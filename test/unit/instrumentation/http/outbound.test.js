@@ -94,6 +94,22 @@ tap.test('instrumentOutbound', (t) => {
     t.end()
   })
 
+  t.test('should parse url if a string and set as segment url attribute', (t) => {
+    const req = new events.EventEmitter()
+    helper.runInTransaction(agent, function(transaction) {
+      agent.config.attributes.enabled = true
+      instrumentOutbound(agent, `http://${HOSTNAME}:${PORT}`, makeFakeRequest)
+      t.equals(transaction.trace.root.children[0].getAttributes().url, `http://${HOSTNAME}:${PORT}/asdf`)
+
+      function makeFakeRequest() {
+        req.path = '/asdf?a=b&another=yourself&thing&grownup=true'
+        return req
+      }
+    })
+    t.end()
+  })
+
+
   t.test('should save query parameters from path if attributes.enabled is true', (t) => {
     const req = new events.EventEmitter()
     helper.runInTransaction(agent, function(transaction) {
@@ -119,7 +135,7 @@ tap.test('instrumentOutbound', (t) => {
   t.test('should not accept an undefined path', (t) => {
     const req = new events.EventEmitter()
     helper.runInTransaction(agent, function() {
-      t.throws(() => 
+      t.throws(() =>
         instrumentOutbound(agent, {host: HOSTNAME, port: PORT}, makeFakeRequest), Error)
     })
 
