@@ -54,9 +54,13 @@ tap.test('Inifinite tracing - Connection Handling', { skip: !isGrpcSupportedVers
   let startingEndpoints = null
   let spanReceivedListener = null
 
-  t.beforeEach(testSetup)
+  t.beforeEach(async(t) => {
+    await new Promise((resolve) => {
+      testSetup(t, resolve)
+    })
+  })
 
-  t.afterEach((done) => {
+  t.afterEach(async() => {
     helper.unloadAgent(agent)
 
     if (!nock.isDone()) {
@@ -68,8 +72,8 @@ tap.test('Inifinite tracing - Connection Handling', { skip: !isGrpcSupportedVers
 
     nock.enableNetConnect()
 
-    server.tryShutdown(() => {
-      done()
+    await new Promise((resolve) => {
+      server.tryShutdown(resolve)
     })
   })
 
@@ -181,7 +185,7 @@ tap.test('Inifinite tracing - Connection Handling', { skip: !isGrpcSupportedVers
     })
   })
 
-  function testSetup(callback, t) {
+  function testSetup(t, callback) {
     nock.disableNetConnect()
     startingEndpoints = setupConnectionEndpoints(INITIAL_RUN_ID, INITIAL_SESSION_ID)
 
