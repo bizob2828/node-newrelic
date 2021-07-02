@@ -49,7 +49,7 @@ tap.test('cursor duration tests', function(t) {
 
   t.test('toArray callback duration should be greater than its parent wrapper', function(t) {
     helper.runInTransaction(agent, function() {
-      collection.find({ i: 0 }).toArray(function onToArray(err, data) {
+      collection.find({}).toArray(function onToArray(err, data) {
         const segment = agent.tracer.getSegment()
         const cbTime = segment.getExclusiveDurationInMillis()
         // current segment is this callback, must get its parent and parent's parent
@@ -66,7 +66,7 @@ tap.test('cursor duration tests', function(t) {
 
   t.test('toArray promise duration should be greater than its parent wrapper', function(t) {
     helper.runInTransaction(agent, async function() {
-      const data = await collection.find({ i: 0 }).toArray()
+      const data = await collection.find({}).toArray()
       const segment = agent.tracer.getSegment()
       // asserts the toArray promise execution is longer than its parent
       // see https://github.com/newrelic/node-newrelic/issues/788
