@@ -1,0 +1,42 @@
+name: Add issues/PRs to project board
+on:
+  workflow_call:
+    inputs:
+      project:
+        description: URL to project board
+        default: https://github.com/bizob2828/node-newrelic/projects/1
+        required: false
+        type: string
+      todo_column:
+        description: Name of the To-Do column in project
+        default: 'Triage Needed: Unprioritized Features'
+        required: false
+        type: string
+      pr_column:
+        description: Name of the In Review column in project
+        default: 'Needs PR Review'
+        required: false
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  assign_pr_to_project:
+    env:
+      GITHUB_TOKEN: ${{ secrets.token }}
+    runs-on: ubuntu-latest
+    name: Assign Issues and/or PRs to Project
+    steps:
+    - name: Assign to project
+      uses: srggrs/assign-one-project-github-action@1.3.1
+      if: github.event_name == 'pull_request'
+      with:
+        project: ${{ inputs.project }}
+        column_name: ${{ inputs.pr_column }}
+    - name: Assign to project
+      uses: srggrs/assign-one-project-github-action@1.3.1
+      if: github.event_name == 'issues'
+      with:
+        project: ${{ inputs.project }}
+        column_name: ${{ inputs.todo_column }}
