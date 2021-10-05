@@ -10,4 +10,10 @@ env:
 
 jobs:
   assign_to_project:
-    uses: newrelic/node-newrelic/.github/workflows/auto-add.yml@add-to-board
+    runs-on: ubuntu-latest
+    name: Assign Issues and/or PRs to Project ${{ inputs.project }}
+    steps:
+    - name: Assign to project
+      uses: srggrs/assign-one-project-github-action@1.2.1
+      with:
+        project: https://github.com/orgs/newrelic/projects/41
