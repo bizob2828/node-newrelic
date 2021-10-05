@@ -10,4 +10,4 @@ env:
 
 jobs:
   assign_to_project:
-    uses: newrelic/node-newrelic/.github/reusable-workflows/add-to-board.yml@add-to-board
+    uses: newrelic/node-newrelic/.github/workflows/auto-add.yml@add-to-board
