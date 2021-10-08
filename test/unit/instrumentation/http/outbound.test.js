@@ -502,13 +502,18 @@ tap.test('when working with http.request', (t) => {
     const host = 'http://www.google.com'
     const path = '/index.html'
     let headers
+    let traceId
 
     nock(host)
       .get(path)
       .reply(200, function () {
+        const { id: parentId } = agent.tracer.getSegment()
         headers = this.req.headers
         t.ok(headers.traceparent, 'traceparent header')
-        t.equal(headers.traceparent.split('-').length, 4)
+        const traceParentParts = headers.traceparent.split('-')
+        t.equal(traceParentParts.length, 4)
+        t.equal(traceParentParts[1], traceId, 'should be the correct traceId')
+        t.equal(traceParentParts[2], parentId, 'should be correct parent id')
         t.ok(headers.tracestate, 'tracestate header')
         t.notOk(headers.tracestate.includes('null'))
         t.notOk(headers.tracestate.includes('true'))
@@ -517,6 +522,7 @@ tap.test('when working with http.request', (t) => {
       })
 
     helper.runInTransaction(agent, (transaction) => {
+      traceId = transaction.traceId
       http.get(`${host}${path}`, (res) => {
         res.resume()
         transaction.end()
