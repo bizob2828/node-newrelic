@@ -44,7 +44,11 @@ test("the agent's async hook", function (t) {
       let context = tagent && tagent.ctxMgr.active
       process.nextTick(() => {
         context = tagent && tagent.ctxMgr.active
-        this.runInAsyncScope(callback)
+        const wrappedCb = tagent.ctxMgr.runIn({
+          scope: context,
+          cb: callback
+        })
+        this.runInAsyncScope(wrappedCb)
       })
     }
   }
@@ -122,15 +126,18 @@ test("the agent's async hook", function (t) {
 
       const p = Promise.resolve()
 
-      tasks.push(() => {
-        context = agent.ctxMgr.active
-        p.then(() => {
+      tasks.push(agent.ctxMgr.runIn({
+        scope: context,
+        cb: () => {
           context = agent.ctxMgr.active
-          const tx = agent.getTransaction()
-          t.equal(tx ? tx.id : null, txn.id)
-          t.end()
-        })
-      })
+          p.then(() => {
+            context = agent.ctxMgr.active
+            const tx = agent.getTransaction()
+            t.equal(tx ? tx.id : null, txn.id)
+            t.end()
+          })
+        }
+      }))
     })
   })
 
@@ -164,19 +171,21 @@ test("the agent's async hook", function (t) {
         parentResolve = resolve
       })
 
-      tasks.push(() => {
-        context = agent.ctxMgr.active
-        p.then(() => {
+      tasks.push(agent.ctxMgr.runIn({
+        scope: context,
+        cb: () => {
           context = agent.ctxMgr.active
-          const tx = agent.getTransaction()
-          t.equal(tx ? tx.id : null, txn.id)
+          p.then(() => {
+            context = agent.ctxMgr.active
+            const tx = agent.getTransaction()
+            t.equal(tx ? tx.id : null, txn.id)
 
-          t.end()
-        })
-
-        // resolve parent after continuation scheduled
-        parentResolve()
-      })
+            t.end()
+          })
+          // resolve parent after continuation scheduled
+          parentResolve()
+        }
+      }))
     })
   })
 
