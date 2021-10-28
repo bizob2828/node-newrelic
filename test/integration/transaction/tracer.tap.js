@@ -71,7 +71,8 @@ test('bind outside transaction', function testBind(t) {
   t.end()
 
   function compare(expected) {
-    t.equal(tracer.getSegment(), expected)
+    const segment = tracer.getSegment()
+    t.same(segment, expected)
   }
 })
 
@@ -330,7 +331,7 @@ test('addSegment', function addSegmentTest(t) {
   let root
   t.plan(8)
 
-  t.equal(tracer.addSegment('outside', null, null, false, check), null)
+  t.same(tracer.addSegment('outside', null, null, false, check), null)
 
   helper.runInTransaction(agent, function inTrans(transaction) {
     const segment = tracer.addSegment('inside', null, null, false, check)
@@ -348,7 +349,7 @@ test('addSegment', function addSegmentTest(t) {
   t.end()
 
   function check(segment) {
-    t.equal(segment, tracer.getSegment())
+    t.same(segment, tracer.getSegment())
     return tracer.getSegment()
   }
 })
@@ -535,7 +536,7 @@ test('bindEmitter', function testbindEmitter(t) {
   function check(expected) {
     return function onEvent(eventData) {
       t.equal(eventData, data, 'should pass through event data')
-      t.equal(tracer.getSegment(), expected, 'should have expected segment')
+      t.same(tracer.getSegment(), expected, 'should have expected segment')
     }
   }
 })
@@ -580,7 +581,7 @@ test('wrapFunctionNoSegment', function testwrapFunctionNoSegment(t) {
     const args = tracer.slice(arguments)
     const callback = args.pop()
     t.equal(this, outer)
-    t.equal(tracer.getSegment(), seg)
+    t.same(tracer.getSegment(), seg)
     process.nextTick(function next() {
       tracer.segment = null
       callback.apply(inner, args)
@@ -589,7 +590,7 @@ test('wrapFunctionNoSegment', function testwrapFunctionNoSegment(t) {
 
   function check(seg, expected) {
     t.deepEqual([].slice.call(arguments, 2), expected)
-    t.equal(tracer.getSegment(), seg)
+    t.same(tracer.getSegment(), seg)
     t.equal(this, inner)
   }
 })
@@ -637,7 +638,7 @@ test('wrapFunction', function testwrapFunction(t) {
       t.ok(segment.timer.hrstart)
       t.notOk(segment.timer.hrDuration)
     } else {
-      t.equal(segment, null)
+      t.same(segment, null)
     }
 
     t.equal(this, outer)
@@ -731,7 +732,7 @@ test('wrapFunctionLast', function testwrapFunctionLast(t) {
       t.ok(segment.timer.hrstart)
       t.notOk(segment.timer.hrDuration)
     } else {
-      t.equal(segment, null)
+      t.same(segment, null)
     }
 
     t.equal(this, outer)
@@ -803,7 +804,7 @@ test('wrapFunctionFirst', function testwrapFunctionFirst(t) {
       t.ok(segment.timer.hrstart)
       t.notOk(segment.timer.hrDuration)
     } else {
-      t.equal(segment, null)
+      t.same(segment, null)
     }
 
     t.equal(this, outer)

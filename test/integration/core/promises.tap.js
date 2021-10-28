@@ -5,4 +5,4 @@
 
 'use strict'
 
-require('./promises')({ await_support: false })
+require('./promises')({ await_support: false, use_legacy_context: true })

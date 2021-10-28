@@ -92,6 +92,9 @@ tap.test('setImmediate', function testSetImmediate(t) {
     })
   })
 
+  // TODO: since we are using AsyncLocalStorage the context propagation is decoupled
+  // from agent instrumentation.  do we clear the store on transaction end?? prob not,
+  // this test should prob only run with `feature_flag.use_legacy_context`
   t.test('should not propagate segments for ended transaction', (t) => {
     const agent = setupAgent(t)
 
@@ -100,7 +103,11 @@ tap.test('setImmediate', function testSetImmediate(t) {
       transaction.end()
 
       setImmediate(() => {
-        t.notOk(agent.tracer.segment, 'should not have segment for ended transaction')
+        if (agent.config.feature_flag.use_legacy_context) {
+          t.notOk(agent.tracer.segment, 'should not have segment for ended transaction')
+        } else {
+          t.equal(agent.tracer.segment.timer.state, 3, 'root segment should be stopped')
+        }
         t.end()
       })
     })
