@@ -9,8 +9,5 @@ on:
 jobs:
   add-to-board:
     uses: bizob2828/node-newrelic/.github/workflows/board.yml@main
-    with:
-      bob: bob-string
     secrets:
-      test: test
-      token: ${{ secrets.GH_TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}
