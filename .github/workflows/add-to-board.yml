@@ -1,0 +1,16 @@
+name: Auto Assign to Project(s)
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  add-to-board:
+    uses: bizob2828/node-newrelic/.github/workflows/board.yml@main
+    with:
+      bob: bob-string
+    secrets:
+      test: test
+      token: ${{ secrets.GH_TOKEN }}

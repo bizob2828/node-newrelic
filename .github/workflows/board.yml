@@ -1,0 +1,44 @@
+name: Add issues/PRs to project board
+on:
+  workflow_call:
+    inputs:
+      bob:
+        required: false
+        type: string
+      project:
+        description: URL to project board
+        default: https://github.com/bizob2828/node-newrelic/projects/1
+        required: false
+        type: string
+    secrets:
+      test:
+        required: true
+      token:
+        required: true
+
+jobs:
+  assign_pr_to_project:
+    env:
+      MY_GITHUB_TOKEN: ${{ secrets.token }}
+      HI: ${{ secrets.test }}
+      BOB: ${{ inputs.bob }}
+    runs-on: ubuntu-latest
+    name: Assign Issues and/or PRs to Project
+    steps:
+    - name: Testing secrets
+      run: |
+        echo "my secret $MY_GITHUB_TOKEN\n"
+        echo "bob secret $HI\n"
+        echo "bob input $BOB\n"
+    - name: Assign to project
+      uses: srggrs/assign-one-project-github-action@1.3.1
+      if: github.event_name == 'pull_request'
+      with:
+        project: https://github.com/bizob2828/node-newrelic/projects/1
+        column_name: 'Needs PR Review'
+    - name: Assign to project
+      uses: srggrs/assign-one-project-github-action@1.3.1
+      if: github.event_name == 'issues'
+      with:
+        project: https://github.com/bizob2828/node-newrelic/projects/1
+        column_name: 'Triage Needed: Unprioritized Features'
