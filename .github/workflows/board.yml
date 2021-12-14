@@ -4,7 +4,7 @@ on:
     inputs:
       project:
         description: URL to project board
-        default: https://github.com/bizob2828/node-newrelic/projects/1
+        default: https://github.com/orgs/newrelic/projects/41
         required: false
         type: string
       todo_column:
