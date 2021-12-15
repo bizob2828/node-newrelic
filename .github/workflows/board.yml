@@ -2,11 +2,11 @@ name: Add issues/PRs to project board
 on:
   workflow_call:
     inputs:
-      project:
-        description: URL to project board
-        default: https://github.com/orgs/newrelic/projects/41
+      project_id:
+        description: Id of Project in GitHub
+        default: 5864688 # Node.js Engineering Board https://github.com/orgs/newrelic/projects/41
         required: false
-        type: string
+        type: number
       todo_column:
         description: Name of the To-Do column in project
         default: 'Triage Needed: Unprioritized Features'
@@ -25,18 +25,24 @@ jobs:
   assign_pr_to_project:
     env:
       GITHUB_TOKEN: ${{ secrets.token }}
+      PROJECT_ID: ${{ inputs.project_id }}
+      HEADER: "Accept: application/vnd.github.inertia-preview+json"
     runs-on: ubuntu-latest
     name: Assign Issues and/or PRs to Project
     steps:
-    - name: Assign to project
-      uses: srggrs/assign-one-project-github-action@1.3.1
+    - name: Assign PR to Project
       if: github.event_name == 'pull_request'
-      with:
-        project: ${{ inputs.project }}
-        column_name: ${{ inputs.pr_column }}
-    - name: Assign to project
-      uses: srggrs/assign-one-project-github-action@1.3.1
+      run: |
+        ISSUE_ID=${{ github.event.issue.id }}
+        COLUMN=$(gh api -H "$HEADER" projects/$PROJECT_ID/columns --jq ".[] | select(.name == \"$COLUMN_NAME\").id")
+        gh api -H "$HEADER" -X POST projects/columns/$COLUMN/cards -f content_type='Issue' -F content_id=$ISSUE_ID
+      env:
+        COLUMN_NAME: ${{ inputs.pr_column}}
+    - name: Assign Issue to Project
       if: github.event_name == 'issues'
-      with:
-        project: ${{ inputs.project }}
-        column_name: ${{ inputs.todo_column }}
+      run: |
+        ISSUE_ID=${{ github.event.issue.id }}
+        COLUMN=$(gh api -H "$HEADER" projects/$PROJECT_ID/columns --jq ".[] | select(.name == \"$COLUMN_NAME\").id")
+        gh api -H "$HEADER" -X POST projects/columns/$COLUMN/cards -f content_type='Issue' -F content_id=$ISSUE_ID
+      env:
+        COLUMN_NAME: ${{ inputs.todo_column}}
