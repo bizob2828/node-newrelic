@@ -4,6 +4,7 @@ on:
     inputs:
       project_id:
         description: Id of Project in GitHub
+        # To find guid run `gh api -H "Accept: application/vnd.github.inertia-preview+json" orgs/newrelic/projects --jq ".[] | select(.name == \"Node.js Engineering Board\").id"`
         default: 5864688 # Node.js Engineering Board https://github.com/orgs/newrelic/projects/41
         required: false
         type: number
@@ -43,6 +44,7 @@ jobs:
       run: |
         ISSUE_ID=${{ github.event.issue.id }}
         COLUMN=$(gh api -H "$HEADER" projects/$PROJECT_ID/columns --jq ".[] | select(.name == \"$COLUMN_NAME\").id")
+        echo "Name of column $COLUMN"
         gh api -H "$HEADER" -X POST projects/columns/$COLUMN/cards -f content_type='Issue' -F content_id=$ISSUE_ID
       env:
         COLUMN_NAME: ${{ inputs.todo_column}}

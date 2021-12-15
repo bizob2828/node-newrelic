@@ -9,5 +9,7 @@ on:
 jobs:
   add-to-board:
     uses: bizob2828/node-newrelic/.github/workflows/board.yml@main
+    with:
+      project_id: 13451896
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
