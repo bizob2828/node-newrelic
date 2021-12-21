@@ -11,6 +11,6 @@ on:
 
 jobs:
   agent-release-notes:
-    uses: newrelic/node-newrelic/.github/workflows/prepare-release.yml@prep-release-reuse
+    uses: bizob2828/node-newrelic/.github/workflows/prepare-release.yml@main
     with:
       release_type: ${{ github.event.inputs.release_type }}
