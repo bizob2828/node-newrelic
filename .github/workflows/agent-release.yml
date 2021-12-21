@@ -13,4 +13,4 @@ jobs:
   agent-release-notes:
     uses: newrelic/node-newrelic/.github/workflows/prepare-release.yml@prep-release-reuse
     with:
-      release_type: ${{ inputs.release_type }}
+      release_type: ${{ github.event.inputs.release_type }}

@@ -30,6 +30,6 @@ jobs:
         git config user.name $GITHUB_ACTOR
         git config user.email gh-actions-${GITHUB_ACTOR}@github.com
     - name: Create Release Notes
-      run: node ./bin/prepare-release.js --release-type ${{ github.event.inputs.release_type }} --branch ${{ github.ref }} --repo-owner ${{ github.repository_owner }} --dry-run --force
+      run: node ./bin/prepare-release.js --release-type ${{ inputs.release_type }} --branch ${{ github.ref }} --repo-owner ${{ github.repository_owner }} --dry-run --force
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
