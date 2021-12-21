@@ -83,8 +83,10 @@ async function prepareReleaseNotes() {
 
     await npm.version(options.releaseType, false)
 
-    const packagePath = '../package.json'
-    console.log(`Working directory of action: ${__dirname}`)
+    const packagePath = __dirname.includes('node-newrelic/node-newrelic')
+      ? '../../package.json'
+      : '../package.json'
+    console.log(`Working directory of action: ${__dirname}, pkg path ${__dirname}/${packagePath}`)
     console.log('Extracting new version from package.json here: ')
     const packageInfo = require(packagePath)
 
