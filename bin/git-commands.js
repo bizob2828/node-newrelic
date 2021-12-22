@@ -55,7 +55,7 @@ async function checkoutNewBranch(name) {
 }
 
 async function addAllFiles() {
-  const stdout = await execAsPromise(`git add . ':!${AGENT_SUB_REPO}`)
+  const stdout = await execAsPromise(`git add . ':!${AGENT_SUB_REPO}'`)
   const output = stdout.trim()
 
   return output
