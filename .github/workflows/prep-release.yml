@@ -22,18 +22,18 @@ jobs:
     - uses: actions/checkout@v2
       with:
         repository: bizob2828/node-newrelic
-        path: agent
+        path: agent-repo
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install Dependencies
-      run: npm ci --prefix agent
+      run: npm ci --prefix agent-repo
     - name: Setup GitHub Credentials
       run: |
         git config user.name $GITHUB_ACTOR
         git config user.email gh-actions-${GITHUB_ACTOR}@github.com
     - name: Create Release Notes
-      run: node ./agent/bin/prepare-release.js --release-type ${{ inputs.release_type }} --branch ${{ github.ref }} --repo ${{ github.repository }}
+      run: node ./agent-repo/bin/prepare-release.js --release-type ${{ inputs.release_type }} --branch ${{ github.ref }} --repo ${{ github.repository }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
