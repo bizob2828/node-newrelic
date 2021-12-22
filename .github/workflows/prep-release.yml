@@ -28,16 +28,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install Dependencies
-      run: |
-        ls
-        pwd
-        cd agent
-        npm ci
+      run: npm ci --prefix agent
     - name: Setup GitHub Credentials
       run: |
         git config user.name $GITHUB_ACTOR
         git config user.email gh-actions-${GITHUB_ACTOR}@github.com
     - name: Create Release Notes
-      run: node ./bin/prepare-release.js --release-type ${{ inputs.release_type }} --branch ${{ github.ref }} --repo-owner ${{ github.repository_owner }} --dry-run --force
+      run: node ./agent/bin/prepare-release.js --release-type ${{ inputs.release_type }} --branch ${{ github.ref }} --repo-owner ${{ github.repository_owner }} --dry-run --force
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
