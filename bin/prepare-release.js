@@ -83,7 +83,8 @@ async function prepareReleaseNotes() {
 
     await npm.version(options.releaseType, false)
 
-    const packagePath = '../package.json'
+    // we are in CI which means the agent repo is cloned as `agent/`
+    const packagePath = __dirname.includes('agent/bin') ? '../../package.json' : '../package.json'
     console.log(`Working directory of action: ${__dirname}, pkg path ${__dirname}/${packagePath}`)
     console.log('Extracting new version from package.json here: ')
     const packageInfo = require(packagePath)
