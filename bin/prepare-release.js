@@ -83,6 +83,9 @@ async function prepareReleaseNotes() {
 
     await npm.version(options.releaseType, false)
 
+    fs.readdirSync('../../').forEach((file) => {
+      console.log(file)
+    })
     const packagePath = __dirname.includes('node-newrelic/node-newrelic')
       ? '../../package.json'
       : '../package.json'
