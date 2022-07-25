@@ -12,6 +12,9 @@ module.exports = {
     'consistent-return': 'off',
     'jsdoc/require-jsdoc': 'off'
   },
+  globals: {
+    fetch: false
+  },
   ignorePatterns: ['test/versioned-external'],
   overrides: [
     {
