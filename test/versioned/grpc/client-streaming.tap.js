@@ -43,6 +43,21 @@ tap.test('gRPC Client: Client Streaming', (t) => {
     proto = null
   })
 
+  t.test('should bind callback to the proper transaction context', (t) => {
+    helper.runInTransaction(agent, 'web', async(tx) => {
+      const call = client.sayHelloClientStream((err, response) => {
+        t.ok(response)
+        t.equal(response.message, 'Hello Bug')
+        t.ok(agent.getTransaction(), 'callback should have transaction context')
+        t.end()
+      })
+
+      call.write({ name: 'Bug'})
+      call.end()
+    })
+  })
+
+
   t.test('should track client streaming requests as an external when in a transaction', (t) => {
     helper.runInTransaction(agent, 'web', async (tx) => {
       tx.name = 'clientTransaction'
