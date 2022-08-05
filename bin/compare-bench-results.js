@@ -6,8 +6,7 @@
 'use strict'
 /* eslint-disable no-console */
 
-const async = require('async')
-const fs = require('fs')
+const fs = require('fs/promises')
 
 if (process.argv.length !== 4) {
   console.log('Usage: %s %s <baseline> <upstream>', process.argv[0], process.argv[1])
@@ -18,31 +17,17 @@ if (process.argv.length !== 4) {
   process.exit(1)
 }
 
-async.map(
-  process.argv.slice(2),
-  (file, cb) => {
-    fs.readFile(file, { encoding: 'utf8' }, (err, data) => {
-      if (err) {
-        return cb(err)
-      }
+run()
 
-      let parsed = null
-      try {
-        parsed = JSON.parse(data)
-      } catch (parseError) {
-        return cb(parseError)
-      }
+async function run() {
+  const files = process.argv.slice(2)
+  const resultPromises = files.map(async (file) => {
+    const data = await fs.readFile(file, { encoding: 'utf8' })
+    return JSON.parse(data)
+  })
 
-      return cb(null, parsed)
-    })
-  },
-  (err, resultFiles) => {
-    if (err) {
-      console.log('Failed to load files.')
-      console.log(err)
-      process.exit(2)
-    }
-
+  try {
+    const resultFiles = await Promise.all(resultPromises)
     const baseline = resultFiles[0]
     const downstream = resultFiles[1]
 
@@ -87,14 +72,14 @@ async.map(
         const results = baseTests
           .sort()
           .map((test) => {
-            const passes = compareResults(base[test], down[test])
+            const passes = compareResults(base, down)
             filePassing = filePassing && passes
 
             return [
               '<details>',
               `<summary>${test}: ${passMark(passes)}</summary>`,
               '',
-              formatResults(base[test], down[test]),
+              formatResults(base, down),
               '</details>',
               ''
             ].join('\n')
@@ -129,8 +114,12 @@ async.map(
     if (!allPassing) {
       process.exitCode = -1
     }
+  } catch(err) {
+    console.log('Failed to load files.')
+    console.log(err)
+    process.exit(2)
   }
-)
+}
 
 function diffArrays(a, b) {
   return a.filter((elem) => !b.includes(elem))

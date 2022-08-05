@@ -5,7 +5,6 @@
 
 'use strict'
 
-const a = require('async')
 const cp = require('child_process')
 const glob = require('glob')
 const path = require('path')
@@ -74,67 +73,65 @@ class JSONPrinter {
 
 run()
 
-function run() {
+async function run() {
   const printer = opts.json ? new JSONPrinter() : new ConsolePrinter()
 
-  a.series(
-    [
-      function resolveGlobs(cb) {
-        if (!globs.length) {
-          cb()
+  if (!globs.length) {
+    return
+  }
+
+  const globPromises = globs.map((pattern) => {
+    return new Promise((resolve, reject) => {
+      glob(pattern, (err, matches) => {
+        if (err) {
+          reject(err)
         }
+        resolve(matches)
+      })
+    })
+  })
 
-        a.map(globs, glob, function afterGlobbing(err, resolved) {
-          if (err) {
-            console.error('Failed to glob:', err)
-            process.exitCode = -1
-            cb(err)
+  try {
+    const resolved = await Promise.all(globPromises)
+    resolved.forEach(function mergeResolved(files) {
+      files.forEach(function mergeFile(file) {
+        if (tests.indexOf(file) === -1) {
+          tests.push(file)
+        }
+      })
+    })
+  } catch(err) {
+    console.error('Failed to glob:', err)
+    process.exitCode = -1
+    printer.finish()
+  }
+
+  tests.sort()
+  for (const file of tests) {
+    try {
+      await new Promise((resolve, reject) => {
+        const test = path.relative(benchpath, file)
+        const args = [file]
+        if (opts.inspect) {
+          args.unshift('--inspect-brk')
+        }
+        const child = cp.spawn('node', args, { cwd: cwd, stdio: 'pipe' })
+        printer.addTest(test, child)
+
+        child.on('error', reject)
+        child.on('exit', function onChildExit(code) {
+          if (code) {
+            const err = new Error('Benchmark exited with code ' + code)
+            reject(err)
           }
-          resolved.forEach(function mergeResolved(files) {
-            files.forEach(function mergeFile(file) {
-              if (tests.indexOf(file) === -1) {
-                tests.push(file)
-              }
-            })
-          })
-          cb()
+          resolve()
         })
-      },
-      function runBenchmarks(cb) {
-        tests.sort()
-        a.eachSeries(
-          tests,
-          function spawnEachFile(file, spawnCb) {
-            const test = path.relative(benchpath, file)
-
-            const args = [file]
-            if (opts.inspect) {
-              args.unshift('--inspect-brk')
-            }
-            const child = cp.spawn('node', args, { cwd: cwd, stdio: 'pipe' })
-            printer.addTest(test, child)
-
-            child.on('error', spawnCb)
-            child.on('exit', function onChildExit(code) {
-              if (code) {
-                spawnCb(new Error('Benchmark exited with code ' + code))
-              }
-              spawnCb()
-            })
-          },
-          function afterSpawnEachFile(err) {
-            if (err) {
-              console.error('Spawning failed:', err)
-              process.exitCode = -2
-              cb(err)
-            }
-            cb()
-          }
-        )
-      }
-    ],
-    () => {
-      printer.finish()
+      })
+    } catch(err) {
+      console.error(`Spawning test ${file} failed:`, err)
+      process.exitCode = -2
     }
-  )
+  }
+
+  printer.finish()
 }

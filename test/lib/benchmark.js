@@ -48,19 +48,17 @@ class Benchmark {
     const suite = this
     let agent = null
 
-    async.eachSeries(
-      this.tests,
-      function startTest(test, callback) {
-        if (test.agent) {
-          agent = helper.instrumentMockedAgent(test.agent.config)
-        }
+    for (const test or this.tests) {
+      if (test.agent) {
+        agent = helper.instrumentMockedAgent(test.agent.config)
+      }
 
-        const testName = test.name
-        const testFn = test.fn
+      const testName = test.name
+      const testFn = test.fn
 
-        if (typeof test.initialize === 'function') {
-          test.initialize(agent)
-        }
+      if (typeof test.initialize === 'function') {
+        test.initialize(agent)
+      }
 
         async.timesSeries(
           test.runs,
