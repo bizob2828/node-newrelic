@@ -48,7 +48,7 @@ class Benchmark {
     const suite = this
     let agent = null
 
-    for (const test or this.tests) {
+    for (const test of this.tests) {
       if (test.agent) {
         agent = helper.instrumentMockedAgent(test.agent.config)
       }
@@ -60,69 +60,63 @@ class Benchmark {
         test.initialize(agent)
       }
 
-        async.timesSeries(
-          test.runs,
-          function runTest(n, next) {
-            if (global.gc && test.runGC) {
-              global.gc()
-            }
-
-            if (typeof test.before === 'function') {
-              test.before(agent)
-            }
-
-            if (agent && test.runInTransaction) {
-              return helper.runInTransaction(agent, function inTransaction(txn) {
-                execute(function afterExecute(execCallback) {
-                  txn.end()
-                  execCallback(txn)
-                })
-              })
-            }
-
-            execute()
-
-            function execute(executeCb) {
-              const prevCpu = process.cpuUsage()
-              if (test.async) {
-                testFn(agent, after)
-              } else {
-                testFn(agent)
-                after()
-              }
-              function after() {
-                // The cpu delta is reported in microseconds, so we turn them into
-                // milliseconds
-                const delta = process.cpuUsage(prevCpu).user / 1000
-
-                if (typeof test.after === 'function') {
-                  test.after()
-                }
-
-                if (typeof executeCb === 'function') {
-                  return executeCb(afterCallback)
-                }
-
-                afterCallback()
-                function afterCallback() {
-                  next(null, delta)
-                }
-              }
-            }
-          },
-          function afterTestRuns(err, samples) {
-            if (agent) {
-              helper.unloadAgent(agent)
-            }
-
-            if (typeof test.teardown === 'function') {
-              test.teardown()
-            }
-
-            suite.samples[testName] = samples
-            callback()
+        for (const next of test.runs) {
+          if (global.gc && test.runGC) {
+            global.gc()
           }
-        )
+
+          if (typeof test.before === 'function') {
+            test.before(agent)
+          }
+
+          if (agent && test.runInTransaction) {
+            return helper.runInTransaction(agent, async function inTransaction(txn) {
+              await execute()
+              txn.end()
+            })
+          }
+
+          execute()
+        }
+
+        function execute(executeCb) {
+          const prevCpu = process.cpuUsage()
+          if (test.async) {
+            testFn(agent, after)
+          } else {
+            testFn(agent)
+            after()
+          }
+
+          function after() {
+            // The cpu delta is reported in microseconds, so we turn them into
+            // milliseconds
+            const delta = process.cpuUsage(prevCpu).user / 1000
+
+            if (typeof test.after === 'function') {
+              test.after()
+            }
+
+            if (typeof executeCb === 'function') {
+              return executeCb(afterCallback)
+            }
+
+            afterCallback()
+            function afterCallback() {
+              next(null, delta)
+            }
+          }
+        }
+
+        if (agent) {
+          helper.unloadAgent(agent)
+        }
+
+        if (typeof test.teardown === 'function') {
+          test.teardown()
+        }
+
+        suite.samples[testName] = samples
       },
       function onSuiteFinish() {
         if (typeof cb === 'function') {
