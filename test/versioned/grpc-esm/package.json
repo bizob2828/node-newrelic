@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=16.12.0"
+  },
   "tests": [
     {
       "engines": {
@@ -12,8 +15,8 @@
         "@grpc/grpc-js": ">=1.4.0"
       },
       "files": [
-        "client-unary.tap.mjs",
-        "server-unary.tap.mjs"
+        "client-unary.tap.js",
+        "server-unary.tap.js"
       ]
     }
   ]

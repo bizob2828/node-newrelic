@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=16.12.0"
+  },
   "tests": [
     {
       "engines": {
@@ -14,8 +17,8 @@
         "ejs": "2.5.9"
       },
       "files": [
-        "segments.tap.mjs",
-        "transaction-naming.tap.mjs"
+        "segments.tap.js",
+        "transaction-naming.tap.js"
       ]
     }
   ],

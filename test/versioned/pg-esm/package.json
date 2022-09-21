@@ -3,6 +3,9 @@
   "type": "module",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=16.12.0"
+  },
   "tests": [
     {
       "engines": {
@@ -13,9 +16,9 @@
         "pg-native": ">=2"
       },
       "files": [
-        "force-native.tap.mjs",
-        "native.tap.mjs",
-        "pg.tap.mjs"
+        "force-native.tap.js",
+        "native.tap.js",
+        "pg.tap.js"
       ]
     },
     {
@@ -27,9 +30,9 @@
         "pg-native": ">=3"
       },
       "files": [
-        "force-native.tap.mjs",
-        "native.tap.mjs",
-        "pg.tap.mjs"
+        "force-native.tap.js",
+        "native.tap.js",
+        "pg.tap.js"
       ]
     }
   ],
