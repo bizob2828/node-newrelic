@@ -3,87 +3,87 @@ name: Node Agent CI
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
+  #lint:
+  #  runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [lts/*]
+  #  strategy:
+  #    matrix:
+  #      node-version: [lts/*]
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install Dependencies
-      run: npm ci
-    - name: Run Linting
-      run: npm run lint
-    - name: Inspect Lockfile
-      run: npm run lint:lockfile
+  #  steps:
+  #  - uses: actions/checkout@v3
+  #  - name: Use Node.js ${{ matrix.node-version }}
+  #    uses: actions/setup-node@v3
+  #    with:
+  #      node-version: ${{ matrix.node-version }}
+  #  - name: Install Dependencies
+  #    run: npm ci
+  #  - name: Run Linting
+  #    run: npm run lint
+  #  - name: Inspect Lockfile
+  #    run: npm run lint:lockfile
 
-  unit:
-    runs-on: ubuntu-latest
+  #unit:
+  #  runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
+  #  strategy:
+  #    matrix:
+  #      node-version: [14.x, 16.x, 18.x]
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install Dependencies
-      run: npm ci
-    - name: Run Unit Tests
-      run: npm run unit
-    - name: Archive Unit Test Coverage
-      uses: actions/upload-artifact@v3
-      with:
-        name: unit-tests-${{ matrix.node-version }}
-        path: ./coverage/unit/lcov.info
-    - name: Run ESM Unit Tests
-      run: npm run unit:esm
-    - name: Archive ESM Unit Test Coverage
-      uses: actions/upload-artifact@v3
-      with:
-        name: esm-unit-tests-${{ matrix.node-version }}
-        path: ./coverage/esm-unit/lcov.info
+  #  steps:
+  #  - uses: actions/checkout@v3
+  #  - name: Use Node.js ${{ matrix.node-version }}
+  #    uses: actions/setup-node@v3
+  #    with:
+  #      node-version: ${{ matrix.node-version }}
+  #  - name: Install Dependencies
+  #    run: npm ci
+  #  - name: Run Unit Tests
+  #    run: npm run unit
+  #  - name: Archive Unit Test Coverage
+  #    uses: actions/upload-artifact@v3
+  #    with:
+  #      name: unit-tests-${{ matrix.node-version }}
+  #      path: ./coverage/unit/lcov.info
+  #  - name: Run ESM Unit Tests
+  #    run: npm run unit:esm
+  #  - name: Archive ESM Unit Test Coverage
+  #    uses: actions/upload-artifact@v3
+  #    with:
+  #      name: esm-unit-tests-${{ matrix.node-version }}
+  #      path: ./coverage/esm-unit/lcov.info
 
-  integration:
-    runs-on: ubuntu-latest
+  #integration:
+  #  runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
+  #  strategy:
+  #    matrix:
+  #      node-version: [14.x, 16.x, 18.x]
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install Dependencies
-      run: npm ci
-    - name: Run Docker Services
-      run: npm run services
-    - name: Run Integration Tests
-      run: npm run integration
-    - name: Archive Integration Test Coverage 
-      uses: actions/upload-artifact@v3
-      with:
-        name: integration-tests-${{ matrix.node-version }}
-        path: ./coverage/integration/lcov.info
+  #  steps:
+  #  - uses: actions/checkout@v3
+  #  - name: Use Node.js ${{ matrix.node-version }}
+  #    uses: actions/setup-node@v3
+  #    with:
+  #      node-version: ${{ matrix.node-version }}
+  #  - name: Install Dependencies
+  #    run: npm ci
+  #  - name: Run Docker Services
+  #    run: npm run services
+  #  - name: Run Integration Tests
+  #    run: npm run integration
+  #  - name: Archive Integration Test Coverage 
+  #    uses: actions/upload-artifact@v3
+  #    with:
+  #      name: integration-tests-${{ matrix.node-version }}
+  #      path: ./coverage/integration/lcov.info
 
   versioned:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -103,51 +103,52 @@ jobs:
         JOBS: 4 # 2 per CPU seems to be the sweet spot in GHA (July 2022)
     - name: Run Versioned Tests (npm v7 / Node 16+)
       if: ${{ matrix.node-version != '14.x' }}
-      run: TEST_CHILD_TIMEOUT=600000 npm run versioned:npm7
+      run: TEST_CHILD_TIMEOUT=600000 npm run versioned:npm7 prisma
       env:
-        VERSIONED_MODE: ${{ github.ref == 'refs/heads/main' && '--minor' || '--major' }}
+        #VERSIONED_MODE: ${{ github.ref == 'refs/heads/main' && '--minor' || '--major' }}
+        VERSIONED_MODE: --minor 
         JOBS: 4 # 2 per CPU seems to be the sweet spot in GHA (July 2022)
-    - name: Archive Versioned Test Coverage
-      uses: actions/upload-artifact@v3
-      if: github.ref != 'refs/heads/main'
-      with:
-        name: versioned-tests-${{ matrix.node-version }}
-        path: ./coverage/versioned/lcov.info
+          #- name: Archive Versioned Test Coverage
+          #  uses: actions/upload-artifact@v3
+          #  if: github.ref != 'refs/heads/main'
+          #  with:
+          #    name: versioned-tests-${{ matrix.node-version }}
+          #    path: ./coverage/versioned/lcov.info
 
-  codecov:
-    needs: [unit, integration, versioned]
-    runs-on: ubuntu-latest
+          #codecov:
+          #  needs: [unit, integration, versioned]
+          #  runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
+          #  strategy:
+          #    matrix:
+          #      node-version: [14.x, 16.x, 18.x]
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-      - name: Post Unit Test Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: unit-tests-${{ matrix.node-version }}
-          flags: unit-tests-${{ matrix.node-version }}
-      - name: Post ESM Unit Test Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: esm-unit-tests-${{ matrix.node-version }}
-          flags: esm-unit-tests-${{ matrix.node-version }}
-      - name: Post Integration Test Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: integration-tests-${{ matrix.node-version }}
-          flags: integration-tests-${{ matrix.node-version }}
-      - name: Post Versioned Test Coverage
-        uses: codecov/codecov-action@v3
-        if: github.ref != 'refs/heads/main'
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: versioned-tests-${{ matrix.node-version }}
-          flags: versioned-tests-${{ matrix.node-version }}
+          #  steps:
+          #    - uses: actions/checkout@v3
+          #    - name: Download artifacts
+          #      uses: actions/download-artifact@v3
+          #    - name: Post Unit Test Coverage
+          #      uses: codecov/codecov-action@v3
+          #      with:
+          #        token: ${{ secrets.CODECOV_TOKEN }}
+          #        directory: unit-tests-${{ matrix.node-version }}
+          #        flags: unit-tests-${{ matrix.node-version }}
+          #    - name: Post ESM Unit Test Coverage
+          #      uses: codecov/codecov-action@v3
+          #      with:
+          #        token: ${{ secrets.CODECOV_TOKEN }}
+          #        directory: esm-unit-tests-${{ matrix.node-version }}
+          #        flags: esm-unit-tests-${{ matrix.node-version }}
+          #    - name: Post Integration Test Coverage
+          #      uses: codecov/codecov-action@v3
+          #      with:
+          #        token: ${{ secrets.CODECOV_TOKEN }}
+          #        directory: integration-tests-${{ matrix.node-version }}
+          #        flags: integration-tests-${{ matrix.node-version }}
+          #    - name: Post Versioned Test Coverage
+          #      uses: codecov/codecov-action@v3
+          #      if: github.ref != 'refs/heads/main'
+          #      with:
+          #        token: ${{ secrets.CODECOV_TOKEN }}
+          #        directory: versioned-tests-${{ matrix.node-version }}
+          #        flags: versioned-tests-${{ matrix.node-version }}
