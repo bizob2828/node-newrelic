@@ -113,6 +113,10 @@ function initialize() {
         (Date.now() - agentStart) / 1000
       )
     })
+
+    if (agent.config.security.agent.enabled) {
+      require('nr-node-security-agent').start(require.cache[symbols.cache])
+    }
   }
 }
 
