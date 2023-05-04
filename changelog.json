@@ -1,4 +1,57 @@
 {
-    "repository": "newrelic/node-newrelic",
-    "entries": []
+  "repository": "newrelic/node-newrelic",
+  "entries": [
+    {
+      "changes": [
+        {
+          "type": "fix",
+          "sha": "5579a5e525b7b8201edcbca43cf5974a99f3eb56",
+          "message": "add logging statement for minimum instrumentable version",
+          "issues": [],
+          "scope": "nestjs"
+        },
+        {
+          "type": "fix",
+          "sha": "99d524d8d1ec18ad4683e47f314f12f1796d65d7",
+          "message": "add a semver check",
+          "issues": [],
+          "scope": "nestjs"
+        },
+        {
+          "type": "fix",
+          "sha": "50b42cba9bc0f63760bbb7d292b5bcadae595fa3",
+          "message": "add unit test",
+          "issues": [],
+          "scope": "nest"
+        },
+        {
+          "type": "fix",
+          "sha": "79f294b76923754a83278c28964378eabd901779",
+          "message": "properly check for a transaction in case the segment is missing",
+          "issues": [],
+          "scope": "nest"
+        },
+        {
+          "type": "fix",
+          "sha": "0d04fcf9a7cfd115ec628e4bbf2c159dc7241e54",
+          "message": "properly set the shim type",
+          "issues": [],
+          "scope": "nest"
+        },
+        {
+          "type": "fix",
+          "sha": "9bae4e8c1e28c540c165133b978f0940c25b6c3f",
+          "message": "remove stray console.log statement",
+          "issues": [],
+          "scope": "nest"
+        }
+      ],
+      "version": "10.0.1",
+      "language": "JAVASCRIPT",
+      "artifactName": "newrelic",
+      "id": "34d2929c-9668-40a6-ae4e-205bb2bfa528",
+      "createTime": "2023-05-04T16:35:34.853Z"
+    }
+  ],
+  "updateTime": "2023-05-04T16:35:34.853Z"
 }

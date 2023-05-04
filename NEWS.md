@@ -39,6 +39,18 @@
 
 * Upgraded devDependencies jsdoc, and lean-jsdoc-theme. 
 
+## [10.0.1](https://github.com/bizob2828/node-newrelic/compare/v10.0.0...v10.0.1) (2023-05-04)
+
+
+### Bug Fixes
+
+* **nest:** add unit test ([50b42cb](https://github.com/bizob2828/node-newrelic/commit/50b42cba9bc0f63760bbb7d292b5bcadae595fa3))
+* **nestjs:** add a semver check ([99d524d](https://github.com/bizob2828/node-newrelic/commit/99d524d8d1ec18ad4683e47f314f12f1796d65d7))
+* **nestjs:** add logging statement for minimum instrumentable version ([5579a5e](https://github.com/bizob2828/node-newrelic/commit/5579a5e525b7b8201edcbca43cf5974a99f3eb56))
+* **nest:** properly check for a transaction in case the segment is missing ([79f294b](https://github.com/bizob2828/node-newrelic/commit/79f294b76923754a83278c28964378eabd901779))
+* **nest:** properly set the shim type ([0d04fcf](https://github.com/bizob2828/node-newrelic/commit/0d04fcf9a7cfd115ec628e4bbf2c159dc7241e54))
+* **nest:** remove stray console.log statement ([9bae4e8](https://github.com/bizob2828/node-newrelic/commit/9bae4e8c1e28c540c165133b978f0940c25b6c3f))
+
 ### v9.15.0 (2023-04-04)
 
 * Added a new configuration option `heroku.use_dyno_names` to specify whether or not to use `process.env.DYNO` for naming the host name and display host.  This option defaults to true.  If you are on heroku and do not want this functionality set `heroku.use_dyno_names` to `false`.  You can also control this configuration options with the environment variable of `NEW_RELIC_HEROKU_USE_DYNO_NAMES`. Thanks @benney-au-le  for your contribution 🚀
