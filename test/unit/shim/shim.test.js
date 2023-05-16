@@ -272,14 +272,17 @@ tap.test('Shim', function (t) {
       })
     })
 
+    // TODO: this is not working because the proxy does not have a registered
+    // handler for .wrappable, just the name of the export which is the name property
+    // Not sure if this is a valid test or just a means to test some old functionality where it just overwrote the export, whereas now it proxies the export and gives you instrumented code when properties match
     t.test('should mark the first parameter as wrapped', function (t) {
       const wrapped = shim.wrap(wrappable, function (_, toWrap) {
         return { wrappable: toWrap }
       })
 
       t.not(wrapped, wrappable)
-      t.equal(wrapped.wrappable, wrappable)
-      t.ok(shim.isWrapped(wrapped))
+      t.equal(wrapped[wrapped.name].wrappable, wrappable)
+      t.ok(shim.isWrapped(wrapped[wrapped.name]))
       t.end()
     })
   })
@@ -308,7 +311,8 @@ tap.test('Shim', function (t) {
         t.equal(name, 'fiz', 'should use property as name')
       })
 
-      t.equal(ret, wrappable)
+      // no longer the same because they are 2 diff proxies
+      t.not(ret, wrappable)
       t.equal(wrappable.fiz, originalFiz, 'should not replace unwrapped')
       t.end()
     })
