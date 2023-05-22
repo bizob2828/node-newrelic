@@ -998,27 +998,30 @@ tap.test('MessageShim', function (t) {
     })
 
     t.test('should end the transaction based on a promise rejection', function (t) {
+      t.plan(5)
+      const expectedErr = new Error('Something went wrong.')
       messageHandler = function () {
-        return { promise: true, handlePromiseError: true }
+        return {
+          promise: true,
+          handlePromiseRejection(err) {
+            t.same(err, expectedErr)
+          }
+        }
       }
 
       wrapped('my.queue', function consumer() {
         const tx = shim.getSegment().transaction
         t.ok(tx.isActive())
-        const userErrors = tx.userErrors
-
-        const ret = new Promise(function (resolve, reject) {
+        const ret = new Promise(function (_resolve, reject) {
           t.ok(tx.isActive())
-          setImmediate(() => reject(new Error('something went wrong')))
+          setImmediate(() => reject(expectedErr))
         })
 
         return ret.finally(function testIfTransactionEnded() {
           t.ok(tx.isActive())
           setTimeout(function () {
             t.notOk(tx.isActive())
-            t.equal(userErrors.length, 1)
-            t.end()
-          }, 20)
+          }, 5)
         })
       })
     })
