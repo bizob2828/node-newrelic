@@ -3,35 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import newrelic from './index.js'
-import shimmer from './lib/shimmer.js'
-import loggingModule from './lib/logger.js'
-import NAMES from './lib/metrics/names.js'
-import semver from 'semver'
-import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import semver from 'semver'
 
-const isSupportedVersion = () => semver.gte(process.version, 'v16.12.0')
 // This check will prevent resolve hooks executing from within this file
 // If I do `import('foo')` in here it'll hit the resolve hook multiple times
 const isFromEsmLoader = (context) =>
   context && context.parentURL && context.parentURL.includes('newrelic/esm-loader.mjs')
 
-const logger = loggingModule.child({ component: 'esm-loader' })
-const esmShimPath = new URL('./lib/esm-shim.mjs', import.meta.url)
-const customEntryPoint = newrelic?.agent?.config?.api.esm.custom_instrumentation_entrypoint
-
-// Hook point within agent for customers to register their custom instrumentation.
-if (customEntryPoint) {
-  const resolvedEntryPoint = path.resolve(customEntryPoint)
-  logger.debug('Registering custom ESM instrumentation at %s', resolvedEntryPoint)
-  await import(resolvedEntryPoint)
-}
-
-addESMSupportabilityMetrics(newrelic.agent)
-
 // exporting for testing purposes
 export const registeredSpecifiers = new Map()
+const isSupportedVersion = () => semver.gte(process.version, 'v16.12.0')
+
+export function globalPreload() {
+  return `
+  const { createRequire } = getBuiltin('module');
+  const { cwd } = getBuiltin('process')
+  const require = createRequire(cwd())
+  //const utils = require(cwd() + '/../../../esm-preload.js')
+  const utils = require(cwd() + '/esm-preload.js')
+  return utils()
+  `
+}
 
 /**
  * Hook chain responsible for resolving a file URL for a given module specifier
@@ -48,6 +41,7 @@ export const registeredSpecifiers = new Map()
  * @returns {Promise} Promise object representing the resolution of a given specifier
  */
 export async function resolve(specifier, context, nextResolve) {
+  const { newrelic, shimmer, logger } = globalThis 
   if (!newrelic.agent || !isSupportedVersion() || isFromEsmLoader(context)) {
     return nextResolve(specifier, context, nextResolve)
   }
@@ -109,6 +103,7 @@ export async function resolve(specifier, context, nextResolve) {
  * @returns {Promise} Promise object representing the load of a given url
  */
 export async function load(url, context, nextLoad) {
+  const { newrelic, logger, esmShimPath } = globalThis 
   if (!newrelic.agent || !isSupportedVersion()) {
     return nextLoad(url, context, nextLoad)
   }
@@ -136,7 +131,7 @@ export async function load(url, context, nextLoad) {
 
   const originalUrl = parsedUrl.href
   const specifier = registeredSpecifiers.get(originalUrl)
-  const rewrittenSource = await wrapEsmSource(originalUrl, specifier)
+  const rewrittenSource = await wrapEsmSource(originalUrl, specifier, esmShimPath)
   logger.debug(`Registered module instrumentation for ${specifier}.`)
 
   return {
@@ -146,32 +141,6 @@ export async function load(url, context, nextLoad) {
   }
 }
 
-/**
- * Helper function for determining which of our Supportability metrics to use for the current loader invocation
- *
- * @param {object} agent
- *        instantiation of the New Relic agent
- * @returns {void}
- */
-function addESMSupportabilityMetrics(agent) {
-  if (!agent) {
-    return
-  }
-
-  if (isSupportedVersion()) {
-    agent.metrics.getOrCreateMetric(NAMES.FEATURES.ESM.LOADER).incrementCallCount()
-  } else {
-    logger.warn(
-      'New Relic for Node.js ESM loader requires a version of Node >= v16.12.0; your version is %s.  Instrumentation will not be registered.',
-      process.version
-    )
-    agent.metrics.getOrCreateMetric(NAMES.FEATURES.ESM.UNSUPPORTED_LOADER).incrementCallCount()
-  }
-
-  if (customEntryPoint) {
-    agent.metrics.getOrCreateMetric(NAMES.FEATURES.ESM.CUSTOM_INSTRUMENTATION).incrementCallCount()
-  }
-}
 
 /**
  * Rewrites the source code of a ES module we want to instrument.
@@ -185,7 +154,7 @@ function addESMSupportabilityMetrics(agent) {
  * @param {string} specifier string identifier in an import statement or import() expression
  * @returns {string} source code rewritten to wrap with our esm-shim
  */
-async function wrapEsmSource(url, specifier) {
+async function wrapEsmSource(url, specifier, esmShimPath) {
   const pkg = await import(url)
   const props = Object.keys(pkg)
   const trimmedUrl = fileURLToPath(url)
