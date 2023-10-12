@@ -67,8 +67,8 @@ tap.test('should instrument multiple versions of the same package', function (t)
   const pkg2 = require(CUSTOM_MODULE_PATH_SUB)
   t.ok(pkg1[symbols.shim], 'should wrap first package')
   t.ok(pkg2[symbols.shim], 'should wrap sub package of same name, different version')
-  t.ok(instrumentation[symbols.instrumented].has('3.0.0'))
-  t.ok(instrumentation[symbols.instrumented].has('1.0.0'))
+  t.ok(pkg1[symbols.instrumented].length)
+  t.ok(pkg2[symbols.instrumented].length)
 })
 
 tap.test('should only log supportability metric for tracking type instrumentation', function (t) {
@@ -85,12 +85,12 @@ tap.test('should only log supportability metric for tracking type instrumentatio
   const PKG_VERSION = `${FEATURES.INSTRUMENTATION.ON_REQUIRE}/knex/Version/1`
 
   // eslint-disable-next-line node/no-extraneous-require
-  require('knex')
+  const knex = require('knex')
   const knexOnRequiredMetric = agent.metrics._metrics.unscoped[PKG]
   t.equal(knexOnRequiredMetric.callCount, 1, `should record ${PKG}`)
   const knexVersionMetric = agent.metrics._metrics.unscoped[PKG_VERSION]
   t.equal(knexVersionMetric.callCount, 1, `should record ${PKG_VERSION}`)
-  t.ok(shimmer.isInstrumented('knex'), 'should mark tracking modules as instrumented')
+  t.ok(shimmer.isInstrumented(knex, 'knex'), 'should mark tracking modules as instrumented')
   t.end()
 })
 

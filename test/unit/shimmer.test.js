@@ -36,6 +36,7 @@ const TEST_MODULE_PATH = 'test-mod/module'
 const TEST_MODULE_RELATIVE_PATH = `../helpers/node_modules/${TEST_MODULE_PATH}`
 const TEST_MODULE = 'sinon'
 const TEST_PATH_WITHIN = `${TEST_MODULE}/lib/sinon/spy`
+const parse = require('module-details-from-path')
 
 describe('shimmer', function () {
   describe('custom instrumentation', function () {
@@ -745,6 +746,53 @@ tap.test('Shimmer with logger mock', (t) => {
     helper.unloadAgent(agent, shimmer)
   })
 
+  t.test('should register multiple hooks per module', (t) => {
+    shimmer.registerInstrumentation({
+      moduleName: TEST_MODULE_PATH,
+      onRequire: () => {}
+    })
+
+    shimmer.registerInstrumentation({
+      moduleName: TEST_MODULE_PATH,
+      onRequire: function second() {}
+    })
+
+    const mod = require(TEST_MODULE_RELATIVE_PATH)
+    t.ok(mod[symbols.instrumented].length === 2, 'should apply multiple hooks for a given module')
+    t.ok(
+      mod[symbols.instrumentedErrored].length === 0,
+      'should not assign instrumentedError symbol when hook succeeds'
+    )
+    t.end()
+  })
+
+  t.test('should register multiple hooks onError hooks per module', (t) => {
+    shimmer.registerInstrumentation({
+      moduleName: TEST_MODULE_PATH,
+      onRequire: () => {
+        throw new Error('failed')
+      }
+    })
+
+    shimmer.registerInstrumentation({
+      moduleName: TEST_MODULE_PATH,
+      onRequire: function second() {
+        throw new Error('failed in second')
+      }
+    })
+
+    const mod = require(TEST_MODULE_RELATIVE_PATH)
+    t.ok(
+      mod[symbols.instrumentedErrored].length === 2,
+      'should apply multiple error hooks for a given module'
+    )
+    t.ok(
+      mod[symbols.instrumented].length === 0,
+      'should not assign instrumented property when instrumentation fails'
+    )
+    t.end()
+  })
+
   t.test('should log warning when onError hook throws', (t) => {
     const origError = new Error('failed to instrument')
     const instFail = new Error('Failed to handle instrumentation error')
@@ -789,18 +837,26 @@ tap.test('Shimmer with logger mock', (t) => {
   t.test(
     'should skip instrumentation if hooks for the same package version have already run',
     (t) => {
+      const PATH_FROM_SHIMMER = `../test/helpers/node_modules/${TEST_MODULE_PATH}`
       const opts = {
-        moduleName: TEST_MODULE_PATH,
+        moduleName: PATH_FROM_SHIMMER,
         onRequire: () => {}
       }
 
       shimmer.registerInstrumentation(opts)
-      require(TEST_MODULE_RELATIVE_PATH)
-      clearCachedModules([TEST_MODULE_RELATIVE_PATH])
-      require(TEST_MODULE_RELATIVE_PATH)
+      // This forces the attempt at loading instrumentation hooks twice
+      // You cannot use require as the symbols of instrumented and instrumentedErrored are
+      // on exported module. The module is cached and if you delete the cache the module
+      // will lack the symbols
+      shimmer.reinstrument(agent, PATH_FROM_SHIMMER)
+      shimmer.reinstrument(agent, PATH_FROM_SHIMMER)
+      const resolvedPath = require.resolve(TEST_MODULE_RELATIVE_PATH)
+      const { basedir } = parse(resolvedPath)
       t.same(loggerMock.trace.args[2], [
-        'Already instrumented test-mod/module@0.0.1, skipping registering instrumentation'
+        `Already instrumented ${basedir} ${PATH_FROM_SHIMMER}, skipping registering instrumentation`
       ])
+      const pkg = require(TEST_MODULE_RELATIVE_PATH)
+      t.ok(pkg[symbols.instrumented].length === 1, 'instrumented symbol set to 1')
       t.end()
     }
   )
@@ -808,47 +864,28 @@ tap.test('Shimmer with logger mock', (t) => {
   t.test(
     'should skip instrumentation if hooks for the same package version have already errored',
     (t) => {
+      const PATH_FROM_SHIMMER = `../test/helpers/node_modules/${TEST_MODULE_PATH}`
       const opts = {
-        moduleName: TEST_MODULE_PATH,
+        moduleName: PATH_FROM_SHIMMER,
         onRequire: () => {
-          throw new Error('test')
+          throw new Error('you failed')
         }
       }
 
       shimmer.registerInstrumentation(opts)
-      require(TEST_MODULE_RELATIVE_PATH)
-      clearCachedModules([TEST_MODULE_RELATIVE_PATH])
-      require(TEST_MODULE_RELATIVE_PATH)
+      // This forces the attempt at loading instrumentation hooks twice
+      // You cannot use require as the symbols of instrumented and instrumentedErrored are
+      // on exported module. The module is cached and if you delete the cache the module
+      // will lack the symbols
+      shimmer.reinstrument(agent, PATH_FROM_SHIMMER)
+      shimmer.reinstrument(agent, PATH_FROM_SHIMMER)
+      const resolvedPath = require.resolve(TEST_MODULE_RELATIVE_PATH)
+      const { basedir } = parse(resolvedPath)
       t.same(loggerMock.trace.args[2], [
-        'Failed to instrument test-mod/module@0.0.1, skipping registering instrumentation'
+        `Failed to instrument ${basedir} ${PATH_FROM_SHIMMER}, skipping registering instrumentation`
       ])
-      t.end()
-    }
-  )
-
-  t.test('should return package version from package.json', (t) => {
-    shimmer.registerInstrumentation({
-      moduleName: TEST_MODULE_PATH,
-      onRequire: () => {}
-    })
-
-    require(TEST_MODULE_RELATIVE_PATH)
-    const version = shimmer.getPackageVersion(TEST_MODULE_PATH)
-    t.not(loggerMock.debug.callCount)
-    t.equal(version, '0.0.1', 'should get package version from package.json')
-    t.end()
-  })
-
-  t.test(
-    'should return Node.js version when it cannot obtain package version from package.json',
-    (t) => {
-      const version = shimmer.getPackageVersion('bogus')
-      t.equal(version, process.version)
-      t.same(loggerMock.debug.args[0], [
-        'Failed to get version for `%s`, reason: %s',
-        'bogus',
-        `Cannot destructure property 'basedir' of 'shimmer.registeredInstrumentations[moduleName]' as it is undefined.`
-      ])
+      const pkg = require(TEST_MODULE_RELATIVE_PATH)
+      t.ok(pkg[symbols.instrumentedErrored].length === 1, 'instrumentedErrored symbol set to 1')
       t.end()
     }
   )
