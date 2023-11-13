@@ -46,7 +46,7 @@ const req = {
 
 function getExpectedResult(tx, event, type, completionId) {
   const trace = tx.trace.root
-  let serialized = `{"id":"${event.id}","appName":"New Relic for Node.js tests","request_id":"req-id","trace_id":"${tx.traceId}","span_id":"${trace.children[0].id}","transaction_id":"${tx.id}","metadata":"","response.model":"gpt-3.5-turbo-0613","vendor":"openAI","ingest_source":"Node",`
+  let serialized = `{"id":"${event.id}","appName":"New Relic for Node.js tests","request_id":"req-id","trace_id":"${tx.traceId}","span_id":"${trace.children[0].id}","transaction_id":"${tx.id}","response.model":"gpt-3.5-turbo-0613","vendor":"openAI","ingest_source":"Node",`
   const resKeys = `"duration":${trace.children[0].getExclusiveDurationInMillis()},"request.model":"gpt-3.5-turbo-0613","api_key_last_four_digits":"sk-7890","response.organization":"new-relic","response.usage.total_tokens":"100","response.usage.prompt_tokens":"10","response.headers.llmVersion":"1.0.0","response.headers.ratelimitLimitRequests":"100","response.headers.ratelimitLimitTokens":"100","response.headers.ratelimitResetTokens":"100","response.headers.ratelimitRemainingTokens":"10","response.headers.ratelimitRemainingRequests":"10",`
 
   switch (type) {
@@ -57,10 +57,10 @@ function getExpectedResult(tx, event, type, completionId) {
     case 'summary':
       serialized += resKeys
       serialized +=
-        '"conversation_id":"","request.max_tokens":"1000000","request.temperature":"medium-rare","response.number_of_messages":3,"response.usage.completion_tokens":10,"response.choices.finish_reason":"stop"}'
+        '"request.max_tokens":"1000000","request.temperature":"medium-rare","response.number_of_messages":3,"response.usage.completion_tokens":10,"response.choices.finish_reason":"stop"}'
       break
     case 'message':
-      serialized += `"conversation_id":"","content":"What is a woodchuck?","role":"inquisitive-kid","sequence":"","completion_id":"${completionId}"}`
+      serialized += `"content":"What is a woodchuck?","role":"inquisitive-kid","sequence":"","completion_id":"${completionId}"}`
   }
 
   return JSON.parse(serialized)
