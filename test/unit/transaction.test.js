@@ -1123,13 +1123,13 @@ tap.test('_createDistributedTracePayload', (t) => {
     t.end()
   })
 
-  t.test('does not add the span id if the transaction is not sampled', (t) => {
+  t.test('does add the span id event if the transaction is not sampled', (t) => {
     agent.config.span_events.enabled = true
     txn._calculatePriority()
     txn.sampled = false
     contextManager.setContext(txn.trace.root)
     const payload = JSON.parse(txn._createDistributedTracePayload().text())
-    t.equal(payload.d.id, undefined)
+    t.equal(payload.d.id, txn.trace.root.id)
     contextManager.setContext(null)
     agent.config.span_events.enabled = false
     t.end()
