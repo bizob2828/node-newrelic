@@ -12,8 +12,6 @@ const { SUPPORTABILITY, LOGGING } = require('../../../lib/metrics/names')
 const API_METRIC = SUPPORTABILITY.API + '/recordLogEvent'
 
 tap.test('Agent API - recordCustomEvent', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
   const message = 'just logging a log in the logger'
@@ -172,6 +170,7 @@ tap.test('Agent API - recordCustomEvent', (t) => {
     t.equal(apiMetric.callCount, 1, 'and one API call was counted anyway')
     t.end()
   })
+  t.end()
 })
 
 function popTopLogMessage(agent) {

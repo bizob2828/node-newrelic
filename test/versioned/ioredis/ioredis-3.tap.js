@@ -108,7 +108,7 @@ tap.test('ioredis instrumentation', function (t) {
     })
   })
 
-  t.autoend()
+  t.end()
 })
 
 async function setup(t) {

@@ -10,8 +10,6 @@ const test = tap.test
 const helper = require('../../../lib/agent_helper')
 
 test('Unhandled rejection', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach((t) => {
@@ -65,4 +63,5 @@ test('Unhandled rejection', (t) => {
         })
     })
   })
+  t.end()
 })

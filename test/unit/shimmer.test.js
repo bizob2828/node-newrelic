@@ -24,7 +24,6 @@ const TEST_MODULE = 'sinon'
 const TEST_PATH_WITHIN = `${TEST_MODULE}/lib/sinon/spy`
 
 function makeModuleTests({ moduleName, relativePath, throwsError }, t) {
-  t.autoend()
   t.beforeEach(function (t) {
     t.context.counter = 0
     t.context.errorThrown = 0
@@ -120,12 +119,11 @@ function makeModuleTests({ moduleName, relativePath, throwsError }, t) {
       t.end()
     })
   }
+  t.end()
 }
 
 tap.test('shimmer', function (t) {
-  t.autoend()
   t.test('custom instrumentation', function (t) {
-    t.autoend()
     t.test(
       'of relative modules',
       makeModuleTests.bind(this, {
@@ -149,10 +147,10 @@ tap.test('shimmer', function (t) {
       'of deep modules',
       makeModuleTests.bind(this, { moduleName: TEST_PATH_WITHIN, relativePath: TEST_PATH_WITHIN })
     )
+    t.end()
   })
 
   t.test('wrapping exports', function (t) {
-    t.autoend()
     t.beforeEach(function (t) {
       t.context.agent = helper.instrumentMockedAgent()
       shimmer.registerInstrumentation({
@@ -182,10 +180,10 @@ tap.test('shimmer', function (t) {
       t.not(obj, original)
       t.end()
     })
+    t.end()
   })
 
   t.test('the instrumentation injector', function (t) {
-    t.autoend()
     const nodule = {
       c: 2,
       ham: 'ham',
@@ -285,8 +283,6 @@ tap.test('shimmer', function (t) {
     })
 
     t.test('with accessor replacement', function (t) {
-      t.autoend()
-
       t.beforeEach(function (t) {
         t.context.simple = { target: true }
       })
@@ -366,6 +362,7 @@ tap.test('shimmer', function (t) {
         t.equal(simple.target, 'ham')
         simple.target = 'eggs'
       })
+      t.end()
     })
 
     t.test('should wrap, then unwrap a method', function (t) {
@@ -437,8 +434,6 @@ tap.test('shimmer', function (t) {
     })
 
     t.test('with full instrumentation running', function (t) {
-      t.autoend()
-
       t.beforeEach(function (t) {
         t.context.agent = helper.loadMockedAgent()
       })
@@ -664,8 +659,11 @@ tap.test('shimmer', function (t) {
           process.nextTick(createTicker(i))
         }
       })
+      t.end()
     })
+    t.end()
   })
+  t.end()
 })
 
 tap.test('Should not augment module when no instrumentation hooks provided', (t) => {
@@ -761,7 +759,6 @@ tap.test('should not throw if you call removeHooks before creating ritm and iitm
 })
 
 tap.test('Shimmer with logger mock', (t) => {
-  t.autoend()
   let loggerMock
   let shimmer
   let sandbox
@@ -893,6 +890,7 @@ tap.test('Shimmer with logger mock', (t) => {
       t.end()
     }
   )
+  t.end()
 })
 
 function clearCachedModules(modules) {

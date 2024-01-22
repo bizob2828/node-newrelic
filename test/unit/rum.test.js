@@ -11,7 +11,6 @@ const API = require('../../api')
 const hashes = require('../../lib/util/hashes')
 
 tap.test('the RUM API', function (t) {
-  t.autoend()
   t.beforeEach(function (t) {
     const agent = helper.loadMockedAgent({
       license_key: 'license key here',
@@ -236,4 +235,5 @@ tap.test('the RUM API', function (t) {
       t.end()
     })
   })
+  t.end()
 })

@@ -18,8 +18,6 @@ const keyMapping = {
 }
 
 tap.test('collector host name', (t) => {
-  t.autoend()
-
   keyTests.forEach(function runTest(testCase) {
     t.test(testCase.name, (t) => {
       const confSettings = {}
@@ -38,6 +36,7 @@ tap.test('collector host name', (t) => {
       })
     })
   })
+  t.end()
 })
 
 function runWithEnv(conf, envObj, callback) {

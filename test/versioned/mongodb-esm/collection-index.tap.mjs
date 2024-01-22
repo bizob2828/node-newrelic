@@ -10,7 +10,6 @@ import helper from '../../lib/agent_helper.js'
 import { pkgVersion, STATEMENT_PREFIX, COLLECTIONS } from './common.cjs'
 
 tap.test('Collection(Index) Tests', (t) => {
-  t.autoend()
   let agent
 
   t.before(() => {
@@ -125,4 +124,5 @@ tap.test('Collection(Index) Tests', (t) => {
       })
     })
   }
+  t.end()
 })

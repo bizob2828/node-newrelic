@@ -11,8 +11,6 @@ const helper = require('../../../lib/agent_helper')
 const { req, chatRes, getExpectedResult } = require('./common')
 
 tap.test('LlmChatCompletionSummary', (t) => {
-  t.autoend()
-
   let agent
   t.beforeEach(() => {
     agent = helper.loadMockedAgent()
@@ -76,4 +74,5 @@ tap.test('LlmChatCompletionSummary', (t) => {
       t.end()
     })
   })
+  t.end()
 })

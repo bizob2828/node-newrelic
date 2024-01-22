@@ -9,7 +9,6 @@ const { createFakeConnection, createMetricAggregator } = require('./span-streame
 const BaseSpanStreamer = require('../../../lib/spans/base-span-streamer')
 
 tap.test('SpanStreamer', (t) => {
-  t.autoend()
   let spanStreamer
 
   t.beforeEach(() => {
@@ -35,4 +34,5 @@ tap.test('SpanStreamer', (t) => {
       t.end()
     })
   })
+  t.end()
 })

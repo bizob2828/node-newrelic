@@ -10,8 +10,6 @@ const proxyquire = require('proxyquire').noPreserveCache().noCallThru()
 const sinon = require('sinon')
 
 tap.test('Update Snyk PR Scripting', (testHarness) => {
-  testHarness.autoend()
-
   let originalEnvVars
   let originalConsoleLog
   let MockGithubSdk
@@ -107,4 +105,5 @@ tap.test('Update Snyk PR Scripting', (testHarness) => {
       )
     }
   )
+  testHarness.end()
 })

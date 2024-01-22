@@ -7,7 +7,7 @@
 const helpers = module.exports
 const tap = require('tap')
 
-tap.Test.prototype.addAssert('validateAnnotations', 2, validateLogLine)
+tap.Test.prototype.validateAnnotations = validateLogLine
 
 // NOTE: pino adds hostname to log lines which is why we don't check it here
 helpers.CONTEXT_KEYS = [
@@ -23,21 +23,21 @@ helpers.CONTEXT_KEYS = [
  * To be registered as a tap assertion
  */
 function validateLogLine({ line: logLine, message, level, config }) {
-  this.equal(
+  this.t.equal(
     logLine['entity.name'],
     config.applications()[0],
     'should have entity name that matches app'
   )
-  this.equal(logLine['entity.guid'], 'test-guid', 'should have set entitye guid')
-  this.equal(logLine['entity.type'], 'SERVICE', 'should have entity type of SERVICE')
-  this.equal(logLine.hostname, config.getHostnameSafe(), 'should have proper hostname')
-  this.match(logLine.timestamp, /[0-9]{10}/, 'should have proper unix timestamp')
-  this.notOk(logLine.message.includes('NR-LINKING'), 'should not contain NR-LINKING metadata')
+  this.t.equal(logLine['entity.guid'], 'test-guid', 'should have set entitye guid')
+  this.t.equal(logLine['entity.type'], 'SERVICE', 'should have entity type of SERVICE')
+  this.t.equal(logLine.hostname, config.getHostnameSafe(), 'should have proper hostname')
+  this.t.match(logLine.timestamp, /[0-9]{10}/, 'should have proper unix timestamp')
+  this.t.notOk(logLine.message.includes('NR-LINKING'), 'should not contain NR-LINKING metadata')
   if (message) {
-    this.equal(logLine.message, message, 'message should be the same as log')
+    this.t.equal(logLine.message, message, 'message should be the same as log')
   }
 
   if (level) {
-    this.equal(logLine.level, level, 'level should be string value not number')
+    this.t.equal(logLine.level, level, 'level should be string value not number')
   }
 }

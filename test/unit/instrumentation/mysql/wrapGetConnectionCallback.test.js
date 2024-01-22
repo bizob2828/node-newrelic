@@ -11,8 +11,6 @@ const proxyquire = require('proxyquire')
 const symbols = require('../../../../lib/symbols')
 
 tap.test('wrapGetConnectionCallback', (t) => {
-  t.autoend()
-
   let mockCallback
   let mockConnection
   let mockShim
@@ -77,4 +75,5 @@ tap.test('wrapGetConnectionCallback', (t) => {
     t.ok(mockShim[symbols.wrappedPoolConnection], 'should have added the symbol')
     t.end()
   })
+  t.end()
 })

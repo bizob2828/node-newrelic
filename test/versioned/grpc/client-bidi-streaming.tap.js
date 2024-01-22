@@ -20,8 +20,6 @@ const {
 } = require('./util.cjs')
 
 tap.test('gRPC Client: Bidi Streaming', (t) => {
-  t.autoend()
-
   let agent
   let client
   let server
@@ -186,4 +184,5 @@ tap.test('gRPC Client: Bidi Streaming', (t) => {
       })
     })
   })
+  t.end()
 })

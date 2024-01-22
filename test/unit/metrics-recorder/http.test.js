@@ -41,9 +41,7 @@ function afterEach(t) {
 }
 
 tap.test('recordWeb', function (t) {
-  t.autoend()
   t.test('when scope is undefined', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -71,10 +69,10 @@ tap.test('recordWeb', function (t) {
       t.assertMetrics(trans.metrics, [], true, true)
       t.end()
     })
+    t.end()
   })
 
   t.test('when recording web transactions with distributed tracing enabled', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should record metrics from accepted payload information', function (t) {
@@ -170,10 +168,10 @@ tap.test('recordWeb', function (t) {
       t.assertMetrics(trans.metrics, result, true, true)
       t.end()
     })
+    t.end()
   })
 
   t.test('with normal requests', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should infer a satisfying end-user experience', function (t) {
@@ -284,6 +282,7 @@ tap.test('recordWeb', function (t) {
       t.equal(trans.url, '/test')
       t.end()
     })
+    t.end()
   })
 
   t.test('with exceptional requests should handle internal server errors', function (t) {
@@ -318,7 +317,6 @@ tap.test('recordWeb', function (t) {
   })
 
   t.test("when testing a web request's apdex", function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test("shouldn't automatically mark ignored status codes as frustrating", function (t) {
@@ -441,5 +439,7 @@ tap.test('recordWeb', function (t) {
       t.assertMetrics(trans.metrics, result, true, true)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

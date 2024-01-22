@@ -20,7 +20,6 @@ function clean(sql) {
 }
 
 test('database query parser', function (t) {
-  t.autoend()
   t.test('should accept query as a string', function (t) {
     const ps = parseSql('select * from someTable')
     t.equal(ps.query, 'select * from someTable')
@@ -36,7 +35,6 @@ test('database query parser', function (t) {
   })
 
   t.test('SELECT SQL', function (t) {
-    t.autoend()
     t.test('should parse a simple query', function (t) {
       const ps = parseSql('Select * from dude')
       t.ok(ps)
@@ -72,10 +70,10 @@ test('database query parser', function (t) {
       t.equal(ps.query, sql)
       t.end()
     })
+    t.end()
   })
 
   t.test('DELETE SQL', function (t) {
-    t.autoend()
     t.test('should parse a simple command', function (t) {
       const ps = parseSql('DELETE\nfrom dude')
       t.ok(ps)
@@ -101,10 +99,10 @@ test('database query parser', function (t) {
       t.equal(ps.query, "DELETE\nfrom dude where name = 'man'")
       t.end()
     })
+    t.end()
   })
 
   t.test('UPDATE SQL', function (t) {
-    t.autoend()
     t.test('should parse a command with gratuitous white space and conditions', function (t) {
       const ps = parseSql('  update test set value = 1 where id = 12')
       t.ok(ps)
@@ -117,10 +115,10 @@ test('database query parser', function (t) {
       t.equal(ps.query, 'update test set value = 1 where id = 12')
       t.end()
     })
+    t.end()
   })
 
   t.test('INSERT SQL', function (t) {
-    t.autoend()
     t.test('should parse a command with a subquery', function (t) {
       const ps = parseSql('  insert into\ntest\nselect * from dude')
       t.ok(ps)
@@ -133,10 +131,10 @@ test('database query parser', function (t) {
       t.equal(ps.query, 'insert into\ntest\nselect * from dude')
       t.end()
     })
+    t.end()
   })
 
   t.test('invalid SQL', function (t) {
-    t.autoend()
     t.test("should return 'other' when handed garbage", function (t) {
       const ps = parseSql('  bulge into\ndudes\nselect * from dude')
       t.ok(ps)
@@ -156,13 +154,12 @@ test('database query parser', function (t) {
       t.equal(ps.query, '')
       t.end()
     })
+    t.end()
   })
 
   t.test('CAT', function (t) {
-    t.autoend()
     CATs.forEach(function (cat) {
       t.test(clean(cat.input), function (t) {
-        t.autoend()
         const ps = parseSql(cat.input)
 
         t.test('should parse the operation as ' + cat.operation, function (t) {
@@ -180,7 +177,10 @@ test('database query parser', function (t) {
             t.end()
           })
         }
+        t.end()
       })
     })
+    t.end()
   })
+  t.end()
 })

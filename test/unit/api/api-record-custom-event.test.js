@@ -12,8 +12,6 @@ const API = require('../../../api.js')
 const MAX_CUSTOM_EVENTS = 2
 
 tap.test('Agent API - recordCustomEvent', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -291,6 +289,7 @@ tap.test('Agent API - recordCustomEvent', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 function popTopCustomEvent(agent) {

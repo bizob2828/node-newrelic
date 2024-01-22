@@ -34,7 +34,6 @@ function beforeEach(t) {
 }
 
 tap.test('Transaction Event Aggregator', (t) => {
-  t.autoend()
   t.beforeEach(beforeEach)
 
   t.test('should set the correct default method', (t) => {
@@ -74,10 +73,10 @@ tap.test('Transaction Event Aggregator', (t) => {
     t.notOk(payload)
     t.end()
   })
+  t.end()
 })
 
 tap.test('Transaction Event Aggregator - when data over split threshold', (t) => {
-  t.autoend()
   t.beforeEach((t) => {
     beforeEach(t)
     const { eventAggregator } = t.context
@@ -92,7 +91,9 @@ tap.test('Transaction Event Aggregator - when data over split threshold', (t) =>
     const { eventAggregator } = t.context
     const expectedStartEmit = `starting ${EXPECTED_METHOD} data send.`
 
-    eventAggregator.once(expectedStartEmit, t.end)
+    eventAggregator.once(expectedStartEmit, () => {
+      t.end()
+    })
 
     eventAggregator.send()
   })
@@ -206,7 +207,9 @@ tap.test('Transaction Event Aggregator - when data over split threshold', (t) =>
     const { eventAggregator, fakeCollectorApi } = t.context
     const expectedStartEmit = `finished ${EXPECTED_METHOD} data send.`
 
-    eventAggregator.once(expectedStartEmit, t.end)
+    eventAggregator.once(expectedStartEmit, () => {
+      t.end()
+    })
 
     fakeCollectorApi.send.callsFake((_method, _payload, callback) => {
       callback(null, { retainData: false })
@@ -214,6 +217,7 @@ tap.test('Transaction Event Aggregator - when data over split threshold', (t) =>
 
     eventAggregator.send()
   })
+  t.end()
 })
 
 function sortEventsByNum(event1, event2) {

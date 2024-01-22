@@ -11,8 +11,6 @@ const helper = require('../../../lib/agent_helper')
 const HTTP_ATTS = require('../../../lib/fixtures').httpAttributes
 
 test('Restify capture params introspection', function (t) {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(function () {
@@ -180,4 +178,5 @@ test('Restify capture params introspection', function (t) {
       })
     })
   })
+  t.end()
 })

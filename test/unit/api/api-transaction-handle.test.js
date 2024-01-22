@@ -10,8 +10,6 @@ const API = require('../../../api')
 const helper = require('../../lib/agent_helper')
 
 tap.test('Agent API - transaction handle', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -138,4 +136,5 @@ tap.test('Agent API - transaction handle', (t) => {
       t.end()
     })
   })
+  t.end()
 })

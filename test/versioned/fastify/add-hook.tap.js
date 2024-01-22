@@ -40,7 +40,6 @@ function getExpectedSegments(hooks) {
 }
 
 tap.test('fastify hook instrumentation', (t) => {
-  t.autoend()
   t.beforeEach(() => {
     const agent = helper.instrumentMockedAgent()
     const fastify = require('fastify')()
@@ -175,4 +174,5 @@ tap.test('fastify hook instrumentation', (t) => {
     })
     t.end()
   })
+  t.end()
 })

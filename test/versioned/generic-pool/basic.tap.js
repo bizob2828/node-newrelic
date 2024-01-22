@@ -9,8 +9,6 @@ const helper = require('../../lib/agent_helper')
 const tap = require('tap')
 
 tap.test('generic-pool', function (t) {
-  t.autoend()
-
   let agent = null
   let pool = null
   const PoolClass = require('generic-pool').Pool
@@ -131,4 +129,5 @@ tap.test('generic-pool', function (t) {
       })
     }
   })
+  t.end()
 })

@@ -10,8 +10,6 @@ const API = require('../../../api')
 const helper = require('../../lib/agent_helper')
 
 tap.test('Agent API - startWebTransaction', (t) => {
-  t.autoend()
-
   let agent = null
   let contextManager = null
   let api = null
@@ -192,4 +190,5 @@ tap.test('Agent API - startWebTransaction', (t) => {
       }
     )
   })
+  t.end()
 })

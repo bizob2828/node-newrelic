@@ -11,9 +11,8 @@ const runContextManagerTests = require('./context-manager-tests')
 const AsyncLocalContextManager = require('../../../lib/context-manager/async-local-context-manager')
 
 test('Async Local Context Manager', (t) => {
-  t.autoend()
-
   runContextManagerTests(t, createContextManager)
+  t.end()
 })
 
 function createContextManager() {

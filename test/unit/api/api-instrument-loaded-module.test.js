@@ -11,8 +11,6 @@ const agentHelper = require('../../lib/agent_helper')
 const symbols = require('../../../lib/symbols')
 
 tap.test('Agent API - instrumentLoadedModule', (t) => {
-  t.autoend()
-
   let agent
   let api
   let expressMock
@@ -107,4 +105,5 @@ tap.test('Agent API - instrumentLoadedModule', (t) => {
     }
     t.end()
   })
+  t.end()
 })

@@ -24,8 +24,6 @@ consumer
  */
 
 tap.test('amqplib promise instrumentation', function (t) {
-  t.autoend()
-
   let amqplib = null
   let conn = null
   let channel = null
@@ -482,4 +480,5 @@ tap.test('amqplib promise instrumentation', function (t) {
         t.end()
       })
   })
+  t.end()
 })

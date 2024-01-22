@@ -14,7 +14,6 @@ const createShimmerMock = require('./mocks/shimmer')
 const createMetricsMock = require('./mocks/metrics')
 
 test('loader metrics', (t) => {
-  t.autoend()
   let metricsMock
   let MockAgent
   let shimmerMock
@@ -182,10 +181,10 @@ test('loader metrics', (t) => {
     t.equal(metricCall.args[1][0], 'Supportability/Features/EnableSourceMaps')
     t.end()
   })
+  t.end()
 })
 
 test('index tests', (t) => {
-  t.autoend()
   let sandbox
   let loggerMock
   let processVersionStub
@@ -396,4 +395,5 @@ test('index tests', (t) => {
       t.end()
     }
   )
+  t.end()
 })

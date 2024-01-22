@@ -10,8 +10,6 @@ const sinon = require('sinon')
 const instrumentation = require('../../../../lib/instrumentation/mysql/mysql')
 
 tap.test('extractQueryArgs', (t) => {
-  t.autoend()
-
   let mockShim
   let mockArgs
   let mockCallback
@@ -48,4 +46,5 @@ tap.test('extractQueryArgs', (t) => {
 
     t.end()
   })
+  t.end()
 })

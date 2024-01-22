@@ -11,8 +11,6 @@ const instrumentation = require('../../../../lib/instrumentation/mysql/mysql')
 const symbols = require('../../../../lib/symbols')
 
 tap.test('wrapQueryable', (t) => {
-  t.autoend()
-
   let mockShim
   let mockQueryable
 
@@ -142,4 +140,5 @@ tap.test('wrapQueryable', (t) => {
 
     t.end()
   })
+  t.end()
 })

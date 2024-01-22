@@ -11,8 +11,6 @@ const WebFrameworkShim = require('../../../lib/shim/webframework-shim')
 const sinon = require('sinon')
 
 test('Nest unit tests', (t) => {
-  t.autoend()
-
   let agent = null
   let initialize = null
   let shim = null
@@ -108,4 +106,5 @@ test('Nest unit tests', (t) => {
 
     t.end()
   })
+  t.end()
 })

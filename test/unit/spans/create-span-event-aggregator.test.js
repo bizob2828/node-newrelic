@@ -84,7 +84,7 @@ tap.test('should create batching streamer when batching is enabled', (t) => {
   const isBatchStreamer = aggregator.stream instanceof BatchSpanStreamer
   t.ok(isBatchStreamer)
   t.ok(metricsStub.getOrCreateMetric.args[0].length === 1, 'should have only 1 metric set')
-  t.ok(
+  t.equal(
     metricsStub.getOrCreateMetric.args[0][0],
     'Supportability/InfiniteTracing/gRPC/Batching/enabled',
     'should set batching enabled supportability metric'
@@ -107,9 +107,9 @@ tap.test('should create span streamer when batching is disabled', (t) => {
   const isSpanStreamer = aggregator.stream instanceof SpanStreamer
   t.ok(isSpanStreamer)
   t.ok(metricsStub.getOrCreateMetric.args[0].length === 1, 'should have only 1 metric set')
-  t.ok(
+  t.equal(
     metricsStub.getOrCreateMetric.args[0][0],
-    'Supportability/InfiniteTracing/gRPC/Batching/disaabled',
+    'Supportability/InfiniteTracing/gRPC/Batching/disabled',
     'should set batching disabled supportability metric'
   )
   t.end()

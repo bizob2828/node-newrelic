@@ -10,11 +10,7 @@ const sinon = require('sinon')
 
 const formatters = require('../../../lib/config/formatters')
 tap.test('config formatters', (t) => {
-  t.autoend()
-
   tap.test('array', (t) => {
-    t.autoend()
-
     t.test('should trim string into array', (t) => {
       const val = 'opt1, opt2  ,   opt3 , opt4'
       const options = formatters.array(val)
@@ -26,11 +22,10 @@ tap.test('config formatters', (t) => {
       t.same(formatters.array('hello'), ['hello'])
       t.end()
     })
+    t.end()
   })
 
   tap.test('int', (t) => {
-    t.autoend()
-
     t.test('should parse number string as int', (t) => {
       t.equal(formatters.int('100'), 100)
       t.end()
@@ -48,11 +43,10 @@ tap.test('config formatters', (t) => {
       })
       t.end()
     })
+    t.end()
   })
 
   tap.test('float', (t) => {
-    t.autoend()
-
     t.test('should parse number string as float', (t) => {
       t.equal(formatters.float('100'), 100)
       t.end()
@@ -70,11 +64,10 @@ tap.test('config formatters', (t) => {
       })
       t.end()
     })
+    t.end()
   })
 
   tap.test('boolean', (t) => {
-    t.autoend()
-
     const falseyValues = [null, 'false', 'f', 'no', 'n', 'disabled', '0']
     falseyValues.forEach((val) => {
       t.test(`should map ${val} to false`, (t) => {
@@ -92,11 +85,10 @@ tap.test('config formatters', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   tap.test('object', (t) => {
-    t.autoend()
-
     t.test('should parse json string as an object', (t) => {
       const val = '{"key": "value"}'
       const result = formatters.object(val)
@@ -112,11 +104,10 @@ tap.test('config formatters', (t) => {
       t.match(loggerMock.error.args[1][0], /SyntaxError: Unexpected token/)
       t.end()
     })
+    t.end()
   })
 
   tap.test('objectList', (t) => {
-    t.autoend()
-
     t.test('should parse json string a collection with 1 object', (t) => {
       const val = '{"key": "value"}'
       const result = formatters.objectList(val)
@@ -135,11 +126,10 @@ tap.test('config formatters', (t) => {
       t.match(loggerMock.error.args[1][0], /SyntaxError: Unexpected token/)
       t.end()
     })
+    t.end()
   })
 
   tap.test('allowList', (t) => {
-    t.autoend()
-
     t.test('should return value if in allow list', (t) => {
       const allowList = ['bad', 'good', 'evil']
       const val = 'good'
@@ -155,11 +145,10 @@ tap.test('config formatters', (t) => {
       t.same(result, 'good')
       t.end()
     })
+    t.end()
   })
 
   tap.test('regex', (t) => {
-    t.autoend()
-
     t.test('should return regex if valid', (t) => {
       const val = '/hello/'
       const result = formatters.regex(val)
@@ -175,5 +164,7 @@ tap.test('config formatters', (t) => {
       t.match(loggerMock.error.args[1][0], /SyntaxError: Invalid regular expression/)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

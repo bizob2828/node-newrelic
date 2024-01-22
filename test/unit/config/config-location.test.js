@@ -15,8 +15,6 @@ const { removeMatchedModules } = require('../../lib/cache-buster')
 const Config = require('../../../lib/config')
 
 tap.test('when overriding the config file location via NEW_RELIC_HOME', (t) => {
-  t.autoend()
-
   const DESTDIR = path.join(__dirname, 'xXxNRHOMETESTxXx')
   const NOPLACEDIR = path.join(__dirname, 'NOHEREHERECHAMP')
   const CONFIGPATH = path.join(DESTDIR, 'newrelic.js')
@@ -98,11 +96,10 @@ tap.test('when overriding the config file location via NEW_RELIC_HOME', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('Selecting config file path', (t) => {
-  t.autoend()
-
   const DESTDIR = path.join(__dirname, 'test_NEW_RELIC_CONFIG_FILENAME')
   const NOPLACEDIR = path.join(__dirname, 'test_NEW_RELIC_CONFIG_FILENAME_dummy')
   const MAIN_MODULE_DIR = path.join(__dirname, 'test_NEW_RELIC_CONFIG_FILENAME_MAIN_MODULE')
@@ -224,4 +221,5 @@ tap.test('Selecting config file path', (t) => {
 
     fs.writeFileSync(CONFIG_PATH, `exports.config = null.pleaseThrow`)
   }
+  t.end()
 })

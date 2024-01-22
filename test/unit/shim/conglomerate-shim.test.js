@@ -16,7 +16,6 @@ const TransactionShim = require('../../../lib/shim/transaction-shim')
 const WebFrameworkShim = require('../../../lib/shim/webframework-shim')
 
 test('ConglomerateShim', (t) => {
-  t.autoend()
   let agent = null
   let shim = null
 
@@ -83,4 +82,5 @@ test('ConglomerateShim', (t) => {
     t.equal(shim.id, childShim.id)
     t.end()
   })
+  t.end()
 })

@@ -11,8 +11,6 @@ const helper = require('../../lib/agent_helper')
 const symbols = require('../../../lib/symbols')
 
 tap.test('Fastify Instrumentation', (t) => {
-  t.autoend()
-
   let agent = null
   let fastifyExport = null
 
@@ -47,4 +45,5 @@ tap.test('Fastify Instrumentation', (t) => {
 
     t.end()
   })
+  t.end()
 })

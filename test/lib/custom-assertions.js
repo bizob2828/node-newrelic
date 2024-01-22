@@ -5,10 +5,10 @@
 
 'use strict'
 const tap = require('tap')
-tap.Test.prototype.addAssert('clmAttrs', 1, assertCLMAttrs)
-tap.Test.prototype.addAssert('isNonWritable', 1, isNonWritable)
-tap.Test.prototype.addAssert('compareSegments', 2, compareSegments)
-tap.Test.prototype.addAssert('exactClmAttrs', 2, assertExactClmAttrs)
+tap.Test.prototype.clmAttrs = assertCLMAttrs
+tap.Test.prototype.isNonWritable = isNonWritable
+tap.Test.prototype.compareSegments = compareSegments
+tap.Test.prototype.exactClmAttrs = assertExactClmAttrs
 
 function assertExactClmAttrs(segmentStub, expectedAttrs) {
   const attrs = segmentStub.addAttribute.args
@@ -16,7 +16,7 @@ function assertExactClmAttrs(segmentStub, expectedAttrs) {
     obj[key] = value
     return obj
   }, {})
-  this.same(attrsObj, expectedAttrs, 'CLM attrs should match')
+  this.t.same(attrsObj, expectedAttrs, 'CLM attrs should match')
 }
 
 /**
@@ -30,18 +30,18 @@ function assertCLMAttrs({ segments, enabled: clmEnabled }) {
   segments.forEach((segment) => {
     const attrs = segment.segment.getAttributes()
     if (clmEnabled) {
-      this.equal(attrs['code.function'], segment.name, 'should have appropriate code.function')
-      this.ok(
+      this.t.equal(attrs['code.function'], segment.name, 'should have appropriate code.function')
+      this.t.ok(
         attrs['code.filepath'].endsWith(segment.filepath),
         'should have appropriate code.filepath'
       )
-      this.match(attrs['code.lineno'], /[\d]+/, 'lineno should be a number')
-      this.match(attrs['code.column'], /[\d]+/, 'column should be a number')
+      this.t.match(attrs['code.lineno'], /[\d]+/, 'lineno should be a number')
+      this.t.match(attrs['code.column'], /[\d]+/, 'column should be a number')
     } else {
-      this.notOk(attrs['code.function'], 'function should not exist')
-      this.notOk(attrs['code.filepath'], 'filepath should not exist')
-      this.notOk(attrs['code.lineno'], 'lineno should not exist')
-      this.notOk(attrs['code.column'], 'column should not exist')
+      this.t.notOk(attrs['code.function'], 'function should not exist')
+      this.t.notOk(attrs['code.filepath'], 'filepath should not exist')
+      this.t.notOk(attrs['code.lineno'], 'lineno should not exist')
+      this.t.notOk(attrs['code.column'], 'column should not exist')
     }
   })
 }
@@ -55,14 +55,14 @@ function assertCLMAttrs({ segments, enabled: clmEnabled }) {
  * @param {string} params.value expected value of obj[key]
  */
 function isNonWritable({ obj, key, value }) {
-  this.throws(function () {
+  this.t.throws(function () {
     obj[key] = 'testNonWritable test value'
   }, new RegExp("(read only property '" + key + "'|Cannot set property " + key + ')'))
 
   if (value) {
-    this.equal(obj[key], value)
+    this.t.equal(obj[key], value)
   } else {
-    this.not(obj[key], 'testNonWritable test value', 'should not set value when non-writable')
+    this.t.not(obj[key], 'testNonWritable test value', 'should not set value when non-writable')
   }
 }
 
@@ -74,8 +74,8 @@ function isNonWritable({ obj, key, value }) {
  *  @param {Array} segments list of expected segments
  */
 function compareSegments(parent, segments) {
-  this.ok(parent.children.length, segments.length, 'should be the same amount of children')
+  this.t.equal(parent.children.length, segments.length, 'should be the same amount of children')
   segments.forEach((segment, index) => {
-    this.equal(parent.children[index].id, segment.id, 'should have same ids')
+    this.t.equal(parent.children[index].id, segment.id, 'should have same ids')
   })
 }

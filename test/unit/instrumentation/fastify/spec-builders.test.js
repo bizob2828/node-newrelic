@@ -23,7 +23,6 @@ tap.test('Fastify spec builders', (t) => {
     helper.unloadAgent(agent)
   })
 
-  t.autoend()
   t.test('buildMiddlewareSpecForRouteHandler', (t) => {
     let mwSpec
     let bindStub
@@ -34,14 +33,12 @@ tap.test('Fastify spec builders', (t) => {
     t.afterEach(() => {
       bindStub.resetHistory()
     })
-    t.autoend()
     t.test('should return route from when original router function', (t) => {
       t.equal(mwSpec.route, '/path')
       t.end()
     })
 
     t.test('.next', (t) => {
-      t.autoend()
       t.test('should not bind reply.send if not a function', (t) => {
         mwSpec.next(shim, 'fakeFn', 'fakeName', [null, 'not-a-fn'], bindStub)
         t.notOk(bindStub.callCount, 'should not call bindSegment')
@@ -54,10 +51,10 @@ tap.test('Fastify spec builders', (t) => {
         t.same(bindStub.args[0], [replyStub, 'send', true])
         t.end()
       })
+      t.end()
     })
 
     t.test('.params', (t) => {
-      t.autoend()
       t.test('should return params from request.params', (t) => {
         const request = { params: { key: 'value', user: 'id' } }
         const params = mwSpec.params(shim, 'fakeFn', 'fakeName', [request])
@@ -70,10 +67,10 @@ tap.test('Fastify spec builders', (t) => {
         t.notOk(params)
         t.end()
       })
+      t.end()
     })
 
     t.test('.req', (t) => {
-      t.autoend()
       t.test('should return IncomingMessage from request.raw', (t) => {
         const request = { raw: 'IncomingMessage' }
         const req = mwSpec.req(shim, 'fakeFn', 'fakeName', [request])
@@ -87,6 +84,9 @@ tap.test('Fastify spec builders', (t) => {
         t.equal(req, request)
         t.end()
       })
+      t.end()
     })
+    t.end()
   })
+  t.end()
 })

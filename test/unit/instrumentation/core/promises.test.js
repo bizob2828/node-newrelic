@@ -18,8 +18,6 @@ const helper = require('../../../lib/agent_helper')
  * The tests still exist to prove some more complex promise chains will not lose context
  */
 test('Promise trace', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -130,6 +128,7 @@ test('Promise trace', (t) => {
         .then(checkTrace(t, tx))
     })
   })
+  t.end()
 })
 
 function start(n, rejection) {

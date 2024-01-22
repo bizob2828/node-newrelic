@@ -11,8 +11,6 @@ const proxyquire = require('proxyquire').noPreserveCache()
 const symbols = require('../../../../lib/symbols')
 
 tap.test('wrapCreatePoolCluster', (t) => {
-  t.autoend()
-
   let mockShim
   let mockMysql
   let mockPoolCluster
@@ -165,4 +163,5 @@ tap.test('wrapCreatePoolCluster', (t) => {
 
     t.end()
   })
+  t.end()
 })

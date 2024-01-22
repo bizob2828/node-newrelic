@@ -13,7 +13,6 @@ const sinon = require('sinon')
 const NAMES = require('../../lib/metrics/names')
 
 tap.test('environmental sampler', function (t) {
-  t.autoend()
   const numCpus = require('os').cpus().length
 
   t.beforeEach(function (t) {
@@ -278,6 +277,7 @@ tap.test('environmental sampler', function (t) {
       t.end()
     }, 0)
   })
+  t.end()
 })
 
 function spinLoop(cb) {

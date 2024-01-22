@@ -16,8 +16,6 @@ const urltils = require('../../../lib/util/urltils')
 const DB_INDEX = 2
 
 test('Redis instrumentation', function (t) {
-  t.autoend()
-
   let METRIC_HOST_NAME = null
   let HOST_ID = null
 
@@ -238,6 +236,7 @@ test('Redis instrumentation', function (t) {
       )
     }
   })
+  t.end()
 })
 
 function checkMetrics(t, metrics, expected) {

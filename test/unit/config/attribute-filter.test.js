@@ -13,8 +13,6 @@ const { makeAttributeFilterConfig } = require('../../lib/agent_helper')
 const DESTS = AttributeFilter.DESTINATIONS
 
 tap.test('#constructor', (t) => {
-  t.autoend()
-
   t.test('should require a config object', (t) => {
     t.throws(function () {
       return new AttributeFilter()
@@ -26,11 +24,10 @@ tap.test('#constructor', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('#filter', (t) => {
-  t.autoend()
-
   t.test('should respect the rules', (t) => {
     const filter = new AttributeFilter(
       makeAttributeFilterConfig({
@@ -147,6 +144,7 @@ tap.test('#filter', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 function makeFilterAssertions(t, filter) {

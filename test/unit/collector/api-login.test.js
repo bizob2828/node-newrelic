@@ -18,8 +18,6 @@ const URL = 'https://' + HOST
 const RUN_ID = 1337
 
 tap.test('when high_security: true', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -72,11 +70,10 @@ tap.test('when high_security: true', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('when high_security: false', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -129,12 +126,11 @@ tap.test('when high_security: false', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('in a LASP-enabled agent', (t) => {
   const SECURITY_POLICIES_TOKEN = 'TEST-TEST-TEST-TEST'
-
-  t.autoend()
 
   let agent = null
   let collectorApi = null
@@ -233,6 +229,7 @@ tap.test('in a LASP-enabled agent', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('should copy request headers', (t) => {
@@ -286,8 +283,6 @@ tap.test('should copy request headers', (t) => {
 })
 
 tap.test('receiving 200 response, with valid data', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -361,11 +356,10 @@ tap.test('receiving 200 response, with valid data', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('receiving 503 response from preconnect', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -416,11 +410,10 @@ tap.test('receiving 503 response from preconnect', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('receiving no hostname from preconnect', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -496,11 +489,10 @@ tap.test('receiving no hostname from preconnect', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('receiving a weirdo redirect name from preconnect', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -592,11 +584,10 @@ tap.test('receiving a weirdo redirect name from preconnect', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('receiving no config back from connect', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -666,11 +657,10 @@ tap.test('receiving no config back from connect', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('receiving 503 response from connect', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -727,11 +717,10 @@ tap.test('receiving 503 response from connect', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('receiving 200 response to connect but no data', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -787,6 +776,7 @@ tap.test('receiving 200 response to connect but no data', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 function setupMockedAgent() {

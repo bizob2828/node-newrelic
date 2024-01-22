@@ -11,8 +11,6 @@ const helper = require('../../../lib/agent_helper')
 const asyncHooks = require('async_hooks')
 
 test('AsyncLocalStorage based tracking', (t) => {
-  t.autoend()
-
   const config = {}
 
   createPromiseTests(t, config)
@@ -152,6 +150,7 @@ test('AsyncLocalStorage based tracking', (t) => {
       })
     })
   })
+  t.end()
 })
 
 function createPromiseTests(t, config) {
@@ -560,7 +559,6 @@ function checkCallMetrics(t, testMetrics) {
 }
 
 test('promise hooks', function (t) {
-  t.autoend()
   const testMetrics = {
     initCalled: 0,
     beforeCalled: 0,
@@ -601,6 +599,7 @@ test('promise hooks', function (t) {
       setImmediate(checkCallMetrics, t, testMetrics)
     })
   })
+  t.end()
 })
 
 function setupAgent(t, config) {

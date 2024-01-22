@@ -13,8 +13,6 @@ const { LOGGING } = require('../../../lib/metrics/names')
 const { makeSink, logStuff, originalMsgAssertion, logForwardingMsgAssertion } = require('./helpers')
 
 tap.test('bunyan instrumentation', (t) => {
-  t.autoend()
-
   let agent
   let bunyan
 
@@ -57,8 +55,6 @@ tap.test('bunyan instrumentation', (t) => {
   })
 
   t.test('local log decorating', (t) => {
-    t.autoend()
-
     t.beforeEach(() => {
       setup({
         application_logging: {
@@ -105,11 +101,10 @@ tap.test('bunyan instrumentation', (t) => {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('log forwarding enabled', (t) => {
-    t.autoend()
-
     t.beforeEach(() => {
       setup({
         application_logging: {
@@ -182,11 +177,10 @@ tap.test('bunyan instrumentation', (t) => {
       t.notOk(msg.trace, 'trace should be removed')
       t.end()
     })
+    t.end()
   })
 
   t.test('metrics', (t) => {
-    t.autoend()
-
     t.test('should count logger metrics', (t) => {
       setup({
         application_logging: {
@@ -267,5 +261,7 @@ tap.test('bunyan instrumentation', (t) => {
         })
       })
     })
+    t.end()
   })
+  t.end()
 })

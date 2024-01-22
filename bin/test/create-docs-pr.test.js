@@ -11,11 +11,7 @@ const sinon = require('sinon')
 const SCRIPT_PATH = '../create-docs-pr'
 
 tap.test('Create Docs PR script', (testHarness) => {
-  testHarness.autoend()
-
   testHarness.test('getReleaseNotes', (t) => {
-    t.autoend()
-
     let mockFs
     let script
 
@@ -54,11 +50,10 @@ tap.test('Create Docs PR script', (testHarness) => {
 
       t.end()
     })
+    t.end()
   })
 
   testHarness.test('getFrontMatter', (t) => {
-    t.autoend()
-
     let mockFs
     let script
 
@@ -106,11 +101,10 @@ tap.test('Create Docs PR script', (testHarness) => {
       })
       t.end()
     })
+    t.end()
   })
 
   testHarness.test('formatReleaseNotes', (t) => {
-    t.autoend()
-
     let script
 
     t.beforeEach(() => {
@@ -155,5 +149,7 @@ tap.test('Create Docs PR script', (testHarness) => {
 
       t.end()
     })
+    t.end()
   })
+  testHarness.end()
 })

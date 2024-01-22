@@ -19,11 +19,33 @@ const { pkgVersion, STATEMENT_PREFIX } = require('./common')
  * @param {Number} params.count, optional
  * @param {string} params.keyPrefix prefix where the count exists
  * @param {Object} params.extraValues extra fields to assert on >=4.0.0 version of module
+<<<<<<< HEAD
  */
 function assertExpectedResult({ t, data, count, keyPrefix, extraValues }) {
   const expectedResult = { acknowledged: true, ...extraValues }
   if (count) {
     expectedResult[`${keyPrefix}Count`] = count
+=======
+ * @param {Object} params.legacyValues extra fields to assert on <4.0.0 version of module
+ */
+function assertExpectedResult({ t, data, count, keyPrefix, extraValues, legacyValues, match }) {
+  if (semver.satisfies(pkgVersion, '<4')) {
+    const expectedResult = { ok: 1, ...legacyValues }
+    if (count) {
+      expectedResult.n = count
+    }
+    t.same(data.result, expectedResult)
+  } else {
+    const expectedResult = { acknowledged: true, ...extraValues }
+    if (count) {
+      expectedResult[`${keyPrefix}Count`] = count
+    }
+
+    // insert contains a symbol within expected result
+    // we will match on those instead of strict equal
+    const assert = match ? 'match' : 'same'
+    t[assert](data, expectedResult)
+>>>>>>> 666e06d51 (wip: changes after upgrading to tap 18)
   }
   t.same(data, expectedResult)
 }
@@ -140,6 +162,7 @@ if (semver.satisfies(pkgVersion, '<5.0.0')) {
       data,
       count: 1,
       keyPrefix: 'inserted',
+      match: true,
       extraValues: {
         insertedIds: {
           0: {}
@@ -150,8 +173,54 @@ if (semver.satisfies(pkgVersion, '<5.0.0')) {
     verify(null, [`${STATEMENT_PREFIX}/insert`], ['insert'], { strict: false })
   })
 
+<<<<<<< HEAD
   common.test('remove', async function removeTest(t, collection, verify) {
     const data = await collection.remove({ mod10: 5 })
+=======
+common.test('insertMany', function insertManyTest(t, collection, verify) {
+  collection.insertMany([{ foo: 'bar' }, { foo: 'bar2' }], function done(err, data) {
+    t.error(err)
+    assertExpectedResult({
+      t,
+      data,
+      count: 2,
+      keyPrefix: 'inserted',
+      match: true,
+      extraValues: {
+        insertedIds: {
+          0: {},
+          1: {}
+        }
+      }
+    })
+
+    verify(null, [`${STATEMENT_PREFIX}/insertMany`, 'Callback: done'], ['insertMany'])
+  })
+})
+
+common.test('insertOne', function insertOneTest(t, collection, verify) {
+  collection.insertOne({ foo: 'bar' }, function done(err, data) {
+    t.error(err)
+    assertExpectedResult({
+      t,
+      data,
+      match: true,
+      legacyValues: {
+        n: 1
+      },
+      extraValues: {
+        insertedId: {}
+      }
+    })
+
+    verify(null, [`${STATEMENT_PREFIX}/insertOne`, 'Callback: done'], ['insertOne'])
+  })
+})
+
+common.test('remove', function removeTest(t, collection, verify) {
+  collection.remove({ mod10: 5 }, function done(err, data) {
+    t.error(err)
+>>>>>>> 666e06d51 (wip: changes after upgrading to tap 18)
     assertExpectedResult({
       t,
       data,

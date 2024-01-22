@@ -10,8 +10,6 @@ const tap = require('tap')
 const Config = require('../../../lib/config')
 
 tap.test('when receiving server-side configuration', (t) => {
-  t.autoend()
-
   // Unfortunately, the Config currently relies on initialize to
   // instantiate the logger in the module which is later leveraged
   // by methods on the instantiated Config instance.
@@ -436,8 +434,6 @@ tap.test('when receiving server-side configuration', (t) => {
   })
 
   t.test('when handling embedded agent_config', (t) => {
-    t.autoend()
-
     t.test('should not blow up when agent_config is passed in', (t) => {
       t.doesNotThrow(() => {
         config.onConnect({ agent_config: {} })
@@ -582,11 +578,10 @@ tap.test('when receiving server-side configuration', (t) => {
         }
       )
     })
+    t.end()
   })
 
   t.test('when event_harvest_config is set', (t) => {
-    t.autoend()
-
     t.test('should emit event_harvest_config when harvest interval is changed', (t) => {
       const expectedHarvestConfig = {
         report_period_ms: 5000,
@@ -691,11 +686,10 @@ tap.test('when receiving server-side configuration', (t) => {
 
       config.onConnect({ event_harvest_config: invalidHarvestLimits })
     })
+    t.end()
   })
 
   t.test('when apdex_t is set', (t) => {
-    t.autoend()
-
     t.test('should emit `apdex_t` when apdex_t changes', (t) => {
       config.once('apdex_t', function (apdexT) {
         t.equal(apdexT, 0.75)
@@ -717,5 +711,7 @@ tap.test('when receiving server-side configuration', (t) => {
 
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

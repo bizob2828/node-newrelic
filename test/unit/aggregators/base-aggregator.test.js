@@ -15,8 +15,6 @@ const PERIOD_MS = 5
 const METHOD = 'some_method'
 
 tap.test('scheduling', (t) => {
-  t.autoend()
-
   let baseAggregator = null
   let fakeCollectorApi = null
   let fakeHarvester = null
@@ -42,7 +40,9 @@ tap.test('scheduling', (t) => {
     sendInvocation = 0
     baseAggregator.send = () => sendInvocation++
 
-    clock = sinon.useFakeTimers()
+    clock = sinon.useFakeTimers({
+      toFake: ['setInterval', 'clearInterval']
+    })
   })
 
   t.afterEach(() => {
@@ -118,11 +118,10 @@ tap.test('scheduling', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('send', (t) => {
-  t.autoend()
-
   let baseAggregator = null
   let fakeCollectorApi = null
   let fakeHarvester = null
@@ -358,11 +357,10 @@ tap.test('send', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('reconfigure() should update runid and reset enabled flag', (t) => {
-  t.autoend()
-
   let baseAggregator = null
   let fakeCollectorApi = null
   let fakeHarvester = null

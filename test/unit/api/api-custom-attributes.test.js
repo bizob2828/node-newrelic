@@ -13,8 +13,6 @@ const SpanEvent = require('../../../lib/spans/span-event')
 const DESTINATIONS = require('../../../lib/config/attribute-filter').DESTINATIONS
 
 tap.test('Agent API - custom attributes', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -250,4 +248,5 @@ tap.test('Agent API - custom attributes', (t) => {
       t.end()
     })
   })
+  t.end()
 })

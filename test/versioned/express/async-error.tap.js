@@ -27,7 +27,7 @@ test('Express async throw', function (t) {
 
   erk.on('exit', function (code) {
     clearTimeout(timer)
-    t.notEqual(code, COMPLETION, "request didn't complete")
+    t.not(code, COMPLETION, "request didn't complete")
     t.end()
   })
 

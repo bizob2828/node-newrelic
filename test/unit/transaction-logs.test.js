@@ -9,7 +9,6 @@ const { test } = require('tap')
 const sinon = require('sinon')
 
 test('Logs tests', (t) => {
-  t.autoend()
   let logs
   let agent
   t.beforeEach(() => {
@@ -52,8 +51,9 @@ test('Logs tests', (t) => {
     logs.add('line')
     const priority = Math.random() + 1
     logs.flush(priority)
-    t.ok(logs.aggregator.addBatch.callCount, 1, 'should call addBatch once')
+    t.equal(logs.aggregator.addBatch.callCount, 1, 'should call addBatch once')
     t.same(logs.aggregator.addBatch.args[0], [['line'], priority])
     t.end()
   })
+  t.end()
 })

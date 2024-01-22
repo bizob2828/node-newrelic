@@ -18,8 +18,6 @@ const simulateAsyncWork = async () => {
 }
 
 tap.test('Restify with async handlers should work the same as with sync', (t) => {
-  t.autoend()
-
   let agent = null
   let restify = null
   let server = null
@@ -99,11 +97,10 @@ tap.test('Restify with async handlers should work the same as with sync', (t) =>
 
     runTest({ agent, server, t, endpoint: '/path1', expectedName: 'GET//path1' })
   })
+  t.end()
 })
 
 tap.test('Restify metrics for async handlers', (t) => {
-  t.autoend()
-
   let agent = null
   let restify = null
   t.beforeEach(() => {
@@ -177,4 +174,5 @@ tap.test('Restify metrics for async handlers', (t) => {
       })
     })
   })
+  t.end()
 })

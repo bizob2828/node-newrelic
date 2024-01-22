@@ -9,8 +9,6 @@ const Config = require('../../../lib/config')
 const tap = require('tap')
 
 tap.test('Configuration Library', (t) => {
-  t.autoend()
-
   let originalConsoleError
 
   t.beforeEach(() => {
@@ -47,4 +45,5 @@ tap.test('Configuration Library', (t) => {
 
     t.end()
   })
+  t.end()
 })

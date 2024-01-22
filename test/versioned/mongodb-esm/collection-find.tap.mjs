@@ -16,7 +16,6 @@ if (semver.satisfies(pkgVersion, '>=4')) {
 }
 
 tap.test('Collection(Find) Tests', (t) => {
-  t.autoend()
   let agent
 
   t.before(() => {
@@ -115,4 +114,5 @@ tap.test('Collection(Find) Tests', (t) => {
       }
     }
   )
+  t.end()
 })

@@ -18,8 +18,6 @@ const { version: pinoVersion } = require('pino/package')
 require('../../lib/logging-helper')
 
 tap.test('Pino instrumentation', (t) => {
-  t.autoend()
-
   function setupAgent(context, config) {
     context.agent = helper.instrumentMockedAgent(config)
     context.agent.config.entity_guid = 'test-guid'
@@ -96,7 +94,6 @@ tap.test('Pino instrumentation', (t) => {
   })
 
   t.test('forwarding', (t) => {
-    t.autoend()
     t.beforeEach((t) => {
       t.context.config = setupAgent(t.context, {
         application_logging: {
@@ -276,11 +273,10 @@ tap.test('Pino instrumentation', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('metrics', (t) => {
-    t.autoend()
-
     t.test('should count logger metrics', (t) => {
       setupAgent(t.context, {
         application_logging: {
@@ -374,5 +370,7 @@ tap.test('Pino instrumentation', (t) => {
         })
       })
     })
+    t.end()
   })
+  t.end()
 })

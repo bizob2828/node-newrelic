@@ -29,7 +29,6 @@ function setup(test, config) {
 }
 
 tap.test('Fastify CLM Hook Based', (test) => {
-  test.autoend()
   ;[true, false].forEach((isCLMEnabled) => {
     test.test(isCLMEnabled ? 'should add attributes' : 'should not add attributes', async (t) => {
       setup(t, { code_level_metrics: { enabled: isCLMEnabled } })
@@ -80,4 +79,5 @@ tap.test('Fastify CLM Hook Based', (test) => {
       t.same(result, { hello: 'world' })
     })
   })
+  test.end()
 })

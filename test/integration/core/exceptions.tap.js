@@ -159,7 +159,7 @@ tap.test('Report exceptions handled in setUncaughtExceptionCaptureCallback', (t)
   proc.send({ name: 'setUncaughtExceptionCallback' })
 })
 
-tap.test('Report exceptions handled in setUncaughtExceptionCaptureCallback', (t) => {
+tap.test('Report exceptions handled in unsetUncaughtExceptionCaptureCallback', (t) => {
   t.plan(3)
   const proc = startProc()
   let messageReceived = false

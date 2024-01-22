@@ -21,8 +21,6 @@ const METRIC_NAMES = {
 }
 
 tap.test('Event Aggregator', (t) => {
-  t.autoend()
-
   let metrics = null
   let harvester = null
   let eventAggregator = null
@@ -50,8 +48,6 @@ tap.test('Event Aggregator', (t) => {
   }
 
   t.test('add()', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -169,11 +165,10 @@ tap.test('Event Aggregator', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('_merge()', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -330,11 +325,10 @@ tap.test('Event Aggregator', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('_getMergeData()', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -349,11 +343,10 @@ tap.test('Event Aggregator', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('clear()', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -369,11 +362,10 @@ tap.test('Event Aggregator', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('reconfigure()', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -430,5 +422,7 @@ tap.test('Event Aggregator', (t) => {
 
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

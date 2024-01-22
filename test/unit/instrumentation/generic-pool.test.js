@@ -10,7 +10,6 @@ const helper = require('../../lib/agent_helper')
 const Shim = require('../../../lib/shim/shim.js')
 
 tap.test('agent instrumentation of generic-pool', function (t) {
-  t.autoend()
   let agent
   let initialize
   let shim
@@ -26,7 +25,6 @@ tap.test('agent instrumentation of generic-pool', function (t) {
   })
 
   t.test("shouldn't cause bootstrapping to fail", function (t) {
-    t.autoend()
     t.test('when passed no module', function (t) {
       t.doesNotThrow(function () {
         initialize(agent, null, 'generic-pool', shim)
@@ -40,10 +38,10 @@ tap.test('agent instrumentation of generic-pool', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('when wrapping callbacks passed into pool.acquire', function (t) {
-    t.autoend()
     const mockPool = {
       Pool: function (arity) {
         return {
@@ -95,5 +93,7 @@ tap.test('agent instrumentation of generic-pool', function (t) {
       mockPool.Pool(2).acquire(nop)
       /* eslint-enable new-cap */
     })
+    t.end()
   })
+  t.end()
 })

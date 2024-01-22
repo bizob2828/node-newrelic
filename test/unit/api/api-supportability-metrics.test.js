@@ -11,8 +11,6 @@ const API = require('../../../api')
 const NAMES = require('../../../lib/metrics/names')
 
 tap.test('The API supportability metrics', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -46,4 +44,5 @@ tap.test('The API supportability metrics', (t) => {
       t.end()
     })
   }
+  t.end()
 })

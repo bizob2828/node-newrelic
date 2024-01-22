@@ -10,9 +10,6 @@ const TEST_DIR = '../../integration/instrumentation/promises/'
 const testPromiseSegments = require(`${TEST_DIR}/legacy-promise-segments`)
 const testTransactionState = require(`${TEST_DIR}/transaction-state`)
 
-// grab process emit before tap / async-hooks-domain can mess with it
-const originalEmit = process.emit
-
 const tap = require('tap')
 const test = tap.test
 
@@ -39,14 +36,14 @@ test('transaction state', function (t) {
   const agent = setupAgent(t)
   const when = require('when')
   testTransactionState(t, agent, when.Promise, when)
-  t.autoend()
+  t.end()
 })
 
 test('segments', function (t) {
   const agent = setupAgent(t)
   const when = require('when')
   testPromiseSegments(t, agent, when.Promise)
-  t.autoend()
+  t.end()
 })
 
 test('no transaction', function (t) {
@@ -178,19 +175,6 @@ test('when debug API', function (t) {
   t.test('should not break onPotentiallyUnhandledRejectionHandled', function (t) {
     t.plan(2)
     helper.temporarilyRemoveListeners(t, process, 'unhandledRejection')
-
-    // avoid async hook domain emit so `when` can behave normally.
-    // seems like *should not* have negative consequences but it may.
-    // https://github.com/isaacs/async-hook-domain/issues/3
-    const asyncHookDomainEmit = process.emit
-    process.emit = (event, ...args) => {
-      return originalEmit.call(process, event, ...args)
-    }
-
-    t.teardown(() => {
-      process.emit = asyncHookDomainEmit
-    })
-
     const error = { val: 'test' }
     when.Promise.onPotentiallyUnhandledRejectionHandled = function testOPURH(e) {
       t.equal(e.value, error, 'should have passed error through')
@@ -622,7 +606,6 @@ test('Promise#with', function (t) {
 })
 
 test('all', function (t) {
-  t.autoend()
   let agent
   let when
   let Promise
@@ -663,10 +646,10 @@ test('all', function (t) {
       })
     })
   })
+  t.end()
 })
 
 test('any', function (t) {
-  t.autoend()
   let agent
   let when
   let Promise
@@ -700,10 +683,10 @@ test('any', function (t) {
       })
     })
   })
+  t.end()
 })
 
 test('some', function (t) {
-  t.autoend()
   let agent
   let when
   let Promise
@@ -741,10 +724,10 @@ test('some', function (t) {
       })
     })
   })
+  t.end()
 })
 
 test('map', function (t) {
-  t.autoend()
   let agent
   let when
   let Promise
@@ -788,10 +771,10 @@ test('map', function (t) {
       })
     })
   })
+  t.end()
 })
 
 test('reduce', function (t) {
-  t.autoend()
   let agent
   let when
   let Promise
@@ -843,10 +826,10 @@ test('reduce', function (t) {
       })
     })
   })
+  t.end()
 })
 
 test('filter', function (t) {
-  t.autoend()
   let agent
   let when
   let Promise
@@ -888,6 +871,7 @@ test('filter', function (t) {
       })
     })
   })
+  t.end()
 })
 
 test('fn.apply', function (t) {

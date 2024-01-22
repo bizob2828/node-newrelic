@@ -20,7 +20,6 @@ tap.test('ioredis instrumentation', (t) => {
   let METRIC_HOST_NAME
   let HOST_ID
 
-  t.autoend()
   t.beforeEach(async () => {
     agent = helper.instrumentMockedAgent()
     const Redis = require('ioredis')
@@ -113,4 +112,5 @@ tap.test('ioredis instrumentation', (t) => {
       transaction.end()
     })
   })
+  t.end()
 })

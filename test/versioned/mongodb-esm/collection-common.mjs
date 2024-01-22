@@ -30,7 +30,6 @@ function test({ suiteName, agent, t }, run) {
     let client = null
     let db = null
     let collection = null
-    t.autoend()
 
     t.beforeEach(async function () {
       const { default: mongodb } = await import('mongodb')
@@ -134,6 +133,7 @@ function test({ suiteName, agent, t }, run) {
         )
       })
     })
+    t.end()
   })
 }
 

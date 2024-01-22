@@ -10,7 +10,6 @@ const tap = require('tap')
 const helper = require('../../lib/agent_helper')
 
 tap.test('Merging Server Config Values', (t) => {
-  t.autoend()
   let agent
 
   t.beforeEach(() => {
@@ -286,4 +285,5 @@ tap.test('Merging Server Config Values', (t) => {
       t.end()
     })
   })
+  t.end()
 })

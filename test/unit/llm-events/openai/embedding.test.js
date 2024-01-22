@@ -11,8 +11,6 @@ const helper = require('../../../lib/agent_helper')
 const { res, getExpectedResult } = require('./common')
 
 tap.test('LlmEmbedding', (t) => {
-  t.autoend()
-
   let agent
   t.beforeEach(() => {
     agent = helper.loadMockedAgent()
@@ -163,4 +161,5 @@ tap.test('LlmEmbedding', (t) => {
       t.end()
     })
   })
+  t.end()
 })

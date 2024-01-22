@@ -16,8 +16,6 @@ const sinon = require('sinon')
 const FAKE_STACK = 'Error\nfake stack'
 
 tap.test('Query Trace Aggregator', (t) => {
-  t.autoend()
-
   t.test('when no queries in payload, _toPayload should exec callback with null data', (t) => {
     const opts = {
       config: new Config({
@@ -44,7 +42,6 @@ tap.test('Query Trace Aggregator', (t) => {
   })
 
   t.test('when slow_sql.enabled is false', (t) => {
-    t.autoend()
     t.test('should not record anything when transaction_tracer.record_sql === "off"', (t) => {
       const opts = {
         config: new Config({
@@ -154,11 +151,10 @@ tap.test('Query Trace Aggregator', (t) => {
       )
       t.end()
     })
+    t.end()
   })
 
   t.test('when slow_sql.enabled is true', (t) => {
-    t.autoend()
-
     t.test('should not record anything when transaction_tracer.record_sql === "off"', (t) => {
       const opts = {
         config: new Config({
@@ -278,14 +274,11 @@ tap.test('Query Trace Aggregator', (t) => {
       )
       t.end()
     })
+    t.end()
   })
 
   t.test('prepareJSON', (t) => {
-    t.autoend()
-
     t.test('webTransaction when record_sql is "raw"', (t) => {
-      t.autoend()
-
       let queries
 
       t.beforeEach(() => {
@@ -301,8 +294,6 @@ tap.test('Query Trace Aggregator', (t) => {
       })
 
       t.test('and `simple_compression` is `false`', (t) => {
-        t.autoend()
-
         t.beforeEach(() => {
           queries.config.simple_compression = false
         })
@@ -324,11 +315,10 @@ tap.test('Query Trace Aggregator', (t) => {
             })
           })
         })
+        t.end()
       })
 
       t.test('and `simple_compression` is `true`', (t) => {
-        t.autoend()
-
         t.beforeEach(() => {
           queries.config.simple_compression = true
         })
@@ -346,6 +336,7 @@ tap.test('Query Trace Aggregator', (t) => {
             t.end()
           })
         })
+        t.end()
       })
 
       t.test('should record work when empty', (t) => {
@@ -482,11 +473,10 @@ tap.test('Query Trace Aggregator', (t) => {
           }
         })
       })
+      t.end()
     })
 
     t.test('webTransaction when record_sql is "obfuscated"', (t) => {
-      t.autoend()
-
       t.test('should record work when empty', (t) => {
         const opts = {
           config: new Config({
@@ -657,11 +647,10 @@ tap.test('Query Trace Aggregator', (t) => {
           })
         })
       })
+      t.end()
     })
 
     t.test('backgroundTransaction when record_sql is "raw"', (t) => {
-      t.autoend()
-
       t.test('should record work when empty', (t) => {
         const opts = {
           config: new Config({
@@ -835,11 +824,10 @@ tap.test('Query Trace Aggregator', (t) => {
           }
         })
       })
+      t.end()
     })
 
     t.test('background when record_sql is "obfuscated"', (t) => {
-      t.autoend()
-
       t.test('should record work when empty', (t) => {
         const opts = {
           config: new Config({
@@ -1010,12 +998,12 @@ tap.test('Query Trace Aggregator', (t) => {
           })
         })
       })
+      t.end()
     })
+    t.end()
   })
 
   t.test('limiting to n slowest', (t) => {
-    t.autoend()
-
     t.test('should limit to this.config.max_samples', (t) => {
       const opts = {
         config: new Config({
@@ -1043,11 +1031,10 @@ tap.test('Query Trace Aggregator', (t) => {
       t.ok(queries.samples.has('droptableusers'))
       t.end()
     })
+    t.end()
   })
 
   t.test('merging query tracers', (t) => {
-    t.autoend()
-
     t.test('should merge queries correctly', (t) => {
       const opts = {
         config: new Config({
@@ -1097,7 +1084,9 @@ tap.test('Query Trace Aggregator', (t) => {
       t.equal(create.trace.duration, 650, 'trace should be set')
       t.end()
     })
+    t.end()
   })
+  t.end()
 })
 
 function addQuery(queries, duration, url, query) {

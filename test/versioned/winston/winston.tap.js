@@ -24,8 +24,6 @@ const {
 } = require('./helpers')
 
 tap.test('winston instrumentation', (t) => {
-  t.autoend()
-
   let agent
   let winston
 
@@ -91,8 +89,6 @@ tap.test('winston instrumentation', (t) => {
   })
 
   t.test('local log decorating', (t) => {
-    t.autoend()
-
     t.beforeEach(() => {
       setup({
         application_logging: {
@@ -186,11 +182,10 @@ tap.test('winston instrumentation', (t) => {
 
       logStuff({ loggers: [logger], stream: jsonStream, helper, agent })
     })
+    t.end()
   })
 
   t.test('log forwarding enabled', (t) => {
-    t.autoend()
-
     t.beforeEach(() => {
       setup({
         application_logging: {
@@ -426,10 +421,10 @@ tap.test('winston instrumentation', (t) => {
 
       logStuff({ loggers: [logger], stream: jsonStream, helper, agent })
     })
+    t.end()
   })
 
   t.test('metrics', (t) => {
-    t.autoend()
     let nullStream
 
     t.beforeEach(() => {
@@ -638,5 +633,7 @@ tap.test('winston instrumentation', (t) => {
         })
       })
     })
+    t.end()
   })
+  t.end()
 })

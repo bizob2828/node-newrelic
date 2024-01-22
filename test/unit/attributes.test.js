@@ -15,8 +15,6 @@ const DESTINATIONS = AttributeFilter.DESTINATIONS
 const TRANSACTION_SCOPE = 'transaction'
 
 tap.test('#addAttribute', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -53,11 +51,10 @@ tap.test('#addAttribute', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('#addAttributes', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -138,11 +135,10 @@ tap.test('#addAttributes', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('#get', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -191,11 +187,10 @@ tap.test('#get', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('#hasValidDestination', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -248,11 +243,10 @@ tap.test('#hasValidDestination', (t) => {
     t.equal(hasDestination, false)
     t.end()
   })
+  t.end()
 })
 
 tap.test('#reset', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -275,4 +269,5 @@ tap.test('#reset', (t) => {
 
     t.end()
   })
+  t.end()
 })

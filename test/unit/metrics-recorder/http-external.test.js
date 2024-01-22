@@ -34,7 +34,6 @@ function record(options) {
 }
 
 tap.test('recordExternal', function (t) {
-  t.autoend()
   t.beforeEach(function (t) {
     const agent = helper.loadMockedAgent()
     const trans = new Transaction(agent)
@@ -134,4 +133,5 @@ tap.test('recordExternal', function (t) {
     t.equal(JSON.stringify(trans.metrics), JSON.stringify(result))
     t.end()
   })
+  t.end()
 })

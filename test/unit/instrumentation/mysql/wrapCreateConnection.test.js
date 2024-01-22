@@ -11,8 +11,6 @@ const proxyquire = require('proxyquire').noPreserveCache()
 const symbols = require('../../../../lib/symbols')
 
 tap.test('wrapCreateConnection', (t) => {
-  t.autoend()
-
   let mockShim
   let mockMysql
   let mockConnection
@@ -88,4 +86,5 @@ tap.test('wrapCreateConnection', (t) => {
 
     t.end()
   })
+  t.end()
 })

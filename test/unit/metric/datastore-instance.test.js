@@ -13,7 +13,6 @@ const tests = require('../../lib/cross_agent_tests/datastores/datastore_instance
 const DatastoreParameters = require('../../../lib/shim/specs/params/datastore')
 
 tap.test('Datastore instance metrics collected via the datastore shim', function (t) {
-  t.autoend()
   t.beforeEach(function (t) {
     t.context.agent = helper.loadMockedAgent()
   })
@@ -70,6 +69,7 @@ tap.test('Datastore instance metrics collected via the datastore shim', function
       })
     })
   })
+  t.end()
 })
 
 function getMetrics(agent) {

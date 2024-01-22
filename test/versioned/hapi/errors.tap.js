@@ -15,8 +15,6 @@ let server
 let port
 
 tap.test('Hapi error handling', function (t) {
-  t.autoend()
-
   t.beforeEach(function () {
     agent = helper.instrumentMockedAgent()
 
@@ -189,6 +187,7 @@ tap.test('Hapi error handling', function (t) {
       t.end()
     })
   })
+  t.end()
 })
 
 function runTest(t, callback) {
@@ -212,9 +211,6 @@ function runTest(t, callback) {
       }
       response.resume()
     })
-  })
-  t.teardown(function () {
-    server.stop()
   })
 }
 

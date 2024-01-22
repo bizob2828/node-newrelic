@@ -12,8 +12,6 @@ const utils = require('./hapi-utils')
 const HTTP_ATTS = require('../../lib/fixtures').httpAttributes
 
 tap.test('Hapi vhost support', function (t) {
-  t.autoend()
-
   t.test('should not explode when using vhosts', function (t) {
     const agent = helper.instrumentMockedAgent({
       attributes: {
@@ -79,4 +77,5 @@ tap.test('Hapi vhost support', function (t) {
       })
     })
   })
+  t.end()
 })

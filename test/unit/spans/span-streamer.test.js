@@ -15,7 +15,6 @@ const fakeSpan = {
 }
 
 tap.test('SpanStreamer', (t) => {
-  t.autoend()
   let fakeConnection
   let spanStreamer
 
@@ -127,4 +126,5 @@ tap.test('SpanStreamer', (t) => {
 
     t.end()
   })
+  t.end()
 })

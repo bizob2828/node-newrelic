@@ -11,9 +11,8 @@ const runContextManagerTests = require('./context-manager-tests')
 const LegacyContextManager = require('../../../lib/context-manager/legacy-context-manager')
 
 test('Legacy Context Manager', (t) => {
-  t.autoend()
-
   runContextManagerTests(t, createLegacyContextManager)
+  t.end()
 })
 
 function createLegacyContextManager() {

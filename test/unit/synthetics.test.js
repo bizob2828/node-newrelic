@@ -28,7 +28,6 @@ tap.test('synthetics helpers', (t) => {
   let sandbox
   let synthetics
   let loggerMock
-  t.autoend()
   t.before(() => {
     sandbox = sinon.createSandbox()
     loggerMock = require('./mocks/logger')(sandbox)
@@ -208,4 +207,5 @@ tap.test('synthetics helpers', (t) => {
     t.same(tx, {})
     t.end()
   })
+  t.end()
 })

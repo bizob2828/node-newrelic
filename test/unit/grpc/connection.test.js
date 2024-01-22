@@ -375,8 +375,6 @@ tap.test('grpc stream event handling', (test) => {
 })
 
 tap.test('_createClient', (t) => {
-  t.autoend()
-
   t.test(
     'should create client with compression when config.infinite_tracing.compression is true',
     (t) => {
@@ -410,4 +408,5 @@ tap.test('_createClient', (t) => {
       t.end()
     }
   )
+  t.end()
 })

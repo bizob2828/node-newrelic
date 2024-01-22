@@ -674,7 +674,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### import-in-the-middle
 
-This product includes source derived from [import-in-the-middle](https://github.com/DataDog/import-in-the-middle) ([v1.7.4](https://github.com/DataDog/import-in-the-middle/tree/v1.7.4)), distributed under the [Apache-2.0 License](https://github.com/DataDog/import-in-the-middle/blob/v1.7.4/LICENSE):
+This product includes source derived from [import-in-the-middle](https://github.com/DataDog/import-in-the-middle) ([v1.8.0](https://github.com/DataDog/import-in-the-middle/tree/v1.8.0)), distributed under the [Apache-2.0 License](https://github.com/DataDog/import-in-the-middle/blob/v1.8.0/LICENSE):
 
 ```
 Copyright 2021 Datadog, Inc.
@@ -886,7 +886,7 @@ SOFTWARE.
 
 ### @aws-sdk/client-s3
 
-This product includes source derived from [@aws-sdk/client-s3](https://github.com/aws/aws-sdk-js-v3) ([v3.587.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.587.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.587.0/LICENSE):
+This product includes source derived from [@aws-sdk/client-s3](https://github.com/aws/aws-sdk-js-v3) ([v3.592.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.592.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.592.0/LICENSE):
 
 ```
                                 Apache License
@@ -1095,7 +1095,7 @@ This product includes source derived from [@aws-sdk/client-s3](https://github.co
 
 ### @aws-sdk/s3-request-presigner
 
-This product includes source derived from [@aws-sdk/s3-request-presigner](https://github.com/aws/aws-sdk-js-v3) ([v3.587.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.587.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.587.0/LICENSE):
+This product includes source derived from [@aws-sdk/s3-request-presigner](https://github.com/aws/aws-sdk-js-v3) ([v3.592.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.592.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.592.0/LICENSE):
 
 ```
                                 Apache License
@@ -1750,7 +1750,7 @@ This product includes source derived from [@newrelic/newrelic-oss-cli](https://g
 
 ### @newrelic/test-utilities
 
-This product includes source derived from [@newrelic/test-utilities](https://github.com/newrelic/node-test-utilities) ([v8.5.0](https://github.com/newrelic/node-test-utilities/tree/v8.5.0)), distributed under the [Apache-2.0 License](https://github.com/newrelic/node-test-utilities/blob/v8.5.0/LICENSE):
+This product includes source derived from [@newrelic/test-utilities](https://github.com/newrelic/node-test-utilities) ([v8.6.0](https://github.com/newrelic/node-test-utilities/tree/v8.6.0)), distributed under the [Apache-2.0 License](https://github.com/newrelic/node-test-utilities/blob/v8.6.0/LICENSE):
 
 ```
                                  Apache License
@@ -2493,7 +2493,7 @@ THE SOFTWARE.
 
 ### aws-sdk
 
-This product includes source derived from [aws-sdk](https://github.com/aws/aws-sdk-js) ([v2.1631.0](https://github.com/aws/aws-sdk-js/tree/v2.1631.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js/blob/v2.1631.0/LICENSE.txt):
+This product includes source derived from [aws-sdk](https://github.com/aws/aws-sdk-js) ([v2.1636.0](https://github.com/aws/aws-sdk-js/tree/v2.1636.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js/blob/v2.1636.0/LICENSE.txt):
 
 ```
 
@@ -2892,7 +2892,7 @@ THE SOFTWARE.
 
 ### eslint-plugin-jsdoc
 
-This product includes source derived from [eslint-plugin-jsdoc](https://github.com/gajus/eslint-plugin-jsdoc) ([v48.2.7](https://github.com/gajus/eslint-plugin-jsdoc/tree/v48.2.7)), distributed under the [BSD-3-Clause License](https://github.com/gajus/eslint-plugin-jsdoc/blob/v48.2.7/LICENSE):
+This product includes source derived from [eslint-plugin-jsdoc](https://github.com/gajus/eslint-plugin-jsdoc) ([v48.2.9](https://github.com/gajus/eslint-plugin-jsdoc/tree/v48.2.9)), distributed under the [BSD-3-Clause License](https://github.com/gajus/eslint-plugin-jsdoc/blob/v48.2.9/LICENSE):
 
 ```
 Copyright (c) 2018, Gajus Kuizinas (http://gajus.com/)
@@ -3887,24 +3887,64 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### tap
 
-This product includes source derived from [tap](https://github.com/tapjs/node-tap) ([v16.3.10](https://github.com/tapjs/node-tap/tree/v16.3.10)), distributed under the [ISC License](https://github.com/tapjs/node-tap/blob/v16.3.10/LICENSE):
+This product includes source derived from [tap](https://github.com/tapjs/tapjs) ([v18.8.0](https://github.com/tapjs/tapjs/tree/v18.8.0)), distributed under the [BlueOak-1.0.0 License](https://github.com/tapjs/tapjs/blob/v18.8.0/LICENSE.md):
 
 ```
-The ISC License
+# Blue Oak Model License
 
-Copyright (c) 2011-2023 Isaac Z. Schlueter and Contributors
+Version 1.0.0
 
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
+## Purpose
 
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
-IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+This license gives everyone as much permission to work with
+this software as possible, while protecting contributors
+from liability.
+
+## Acceptance
+
+In order to receive this license, you must agree to its
+rules. The rules of this license are both obligations
+under that agreement and conditions to your license.
+You must not do anything with this software that triggers
+a rule that you cannot or will not follow.
+
+## Copyright
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe that contributor's
+copyright in it.
+
+## Notices
+
+You must ensure that everyone who gets a copy of
+any part of this software from you, with or without
+changes, also gets the text of this license or a link to
+<https://blueoakcouncil.org/license/1.0.0>.
+
+## Excuse
+
+If anyone notifies you in writing that you have not
+complied with [Notices](#notices), you can keep your
+license by taking all practical steps to comply within 30
+days after the notice. If you do not do so, your license
+ends immediately.
+
+## Patent
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe any patent claims
+they can license or become able to license.
+
+## Reliability
+
+No contributor can revoke this license.
+
+## No Liability
+
+**_As far as the law allows, this software comes as is,
+without any warranty or condition, and no contributor
+will be liable to anyone for any damages related to this
+software or this license, under any kind of legal claim._**
 
 ```
 

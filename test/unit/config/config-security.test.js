@@ -51,8 +51,6 @@ tap.test('should enable high security mode (HSM) with non-bool truthy HSM settin
 })
 
 tap.test('#_getMostSecure', (t) => {
-  t.autoend()
-
   let config = null
 
   t.beforeEach(() => {
@@ -77,11 +75,10 @@ tap.test('#_getMostSecure', (t) => {
     t.equal(val, 'dunno')
     t.end()
   })
+  t.end()
 })
 
 tap.test('#applyLasp', (t) => {
-  t.autoend()
-
   let config = null
   let policies = null
   let agent = null
@@ -225,6 +222,7 @@ tap.test('#applyLasp', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('ai_monitoring should not be enabled in HSM', (t) => {

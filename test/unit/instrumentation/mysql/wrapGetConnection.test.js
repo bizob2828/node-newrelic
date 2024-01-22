@@ -11,8 +11,6 @@ const instrumentation = require('../../../../lib/instrumentation/mysql/mysql')
 const symbols = require('../../../../lib/symbols')
 
 tap.test('wrapGetConnection', (t) => {
-  t.autoend()
-
   let mockShim
   let mockConnection
 
@@ -127,4 +125,5 @@ tap.test('wrapGetConnection', (t) => {
 
     t.end()
   })
+  t.end()
 })

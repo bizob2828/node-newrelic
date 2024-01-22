@@ -10,11 +10,7 @@ const helper = require('../../lib/agent_helper')
 const shims = require('../../../lib/shim')
 
 tap.test('an instrumented Hapi application', function (t) {
-  t.autoend()
-
   t.test("shouldn't cause bootstrapping to fail", function (t) {
-    t.autoend()
-
     let agent
     let initialize
 
@@ -48,11 +44,10 @@ tap.test('an instrumented Hapi application', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('when stubbed', function (t) {
-    t.autoend()
-
     let agent
     let stub
 
@@ -84,5 +79,7 @@ tap.test('an instrumented Hapi application', function (t) {
       t.equal(frameworks[0], 'Hapi')
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

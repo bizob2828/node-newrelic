@@ -6,18 +6,13 @@
 'use strict'
 const tap = require('tap')
 const ApdexStats = require('../../lib/stats/apdex')
-tap.Test.prototype.addAssert(
-  'verifyApdexStats',
-  2,
-  function verifyApdexStats(actualStats, expectedStats) {
-    this.equal(actualStats.satisfying, expectedStats.satisfying)
-    this.equal(actualStats.tolerating, expectedStats.tolerating)
-    this.equal(actualStats.frustrating, expectedStats.frustrating)
-  }
-)
+tap.Test.prototype.verifyApdexStats = function verifyApdexStats(actualStats, expectedStats) {
+  this.t.equal(actualStats.satisfying, expectedStats.satisfying)
+  this.t.equal(actualStats.tolerating, expectedStats.tolerating)
+  this.t.equal(actualStats.frustrating, expectedStats.frustrating)
+}
 
 tap.test('ApdexStats', function (t) {
-  t.autoend()
   t.beforeEach(function (t) {
     t.context.statistics = new ApdexStats(0.3)
   })
@@ -91,4 +86,5 @@ tap.test('ApdexStats', function (t) {
     t.verifyApdexStats(statistics, expectedMergedStats)
     t.end()
   })
+  t.end()
 })

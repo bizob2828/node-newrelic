@@ -14,8 +14,6 @@ const cat = require('../../../lib/util/cat.js')
 const NAMES = require('../../../lib/metrics/names.js')
 
 tap.test('when CAT is disabled (default agent settings)', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -133,11 +131,10 @@ tap.test('when CAT is disabled (default agent settings)', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('when CAT is enabled', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -239,6 +236,7 @@ tap.test('when CAT is enabled', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 function getMockTransaction(agent, test, start, durationInSeconds, totalTimeInSeconds) {

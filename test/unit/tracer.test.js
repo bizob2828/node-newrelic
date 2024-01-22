@@ -20,10 +20,7 @@ function afterEach(t) {
 }
 
 tap.test('Tracer', function (t) {
-  t.autoend()
-
   t.test('#transactionProxy', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create transaction', (t) => {
@@ -57,10 +54,10 @@ tap.test('Tracer', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#transactionNestProxy', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create transaction', (t) => {
@@ -141,5 +138,7 @@ tap.test('Tracer', function (t) {
         })
       }
     )
+    t.end()
   })
+  t.end()
 })

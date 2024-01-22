@@ -10,7 +10,6 @@ const API = require('../../api')
 const { test } = require('tap')
 
 test('Transaction naming:', function (t) {
-  t.autoend()
   let agent
 
   t.beforeEach(function () {
@@ -167,6 +166,7 @@ test('Transaction naming:', function (t) {
       t.end()
     })
   })
+  t.end()
 })
 
 function simulateInstrumentation(transaction) {

@@ -11,23 +11,19 @@ const helper = require('../../lib/agent_helper')
 const instrument = require('../../../lib/instrumentation/@hapi/hapi')
 const utils = require('./hapi-utils')
 
-tap.test('instrumentation of Hapi', function (t) {
-  t.autoend()
+tap.test('instrumentation of Hapi preserves server creation return', function (t) {
+  const agent = helper.loadMockedAgent()
+  const hapi = require('@hapi/hapi')
+  const returned = utils.getServer({ hapi: hapi })
 
-  t.test('preserves server creation return', function (t) {
-    const agent = helper.loadMockedAgent()
-    const hapi = require('@hapi/hapi')
-    const returned = utils.getServer({ hapi: hapi })
+  t.ok(returned != null, 'Hapi returns from server creation')
 
-    t.ok(returned != null, 'Hapi returns from server creation')
+  const shim = new shims.WebFrameworkShim(agent, 'hapi')
+  instrument(agent, hapi, 'hapi', shim)
 
-    const shim = new shims.WebFrameworkShim(agent, 'hapi')
-    instrument(agent, hapi, 'hapi', shim)
+  const returned2 = utils.getServer({ hapi: hapi })
 
-    const returned2 = utils.getServer({ hapi: hapi })
+  t.ok(returned2 != null, 'Server creation returns when instrumented')
 
-    t.ok(returned2 != null, 'Server creation returns when instrumented')
-
-    t.end()
-  })
+  t.end()
 })

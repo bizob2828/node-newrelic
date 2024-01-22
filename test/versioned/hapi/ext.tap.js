@@ -10,8 +10,6 @@ const helper = require('../../lib/agent_helper')
 const utils = require('./hapi-utils')
 
 tap.test('Hapi ext', function (t) {
-  t.autoend()
-
   let agent = null
   let server = null
   let port = null
@@ -146,4 +144,5 @@ tap.test('Hapi ext', function (t) {
         t.end()
       })
   }
+  t.end()
 })

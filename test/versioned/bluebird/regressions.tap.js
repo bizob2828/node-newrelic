@@ -8,7 +8,6 @@ const tap = require('tap')
 const helper = require('../../lib/agent_helper')
 
 tap.test('bluebird', function (t) {
-  t.autoend()
   t.test('NODE-1649 Stack overflow on recursive promise', function (t) {
     // This was resolved in 2.6.0 as a side-effect of completely refactoring the
     // promise instrumentation.
@@ -45,4 +44,5 @@ tap.test('bluebird', function (t) {
       return getData(new Provider(10000))
     })
   })
+  t.end()
 })

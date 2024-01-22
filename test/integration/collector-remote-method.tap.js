@@ -136,8 +136,6 @@ tap.test('remote method to preconnect', (t) => {
 })
 
 tap.test('record data usage supportability metrics', (t) => {
-  t.autoend()
-
   const port = 8765
   let agent
   let server
@@ -198,4 +196,5 @@ tap.test('record data usage supportability metrics', (t) => {
 
     t.end()
   })
+  t.end()
 })

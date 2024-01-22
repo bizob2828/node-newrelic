@@ -9,9 +9,7 @@ const helper = require('../../lib/agent_helper')
 const tap = require('tap')
 
 tap.test('agent instrumentation of memcached', function (t) {
-  t.autoend()
   t.test("shouldn't cause bootstrapping to fail", function (t) {
-    t.autoend()
     let agent
     let initialize
 
@@ -37,5 +35,7 @@ tap.test('agent instrumentation of memcached', function (t) {
       })
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

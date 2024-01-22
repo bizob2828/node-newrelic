@@ -12,8 +12,6 @@ const utils = require('./hapi-utils')
 const HTTP_ATTS = require('../../lib/fixtures').httpAttributes
 
 tap.test('Hapi capture params support', function (t) {
-  t.autoend()
-
   let agent = null
   let server = null
   let port = null
@@ -142,6 +140,7 @@ tap.test('Hapi capture params support', function (t) {
       makeRequest(t, 'http://localhost:' + port + '/test/1337/?name=hapi')
     })
   })
+  t.end()
 })
 
 function makeRequest(t, uri) {

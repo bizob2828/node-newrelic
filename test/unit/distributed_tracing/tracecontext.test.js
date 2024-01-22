@@ -11,7 +11,6 @@ const TraceContext = require('../../../lib/transaction/tracecontext').TraceConte
 const sinon = require('sinon')
 
 tap.test('TraceContext', function (t) {
-  t.autoend()
   const supportabilitySpy = sinon.spy()
 
   function beforeEach(t) {
@@ -38,7 +37,6 @@ tap.test('TraceContext', function (t) {
   }
 
   t.test('acceptTraceContextPayload', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -136,10 +134,10 @@ tap.test('TraceContext', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('flags hex', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should parse trace flags in the traceparent header', function (t) {
@@ -163,10 +161,10 @@ tap.test('TraceContext', function (t) {
       t.equal(flagsHex, '01')
       t.end()
     })
+    t.end()
   })
 
   t.test('_validateAndParseTraceParentHeader', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should pass valid traceparent header', (t) => {
@@ -263,10 +261,10 @@ tap.test('TraceContext', function (t) {
       t.ok(traceContext._validateAndParseTraceParentHeader(bufferTraceParent).entryValid)
       t.end()
     })
+    t.end()
   })
 
   t.test('_validateAndParseTraceStateHeader', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should pass a valid tracestate header', (t) => {
@@ -379,10 +377,10 @@ tap.test('TraceContext', function (t) {
       t.equal(valid.intrinsics.timestamp, 1563574856827)
       t.end()
     })
+    t.end()
   })
 
   t.test('header creation', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('creating traceparent twice should give the same value', function (t) {
@@ -959,10 +957,10 @@ tap.test('TraceContext', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('should gracefully handle missing required tracestate fields', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     // During startup, there is a period of time where we may notice outbound
@@ -1040,7 +1038,9 @@ tap.test('TraceContext', function (t) {
         t.end()
       })
     })
+    t.end()
   })
+  t.end()
 })
 
 function getTraceContextHeaders(transaction) {

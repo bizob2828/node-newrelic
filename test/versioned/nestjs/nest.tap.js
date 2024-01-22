@@ -13,7 +13,6 @@ const makeRequest = promisify(helper.makeGetRequest)
 const { initNestApp, deleteNestApp } = require('./setup')
 
 tap.test('Verify the Nest.js instrumentation', (t) => {
-  t.autoend()
   let agent = null
   let app = null
   const port = 8972 // chosen by rand(), guaranteed to be random
@@ -54,4 +53,5 @@ tap.test('Verify the Nest.js instrumentation', (t) => {
     t.ok(errors[0][4].stack_trace, 'should have the stack trace')
     t.end()
   })
+  t.end()
 })

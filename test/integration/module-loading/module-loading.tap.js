@@ -21,8 +21,6 @@ const CUSTOM_MODULE_PATH_SUB = `./node_modules/subPkg/node_modules/${CUSTOM_MODU
 const EXPECTED_REQUIRE_METRIC_NAME = `${FEATURES.INSTRUMENTATION.ON_REQUIRE}/${CUSTOM_MODULE}`
 
 tap.test('Should properly track module paths to enable shim.require()', function (t) {
-  t.autoend()
-
   let agent = helper.instrumentMockedAgent()
 
   t.teardown(() => {
@@ -46,11 +44,10 @@ tap.test('Should properly track module paths to enable shim.require()', function
   const shimLoadedCustom = shim.require('custom')
   t.ok(shimLoadedCustom, 'shim.require() should load module')
   t.equal(shimLoadedCustom.name, 'customFunction', 'Should grab correct module')
+  t.end()
 })
 
 tap.test('should instrument multiple versions of the same package', function (t) {
-  t.autoend()
-
   let agent = helper.instrumentMockedAgent()
 
   t.teardown(() => {
@@ -77,11 +74,10 @@ tap.test('should instrument multiple versions of the same package', function (t)
     trackedItems[1].instrumentation.resolvedName.includes(CUSTOM_MODULE_PATH_SUB.slice(1)),
     true
   )
+  t.end()
 })
 
 tap.test('should only log supportability metric for tracking type instrumentation', function (t) {
-  t.autoend()
-
   let agent = helper.instrumentMockedAgent()
 
   t.teardown(() => {

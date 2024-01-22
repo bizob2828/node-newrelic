@@ -51,7 +51,6 @@ function createCATHeaders(config, altNames) {
 }
 
 tap.test('TransactionShim', function (t) {
-  t.autoend()
   let agent = null
   let shim = null
   let wrappable = null
@@ -91,7 +90,6 @@ tap.test('TransactionShim', function (t) {
   }
 
   t.test('constructor', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should require an agent parameter', function (t) {
@@ -118,10 +116,10 @@ tap.test('TransactionShim', function (t) {
       t.equal(shim.pkgVersion, version)
       t.end()
     })
+    t.end()
   })
 
   t.test('#WEB, #BG, #MESSAGE', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     const keys = ['WEB', 'BG', 'MESSAGE']
@@ -137,10 +135,10 @@ tap.test('TransactionShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#bindCreateTransaction', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -181,10 +179,10 @@ tap.test('TransactionShim', function (t) {
       t.equal(shim.unwrap(wrappable, 'bar'), original)
       t.end()
     })
+    t.end()
   })
 
   t.test('#bindCreateTransaction wrapper', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -268,11 +266,10 @@ tap.test('TransactionShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#bindCreateTransaction when `spec.nest` is `true`', function (t) {
-    t.autoend()
-
     let transactions = null
     let web = null
     let bg = null
@@ -351,10 +348,10 @@ tap.test('TransactionShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#pushTransactionName', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should not fail when called outside of a transaction', function (t) {
@@ -371,10 +368,10 @@ tap.test('TransactionShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#popTransactionName', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should not fail when called outside of a transaction', function (t) {
@@ -409,10 +406,10 @@ tap.test('TransactionShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#setTransactionName', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should not fail when called outside of a transaction', function (t) {
@@ -429,11 +426,10 @@ tap.test('TransactionShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#handleMqTracingHeaders', function (t) {
-    t.autoend()
-
     t.beforeEach(() => {
       beforeEach()
       agent.config.cross_application_tracer.enabled = true
@@ -773,10 +769,10 @@ tap.test('TransactionShim', function (t) {
         })
       }
     )
+    t.end()
   })
 
   t.test('#insertCATRequestHeaders', function (t) {
-    t.autoend()
     t.beforeEach(() => {
       beforeEach()
       agent.config.cross_application_tracer.enabled = true
@@ -917,10 +913,10 @@ tap.test('TransactionShim', function (t) {
         })
       }
     )
+    t.end()
   })
 
   t.test('#insertCATReplyHeader', function (t) {
-    t.autoend()
     t.beforeEach(() => {
       beforeEach()
       agent.config.cross_application_tracer.enabled = true
@@ -1015,5 +1011,7 @@ tap.test('TransactionShim', function (t) {
         })
       }
     )
+    t.end()
   })
+  t.end()
 })

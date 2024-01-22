@@ -18,8 +18,6 @@ let shim = null
 const originalShimRequire = DatastoreShim.prototype.require
 
 test('Lazy loading of native PG client', (t) => {
-  t.autoend()
-
   t.beforeEach(function () {
     agent = helper.loadMockedAgent()
     initialize = require('../../../lib/instrumentation/pg')

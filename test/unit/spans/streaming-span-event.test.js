@@ -42,8 +42,6 @@ tap.test('#constructor() should construct an empty span event', (t) => {
 })
 
 tap.test('fromSegment()', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -405,4 +403,5 @@ tap.test('fromSegment()', (t) => {
       t.end()
     })
   })
+  t.end()
 })

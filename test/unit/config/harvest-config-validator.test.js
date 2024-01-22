@@ -10,8 +10,6 @@ const tap = require('tap')
 const harvestConfigValidator = require('../../../lib/config/harvest-config-validator')
 
 tap.test('#isValidHarvestValue', (t) => {
-  t.autoend()
-
   t.test('should be valid when positive number', (t) => {
     const isValid = harvestConfigValidator.isValidHarvestValue(1)
     t.equal(isValid, true)
@@ -46,11 +44,10 @@ tap.test('#isValidHarvestValue', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('#isHarvestConfigValid', (t) => {
-  t.autoend()
-
   t.test('should be valid with valid config', (t) => {
     const validConfig = getValidHarvestConfig()
     const isValidConfig = harvestConfigValidator.isValidHarvestConfig(validConfig)
@@ -138,6 +135,7 @@ tap.test('#isHarvestConfigValid', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 function getValidHarvestConfig() {

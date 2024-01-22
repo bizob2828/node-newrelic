@@ -10,8 +10,6 @@ const tap = require('tap')
 const helper = require('../../../lib/agent_helper')
 
 tap.test('Restify router', function (t) {
-  t.autoend()
-
   let agent = null
   let server = null
 
@@ -155,4 +153,5 @@ tap.test('Restify router', function (t) {
       })
     })
   }
+  t.end()
 })

@@ -11,7 +11,6 @@ const Logger = require('../../lib/util/logger')
 const path = require('path')
 
 tap.test('Logger', function (t) {
-  t.autoend()
   let logger = null
 
   t.beforeEach(function () {
@@ -153,6 +152,7 @@ tap.test('Logger', function (t) {
       logger.fatal(huge)
     })
   })
+  t.end()
 })
 
 /**

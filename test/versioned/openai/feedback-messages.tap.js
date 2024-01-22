@@ -15,8 +15,6 @@ const helper = require('../../lib/agent_helper')
 const { beforeHook, afterEachHook, afterHook } = require('./common')
 
 tap.test('OpenAI instrumentation - feedback messages', (t) => {
-  t.autoend()
-
   t.before(beforeHook.bind(null, t))
 
   t.afterEach(afterEachHook.bind(null, t))
@@ -63,4 +61,5 @@ tap.test('OpenAI instrumentation - feedback messages', (t) => {
       test.end()
     })
   })
+  t.end()
 })

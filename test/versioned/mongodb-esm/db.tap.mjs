@@ -23,7 +23,6 @@ let MONGO_PORT = null
 const BAD_MONGO_COMMANDS = ['collection']
 
 tap.test('Db tests', (t) => {
-  t.autoend()
   let agent
   let mongodb
 
@@ -327,13 +326,12 @@ tap.test('Db tests', (t) => {
       })
     })
   })
+  t.end()
 })
 
 function dbTest({ t, agent, mongodb }, run) {
   let db = null
   let client = null
-
-  t.autoend()
 
   t.beforeEach(async function () {
     MONGO_HOST = getHostName(agent)
@@ -365,6 +363,7 @@ function dbTest({ t, agent, mongodb }, run) {
       })
     })
   })
+  t.end()
 }
 
 function verifyMongoSegments(t, agent, transaction, names) {

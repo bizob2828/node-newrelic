@@ -18,8 +18,6 @@ const TEST_HOST = 'localhost'
 const TEST_URL = 'http://' + TEST_HOST + ':'
 
 tap.test('test attributes.enabled for express', function (t) {
-  t.autoend()
-
   let agent = null
   t.beforeEach(function () {
     agent = helper.instrumentMockedAgent({
@@ -261,4 +259,5 @@ tap.test('test attributes.enabled for express', function (t) {
       })
     })
   })
+  t.end()
 })

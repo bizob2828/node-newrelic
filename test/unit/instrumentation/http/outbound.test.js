@@ -626,8 +626,6 @@ tap.test('when working with http.request', (t) => {
 })
 
 tap.test('Should properly handle http(s) get and request signatures', (t) => {
-  t.autoend()
-
   let agent = null
   let contextManager = null
 
@@ -644,35 +642,35 @@ tap.test('Should properly handle http(s) get and request signatures', (t) => {
   }
 
   t.test('http.get', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
     testSignatures('http', 'get', t)
+    t.end()
   })
 
   t.test('http.request', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
     testSignatures('http', 'request', t)
+    t.end()
   })
 
   t.test('https.get', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
     testSignatures('https', 'get', t)
+    t.end()
   })
 
   t.test('https.request', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
     testSignatures('https', 'request', t)
+    t.end()
   })
 
   function getMethodFromName(nodule, method) {
@@ -845,4 +843,5 @@ tap.test('Should properly handle http(s) get and request signatures', (t) => {
       swapHost: true
     })
   }
+  t.end()
 })

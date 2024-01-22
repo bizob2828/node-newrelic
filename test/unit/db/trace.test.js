@@ -9,7 +9,6 @@ const tap = require('tap')
 const helper = require('../../lib/agent_helper')
 
 tap.test('SQL trace attributes', function (t) {
-  t.autoend()
   t.beforeEach(function (t) {
     t.context.agent = helper.loadMockedAgent({
       slow_sql: {
@@ -97,4 +96,5 @@ tap.test('SQL trace attributes', function (t) {
       })
     })
   })
+  t.end()
 })

@@ -26,7 +26,6 @@ function find(settings, name) {
 }
 
 tap.test('the environment scraper', (t) => {
-  t.autoend()
   let settings = null
 
   t.before(reloadEnvironment)
@@ -255,7 +254,6 @@ tap.test('the environment scraper', (t) => {
   })
 
   t.test('with symlinks', (t) => {
-    t.autoend()
     const nmod = path.resolve(__dirname, '../helpers/node_modules')
     const makeDir = (dirp) => {
       try {
@@ -344,6 +342,7 @@ tap.test('the environment scraper', (t) => {
         cb(code)
       })
     }
+    t.end()
   })
 
   t.test('when NODE_ENV is "production"', async (t) => {
@@ -366,4 +365,5 @@ tap.test('the environment scraper', (t) => {
   async function reloadEnvironment() {
     settings = await environment.getJSON()
   }
+  t.end()
 })

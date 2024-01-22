@@ -12,8 +12,6 @@ const helper = require('../lib/agent_helper')
 const Exception = require('../../lib/errors').Exception
 
 test('Error events', (t) => {
-  t.autoend()
-
   t.test('when error events are disabled', (t) => {
     let agent
 
@@ -177,4 +175,5 @@ test('Error events', (t) => {
 
     t.end()
   })
+  t.end()
 })

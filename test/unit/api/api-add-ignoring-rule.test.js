@@ -10,8 +10,6 @@ const API = require('../../../api')
 const helper = require('../../lib/agent_helper')
 
 tap.test('Agent API - addIgnoringRule', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -113,6 +111,7 @@ tap.test('Agent API - addIgnoringRule', (t) => {
       transaction.end()
     })
   })
+  t.end()
 })
 
 function addIgnoringRuleGoldenPath(agent, api, cb) {

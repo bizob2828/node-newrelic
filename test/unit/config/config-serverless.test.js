@@ -24,8 +24,6 @@ tap.test('should be true when config true', (t) => {
 })
 
 tap.test('serverless_mode via configuration input', (t) => {
-  t.autoend()
-
   t.test('should explicitly disable cross_application_tracer', (t) => {
     const config = Config.initialize({
       cross_application_tracer: { enabled: true },
@@ -158,11 +156,10 @@ tap.test('serverless_mode via configuration input', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('serverless mode via ENV variables', (t) => {
-  t.autoend()
-
   t.test('should pick up serverless_mode', (t) => {
     idempotentEnv(
       {
@@ -410,11 +407,10 @@ tap.test('serverless mode via ENV variables', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('when distributed_tracing manually set in serverless_mode', (t) => {
-  t.autoend()
-
   t.test('disables DT if missing required account_id', (t) => {
     const config = Config.initialize({
       distributed_tracing: { enabled: true },
@@ -461,4 +457,5 @@ tap.test('when distributed_tracing manually set in serverless_mode', (t) => {
     t.doesNotThrow(idempotentEnv.bind(idempotentEnv, env, () => {}))
     t.end()
   })
+  t.end()
 })

@@ -32,8 +32,6 @@ tap.test('should not throw with valid config', (t) => {
 })
 
 tap.test('when loaded with defaults', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -113,6 +111,7 @@ tap.test('when loaded with defaults', (t) => {
     t.ok(agent.config.debug)
     t.end()
   })
+  t.end()
 })
 
 tap.test('should load naming rules when configured', (t) => {
@@ -154,8 +153,6 @@ tap.test('should load ignoring rules when configured', (t) => {
 })
 
 tap.test('when forcing transaction ignore status', (t) => {
-  t.autoend()
-
   let agentInstance = null
 
   t.beforeEach(() => {
@@ -201,6 +198,7 @@ tap.test('when forcing transaction ignore status', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('#harvest.start should start all aggregators', (t) => {
@@ -277,8 +275,6 @@ tap.test('#onConnect should reconfigure all the aggregators', (t) => {
 })
 
 tap.test('when starting', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -425,11 +421,10 @@ tap.test('when starting', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('initial harvest', (t) => {
-  t.autoend()
-
   const origInterval = global.setInterval
 
   let agent = null
@@ -534,11 +529,10 @@ tap.test('initial harvest', (t) => {
       }, 15)
     })
   })
+  t.end()
 })
 
 tap.test('when stopping', (t) => {
-  t.autoend()
-
   function nop() {}
 
   let agent = null
@@ -582,11 +576,10 @@ tap.test('when stopping', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('when stopping after connected', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -638,11 +631,10 @@ tap.test('when stopping after connected', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('when connected', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -933,11 +925,10 @@ tap.test('when connected', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('when handling finished transactions', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -1032,11 +1023,10 @@ tap.test('when handling finished transactions', (t) => {
     transaction.end()
     t.end()
   })
+  t.end()
 })
 
 tap.test('when sampling_target changes', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -1064,11 +1054,10 @@ tap.test('when sampling_target changes', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('when event_harvest_config updated on connect with a valid config', (t) => {
-  t.autoend()
-
   const validHarvestConfig = {
     report_period_ms: 5000,
     harvest_limits: {
@@ -1167,10 +1156,10 @@ tap.test('when event_harvest_config updated on connect with a valid config', (t)
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('logging supportability on connect', (t) => {
-  t.autoend()
   let agent
   const keys = ['Forwarding', 'Metrics', 'LocalDecorating']
 
@@ -1238,10 +1227,10 @@ tap.test('logging supportability on connect', (t) => {
     t.same(agent.llm, {})
     t.end()
   })
+  t.end()
 })
 
 tap.test('getNRLinkingMetadata', (t) => {
-  t.autoend()
   let agent
 
   t.beforeEach(() => {
@@ -1274,6 +1263,7 @@ tap.test('getNRLinkingMetadata', (t) => {
     t.equal(nrLinkingMeta, expectedLinkingMeta, 'NR-LINKING metadata should be properly formatted')
     t.end()
   })
+  t.end()
 })
 
 tap.test('_reset*', (t) => {

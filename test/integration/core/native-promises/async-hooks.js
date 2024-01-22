@@ -66,7 +66,6 @@ test("the agent's async hook", function (t) {
     }
   }
 
-  t.autoend()
   t.test('does not crash on multiple resolve calls', function (t) {
     const { agent } = setupAgent(t)
     helper.runInTransaction(agent, function () {
@@ -531,6 +530,7 @@ test("the agent's async hook", function (t) {
       }
     }
   )
+  t.end()
 })
 
 function checkCallMetrics(t, testMetrics) {
@@ -560,7 +560,6 @@ function checkCallMetrics(t, testMetrics) {
 }
 
 test('promise hooks', function (t) {
-  t.autoend()
   const testMetrics = {
     initCalled: 0,
     beforeCalled: 0,
@@ -601,6 +600,7 @@ test('promise hooks', function (t) {
       setImmediate(checkCallMetrics, t, testMetrics)
     })
   })
+  t.end()
 })
 
 function setupAgent(t) {

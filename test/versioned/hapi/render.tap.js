@@ -14,8 +14,6 @@ const utils = require('./hapi-utils')
 const fixtures = require('./fixtures')
 
 tap.test('agent instrumentation of Hapi', function (t) {
-  t.autoend()
-
   let agent = null
   let server = null
   let port = null
@@ -224,4 +222,5 @@ tap.test('agent instrumentation of Hapi', function (t) {
       })
     })
   })
+  t.end()
 })

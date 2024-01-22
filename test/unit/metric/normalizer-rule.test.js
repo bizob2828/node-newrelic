@@ -8,9 +8,7 @@ const tap = require('tap')
 const Rule = require('../../../lib/metrics/normalizer/rule')
 
 tap.test('NormalizerRule', function (t) {
-  t.autoend()
   t.test('with a very simple specification', function (t) {
-    t.autoend()
     t.beforeEach(function (t) {
       // sample rule sent by staging collector 1 on 2012-08-29
       const sample = {
@@ -85,12 +83,11 @@ tap.test('NormalizerRule', function (t) {
       t.equal(rule.apply('test_match_nothing'), 'test_match_nothing')
       t.end()
     })
+    t.end()
   })
 
   t.test("with Saxon's patterns", function (t) {
-    t.autoend()
     t.test("including '^(?!account|application).*'", function (t) {
-      t.autoend()
       t.beforeEach(function (t) {
         t.context.rule = new Rule({
           each_segment: true,
@@ -116,13 +113,13 @@ tap.test('NormalizerRule', function (t) {
           t.end()
         }
       )
+      t.end()
     })
 
     const expression =
       '^(?!channel|download|popups|search|tap|user' + '|related|admin|api|genres|notification).*'
 
     t.test(`including '${expression}'`, function (t) {
-      t.autoend()
       t.beforeEach(function (t) {
         t.context.rule = new Rule({
           each_segment: true,
@@ -136,11 +133,12 @@ tap.test('NormalizerRule', function (t) {
         t.equal(rule.apply('/tap/stuff/user/gfy77t/view'), '/tap/*/user/*/*')
         t.end()
       })
+      t.end()
     })
+    t.end()
   })
 
   t.test('with a more complex substitution rule', function (t) {
-    t.autoend()
     t.beforeEach(function (t) {
       // sample rule sent by staging collector 1 on 2012-08-29
       const sample = {
@@ -205,6 +203,7 @@ tap.test('NormalizerRule', function (t) {
       t.equal(rule.apply('/00dead_beef_00,b/hamburt'), '/*/hamburt')
       t.end()
     })
+    t.end()
   })
 
   t.test('should replace all the instances of a pattern when so specified', function (t) {
@@ -225,7 +224,6 @@ tap.test('NormalizerRule', function (t) {
   })
 
   t.test('when given an incomplete specification', function (t) {
-    t.autoend()
     t.test("shouldn't throw (but it can log!)", function (t) {
       t.doesNotThrow(function () {
         // eslint-disable-next-line no-new
@@ -273,10 +271,10 @@ tap.test('NormalizerRule', function (t) {
       t.equal(new Rule().apply('sample/input'), 'sample/input')
       t.end()
     })
+    t.end()
   })
 
   t.test('when given a RegExp', function (t) {
-    t.autoend()
     t.test('should merge flags', function (t) {
       const r = new Rule({
         each_segment: false,
@@ -315,5 +313,7 @@ tap.test('NormalizerRule', function (t) {
       t.equal(re.global, true)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

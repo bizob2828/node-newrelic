@@ -14,7 +14,6 @@ const RUN_ID = 1337
 const LIMIT = 5
 
 tap.test('Error Trace Aggregator', (t) => {
-  t.autoend()
   let errorTraceAggregator
 
   t.beforeEach(() => {
@@ -162,6 +161,7 @@ tap.test('Error Trace Aggregator', (t) => {
     )
     t.end()
   })
+
   ;[
     {
       callCount: 1,
@@ -187,4 +187,5 @@ tap.test('Error Trace Aggregator', (t) => {
       t.end()
     })
   })
+  t.end()
 })

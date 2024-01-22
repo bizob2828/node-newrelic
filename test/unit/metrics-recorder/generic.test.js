@@ -30,7 +30,6 @@ function record(options) {
 }
 
 tap.test('recordGeneric', function (t) {
-  t.autoend()
   t.beforeEach((t) => {
     const agent = helper.loadMockedAgent()
     t.context.trans = new Transaction(agent)
@@ -114,4 +113,5 @@ tap.test('recordGeneric', function (t) {
     t.equal(JSON.stringify(trans.metrics), JSON.stringify(result))
     t.end()
   })
+  t.end()
 })

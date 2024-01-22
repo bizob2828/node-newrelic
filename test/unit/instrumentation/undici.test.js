@@ -23,8 +23,6 @@ tap.test('undici instrumentation', function (t) {
   let shim
   let sandbox
 
-  t.autoend()
-
   t.before(function () {
     sandbox = sinon.createSandbox()
     const diagnosticsChannel = require('diagnostics_channel')
@@ -59,7 +57,6 @@ tap.test('undici instrumentation', function (t) {
   }
 
   t.test('request:create', function (t) {
-    t.autoend()
     t.afterEach(afterEach)
 
     t.test('should log trace if request is not in an active transaction', function (t) {
@@ -294,10 +291,10 @@ tap.test('undici instrumentation', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('request:headers', function (t) {
-    t.autoend()
     t.afterEach(afterEach)
 
     t.test('should not add span attrs when there is not an active segment', function (t) {
@@ -356,10 +353,10 @@ tap.test('undici instrumentation', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('request:trailers', function (t) {
-    t.autoend()
     t.afterEach(afterEach)
 
     t.test('should end current segment and restore to parent', function (t) {
@@ -378,10 +375,10 @@ tap.test('undici instrumentation', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('request:error', function (t) {
-    t.autoend()
     t.afterEach(afterEach)
 
     t.test(
@@ -412,5 +409,7 @@ tap.test('undici instrumentation', function (t) {
         })
       }
     )
+    t.end()
   })
+  t.end()
 })

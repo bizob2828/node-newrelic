@@ -10,8 +10,6 @@ const proxyquire = require('proxyquire').noPreserveCache()
 const sinon = require('sinon')
 
 tap.test('getProcessorStats - darwin', (t) => {
-  t.autoend()
-
   let platformFunction
   let execFunction
   let systemInfo
@@ -113,11 +111,10 @@ tap.test('getProcessorStats - darwin', (t) => {
     }
     t.same(results, expected, 'should return the expected results')
   })
+  t.end()
 })
 
 tap.test('getProcessorStats - bsd', (t) => {
-  t.autoend()
-
   let platformFunction
   let execFunction
   let systemInfo
@@ -147,11 +144,10 @@ tap.test('getProcessorStats - bsd', (t) => {
     }
     t.same(results, expected, 'should return the expected results')
   })
+  t.end()
 })
 
 tap.test('getProcessorStats - linux', (t) => {
-  t.autoend()
-
   let platformFunction
   let readProcFunction
   let systemInfo
@@ -219,11 +215,10 @@ tap.test('getProcessorStats - linux', (t) => {
     }
     t.same(results, expected, 'should return the expected results')
   })
+  t.end()
 })
 
 tap.test('getProcessorStats - unknown', (t) => {
-  t.autoend()
-
   let platformFunction
   let systemInfo
 
@@ -246,10 +241,10 @@ tap.test('getProcessorStats - unknown', (t) => {
     }
     t.same(results, expected, 'should return the expected results')
   })
+  t.end()
 })
 
 tap.test('getMemoryStats - darwin', (t) => {
-  t.autoend()
   let platformFunction
   let execFunction
   let systemInfo
@@ -273,10 +268,10 @@ tap.test('getMemoryStats - darwin', (t) => {
     const results = await systemInfo._getMemoryStats()
     t.equal(results, 1)
   })
+  t.end()
 })
 
 tap.test('getMemoryStats - bsd', (t) => {
-  t.autoend()
   let platformFunction
   let execFunction
   let systemInfo
@@ -300,10 +295,10 @@ tap.test('getMemoryStats - bsd', (t) => {
     const results = await systemInfo._getMemoryStats()
     t.equal(results, 1)
   })
+  t.end()
 })
 
 tap.test('getMemoryStats - linux', (t) => {
-  t.autoend()
   let platformFunction
   let readProcFunction
   let systemInfo
@@ -378,11 +373,10 @@ tap.test('getMemoryStats - linux', (t) => {
     const results = await systemInfo._getMemoryStats()
     t.equal(results, null)
   })
+  t.end()
 })
 
 tap.test('getProcessorStats - unknown', (t) => {
-  t.autoend()
-
   let platformFunction
   let systemInfo
 
@@ -400,11 +394,10 @@ tap.test('getProcessorStats - unknown', (t) => {
     const results = await systemInfo._getMemoryStats()
     t.equal(results, null)
   })
+  t.end()
 })
 
 tap.test('systemInfo edge cases', (t) => {
-  t.autoend()
-
   const systemInfo = proxyquire('../../lib/system-info', {
     './utilization/docker-info': {
       getBootId: (agent, callback) => callback(null)
@@ -466,4 +459,5 @@ tap.test('systemInfo edge cases', (t) => {
     const config = await callSystemInfo(mockConfig)
     t.same(config, { processorArch: os.arch() })
   })
+  t.end()
 })

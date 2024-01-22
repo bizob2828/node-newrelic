@@ -16,8 +16,6 @@ const methods = [
 ]
 
 tap.test('parsePath should behave as expected', (t) => {
-  t.autoend()
-
   t.test('indices', function (t) {
     const path = '/indexName'
     methods.forEach((m) => {
@@ -85,10 +83,10 @@ tap.test('parsePath should behave as expected', (t) => {
       t.end()
     }
   )
+  t.end()
 })
 
 tap.test('queryParser should behave as expected', (t) => {
-  t.autoend()
   t.test('given a querystring, it should use that for query', (t) => {
     const params = JSON.stringify({
       path: '/_search',
@@ -144,4 +142,5 @@ tap.test('queryParser should behave as expected', (t) => {
     t.match(parseParams, expected, 'queryParser should handle query body')
     t.end()
   })
+  t.end()
 })

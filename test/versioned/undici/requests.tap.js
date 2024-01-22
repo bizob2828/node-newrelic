@@ -15,8 +15,6 @@ const { version: pkgVersion } = require('undici/package')
 const semver = require('semver')
 
 tap.test('Undici request tests', (t) => {
-  t.autoend()
-
   let agent
   let undici
   let server
@@ -374,4 +372,5 @@ tap.test('Undici request tests', (t) => {
       )
     })
   })
+  t.end()
 })

@@ -11,8 +11,6 @@ const instrumentation = require('../../../../lib/instrumentation/mysql/mysql')
 const symbols = require('../../../../lib/symbols')
 
 tap.test('getInstanceParameters', (t) => {
-  t.autoend()
-
   let mockShim
   let mockQueryable
   let mockQuery
@@ -110,4 +108,5 @@ tap.test('getInstanceParameters', (t) => {
     })
     t.end()
   })
+  t.end()
 })

@@ -63,8 +63,6 @@ tap.test('should default to protocol 17', (t) => {
 })
 
 tap.test('serialize', (t) => {
-  t.autoend()
-
   let method = null
 
   t.beforeEach(() => {
@@ -116,11 +114,10 @@ tap.test('serialize', (t) => {
       }
     )
   })
+  t.end(0)
 })
 
 tap.test('_safeRequest', (t) => {
-  t.autoend()
-
   let method = null
   let options = null
   let agent = null
@@ -210,11 +207,10 @@ tap.test('_safeRequest', (t) => {
     )
     t.end()
   })
+  t.end()
 })
 
 tap.test('when calling a method on the collector', (t) => {
-  t.autoend()
-
   t.test('should not throw when dealing with compressed data', (t) => {
     const method = new RemoteMethod('test', BARE_AGENT, { host: 'localhost' })
     method._shouldCompress = () => true
@@ -238,11 +234,10 @@ tap.test('when calling a method on the collector', (t) => {
 
     method.invoke('data', {})
   })
+  t.end()
 })
 
 tap.test('when the connection fails', (t) => {
-  t.autoend()
-
   t.test('should return the connection failure', (t) => {
     const req = https.request
     https.request = () => {
@@ -302,11 +297,10 @@ tap.test('when the connection fails', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('when posting to collector', (t) => {
-  t.autoend()
-
   const RUN_ID = 1337
   const URL = 'https://collector.newrelic.com'
   let nock = null
@@ -352,8 +346,6 @@ tap.test('when posting to collector', (t) => {
   })
 
   t.test('successfully', (t) => {
-    t.autoend()
-
     function nockMetricDataUncompressed() {
       return nock(URL)
         .post(generate('metric_data', RUN_ID))
@@ -441,11 +433,10 @@ tap.test('when posting to collector', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('unsuccessfully', (t) => {
-    t.autoend()
-
     function nockMetric500() {
       return nock(URL).post(generate('metric_data', RUN_ID)).reply(500, { return_value: [] })
     }
@@ -468,11 +459,10 @@ tap.test('when posting to collector', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('with an error', (t) => {
-    t.autoend()
-
     let thrown = null
     let originalSafeRequest = null
 
@@ -494,11 +484,10 @@ tap.test('when posting to collector', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('parsing successful response', (t) => {
-    t.autoend()
-
     const response = {
       return_value: 'collector-42.newrelic.com'
     }
@@ -535,11 +524,10 @@ tap.test('when posting to collector', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('parsing error response', (t) => {
-    t.autoend()
-
     const response = {}
 
     t.beforeEach(() => {
@@ -554,12 +542,12 @@ tap.test('when posting to collector', (t) => {
         t.end()
       })
     })
+    t.end()
   })
+  t.end()
 })
 
 tap.test('when generating headers for a plain request', (t) => {
-  t.autoend()
-
   let headers = null
   let options = null
   let method = null
@@ -627,11 +615,10 @@ tap.test('when generating headers for a plain request', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('when generating headers for a compressed request', (t) => {
-  t.autoend()
-
   let headers = null
 
   t.beforeEach(() => {
@@ -684,11 +671,10 @@ tap.test('when generating headers for a compressed request', (t) => {
     t.ok(headers['User-Agent'])
     t.end()
   })
+  t.end()
 })
 
 tap.test('when generating a request URL', (t) => {
-  t.autoend()
-
   const TEST_RUN_ID = Math.floor(Math.random() * 3000) + 1
   const TEST_METHOD = 'TEST_METHOD'
   const TEST_LICENSE = 'hamburtson'
@@ -755,11 +741,10 @@ tap.test('when generating a request URL', (t) => {
     t.equal(parsed.pathname.indexOf('/agent_listener/invoke_raw_method'), 0)
     t.end()
   })
+  t.end()
 })
 
 tap.test('when generating the User-Agent string', (t) => {
-  t.autoend()
-
   const TEST_VERSION = '0-test'
   let userAgent = null
   let version = null
@@ -798,11 +783,10 @@ tap.test('when generating the User-Agent string', (t) => {
     t.match(userAgent, process.platform + '-' + process.arch)
     t.end()
   })
+  t.end()
 })
 
 tap.test('record data usage supportability metrics', (t) => {
-  t.autoend()
-
   let endpoint
 
   let agent
@@ -937,10 +921,10 @@ tap.test('record data usage supportability metrics', (t) => {
       ]
     )
   })
+  t.end()
 })
 
 tap.test('_safeRequest logging', (t) => {
-  t.autoend()
   t.beforeEach((t) => {
     const sandbox = sinon.createSandbox()
     const loggerMock = require('../mocks/logger')(sandbox)
@@ -1024,4 +1008,5 @@ tap.test('_safeRequest logging', (t) => {
     t.ok(loggerMock.info.callCount === 0, 'should not log outgoing message to collector')
     t.end()
   })
+  t.end()
 })

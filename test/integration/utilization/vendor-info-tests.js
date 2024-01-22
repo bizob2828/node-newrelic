@@ -33,12 +33,12 @@ module.exports = function (t, vendor) {
 
     const cases = JSONbig.parse(data)
 
-    t.autoend()
     t.ok(cases.length > 0, 'should have tests to run')
 
     for (let i = 0; i < cases.length; ++i) {
       t.test(cases[i].testname, makeTest(cases[i], vendor, getInfo))
     }
+    t.end()
   })
 }
 

@@ -10,8 +10,6 @@ const tap = require('tap')
 const symbols = require('../../../lib/symbols')
 
 tap.test('external requests', function (t) {
-  t.autoend()
-
   let agent = null
   let http = null
   t.beforeEach(() => {
@@ -194,4 +192,5 @@ tap.test('external requests', function (t) {
       reqSegment = req[symbols.segment]
     })
   })
+  t.end()
 })

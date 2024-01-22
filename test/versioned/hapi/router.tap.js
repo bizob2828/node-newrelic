@@ -11,8 +11,6 @@ const utils = require('./hapi-utils')
 const Boom = require('@hapi/boom')
 
 tap.test('Hapi router introspection', function (t) {
-  t.autoend()
-
   let agent = null
   let server = null
   let port = null
@@ -343,6 +341,7 @@ tap.test('Hapi router introspection', function (t) {
       })
     })
   })
+  t.end()
 })
 
 function verifier(t, verb) {

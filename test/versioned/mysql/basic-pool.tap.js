@@ -41,8 +41,6 @@ tap.test('See if mysql is running', function (t) {
 })
 
 tap.test('bad config', function (t) {
-  t.autoend()
-
   const agent = helper.instrumentMockedAgent()
   const mysql = require('mysql')
   const badConfig = {
@@ -77,6 +75,7 @@ tap.test('bad config', function (t) {
   t.teardown(function () {
     helper.unloadAgent(agent)
   })
+  t.end()
 })
 
 // TODO: test variable argument calling
@@ -387,8 +386,6 @@ tap.test('mysql built-in connection pools', function (t) {
 })
 
 tap.test('poolCluster', function (t) {
-  t.autoend()
-
   let agent = null
   let mysql = null
   let poolCluster = null
@@ -664,6 +661,7 @@ tap.test('poolCluster', function (t) {
       })
     })
   }
+  t.end()
 })
 
 function getDomainSocketPath(callback) {

@@ -14,8 +14,6 @@ const helper = require('../../lib/agent_helper')
 const DESTINATIONS = AttributeFilter.DESTINATIONS
 
 tap.test('#addAttribute', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -92,11 +90,10 @@ tap.test('#addAttribute', (t) => {
       })
     })
   })
+  t.end()
 })
 
 tap.test('#addCustomSpanAttribute', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -198,6 +195,7 @@ tap.test('#addCustomSpanAttribute', (t) => {
       })
     })
   })
+  t.end()
 })
 
 function getCustomSpanAttributes(agent) {

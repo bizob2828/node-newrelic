@@ -12,8 +12,6 @@ const rimraf = require('rimraf')
 const DIRNAME = 'XXXNOCONFTEST'
 
 tap.test('logger', function (t) {
-  t.autoend()
-
   t.afterEach(async () => {
     if (path.basename(process.cwd()) === DIRNAME) {
       process.chdir('..')
@@ -48,4 +46,5 @@ tap.test('logger', function (t) {
       t.end()
     })
   })
+  t.end()
 })

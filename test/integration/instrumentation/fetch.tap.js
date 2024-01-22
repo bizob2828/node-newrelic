@@ -13,7 +13,6 @@ const http = require('http')
 const semver = require('semver')
 
 tap.test('fetch', { skip: semver.lte(process.version, '18.0.0') }, function (t) {
-  t.autoend()
   let agent
   let server
   let REQUEST_URL
@@ -241,4 +240,5 @@ tap.test('fetch', { skip: semver.lte(process.version, '18.0.0') }, function (t) 
       t.end()
     })
   })
+  t.end()
 })

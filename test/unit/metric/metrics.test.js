@@ -21,9 +21,7 @@ function afterEach(t) {
 }
 
 tap.test('Metrics', function (t) {
-  t.autoend()
   t.test('when creating', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should throw if apdexT is not set', function (t) {
@@ -174,10 +172,10 @@ tap.test('Metrics', function (t) {
       t.equal(stat.totalExclusive, MEGABYTE)
       t.end()
     })
+    t.end()
   })
 
   t.test('when creating individual metrics', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create a metric when a nonexistent name is requested', function (t) {
@@ -200,10 +198,10 @@ tap.test('Metrics', function (t) {
       t.equal(metric.callCount, 0)
       t.end()
     })
+    t.end()
   })
 
   t.test('when creating with parameters', function (t) {
-    t.autoend()
     const TEST_APDEX = 0.4
     const TEST_MAPPER = new MetricMapper([[{ name: 'Renamed/333' }, 1337]])
     const TEST_NORMALIZER = new MetricNormalizer({ enforce_backstop: true }, 'metric name')
@@ -230,10 +228,10 @@ tap.test('Metrics', function (t) {
       t.equal(summary, '[[1337,[1,0.4,0.3,0.4,0.4,0.16000000000000003]]]')
       t.end()
     })
+    t.end()
   })
 
   t.test('with ordinary statistics', function (t) {
-    t.autoend()
     const NAME = 'Agent/Test384'
 
     t.beforeEach(function (t) {
@@ -268,10 +266,10 @@ tap.test('Metrics', function (t) {
       t.equal(summary, '[{"name":"Agent/Test384"},[1,0.3,0.1,0.3,0.3,0.09]]')
       t.end()
     })
+    t.end()
   })
 
   t.test('with apdex statistics', function (t) {
-    t.autoend()
     const NAME = 'Agent/Test385'
     t.beforeEach(function (t) {
       beforeEach(t)
@@ -306,10 +304,10 @@ tap.test('Metrics', function (t) {
       t.equal(summary, '[{"name":"Agent/Test385"},[0,0,1,0.8,0.8,0]]')
       t.end()
     })
+    t.end()
   })
 
   t.test('scoped metrics', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -360,10 +358,10 @@ tap.test('Metrics', function (t) {
       )
       t.end()
     })
+    t.end()
   })
 
   t.test('when merging two metrics collections', function (t) {
-    t.autoend()
     t.beforeEach(function (t) {
       beforeEach(t)
       const { metrics, agent } = t.context
@@ -414,7 +412,9 @@ tap.test('Metrics', function (t) {
       t.equal(metrics.started, 1337)
       t.end()
     })
+    t.end()
   })
 
   t.test('should not let exclusive duration exceed total duration', { todo: true })
+  t.end()
 })

@@ -26,7 +26,6 @@ function longString(len) {
 }
 
 tap.test('CLM Meta', (t) => {
-  t.autoend()
   let segmentStub
 
   t.beforeEach(() => {
@@ -42,7 +41,7 @@ tap.test('CLM Meta', (t) => {
     t.exactClmAttrs(segmentStub, {
       'code.filepath': __filename,
       'code.function': 'testFunction',
-      'code.lineno': 39,
+      'code.lineno': 38,
       'code.column': 26
     })
     t.end()
@@ -55,7 +54,7 @@ tap.test('CLM Meta', (t) => {
     t.exactClmAttrs(segmentStub, {
       'code.filepath': __filename,
       'code.function': 'testFunction',
-      'code.lineno': 52,
+      'code.lineno': 51,
       'code.column': 35
     })
     t.end()
@@ -122,7 +121,6 @@ tap.test('CLM Meta', (t) => {
   })
 
   t.test('failure cases', (t) => {
-    t.autoend()
     const fnInspector = require('@contrast/fn-inspect')
 
     t.beforeEach(() => {
@@ -171,5 +169,7 @@ tap.test('CLM Meta', (t) => {
       t.notOk(segmentStub.addAttribute.callCount)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

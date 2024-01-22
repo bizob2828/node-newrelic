@@ -14,13 +14,10 @@ function nextulator(req, res, next) {
 }
 
 tap.test('an instrumented Connect stack', function (t) {
-  t.autoend()
-
   t.test("shouldn't cause bootstrapping to fail", function (t) {
     // testing some stuff further down that needs to be non-strict
     'use strict'
 
-    t.autoend()
     let agent
     let initialize
     let shim
@@ -48,10 +45,10 @@ tap.test('an instrumented Connect stack', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('for Connect 1 (stubbed)', function (t) {
-    t.autoend()
     let agent
     let stub
     let app
@@ -144,11 +141,10 @@ tap.test('an instrumented Connect stack', function (t) {
       t.doesNotThrow(function () { app.use.call(app, '/', static); })
       t.end()
     })
+    t.end()
   })
 
   t.test("for Connect 2 (stubbed)", function (t) {
-    t.autoend()
-
     let agent
     let stub
     let app
@@ -232,7 +228,9 @@ tap.test('an instrumented Connect stack', function (t) {
       t.doesNotThrow(function () { app.use.call(app, '/', static); })
       t.end()
     })
+    t.end()
   })
+  t.end()
 })
 
 /* eslint-enable strict */

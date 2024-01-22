@@ -35,31 +35,28 @@ function getPath(obj, path) {
   return obj[paths[0]]
 }
 
-tap.Test.prototype.addAssert('check', 3, function (key, before, after) {
+tap.Test.prototype.check = function check(key, before, after) {
   const fromFile = { high_security: true }
   setPath(fromFile, key, before)
 
   const config = new Config(fromFile)
-  return this.same(getPath(config, key), after)
-})
+  return this.t.same(getPath(config, key), after)
+}
 
-tap.Test.prototype.addAssert('checkServer', 4, function (config, key, expected, server) {
+tap.Test.prototype.checkServer = function (config, key, expected, server) {
   setPath(config, key, expected)
   const fromServer = { high_security: true }
   fromServer[key] = server
 
-  this.same(getPath(config, key), expected)
-  this.same(fromServer[key], server)
+  this.t.same(getPath(config, key), expected)
+  this.t.same(fromServer[key], server)
 
   config.onConnect(fromServer)
-  return this.same(getPath(config, key), expected)
-})
+  return this.t.same(getPath(config, key), expected)
+}
 
 tap.test('high security mode', function (t) {
-  t.autoend()
-
   t.test('config to be sent during connect', function (t) {
-    t.autoend()
     let agent = null
 
     t.beforeEach(function () {
@@ -76,15 +73,13 @@ tap.test('high security mode', function (t) {
       })
       t.ok(Object.keys(factoids).includes('high_security'))
     })
+    t.end()
   })
 
   t.test('conditional application of server side settings', function (t) {
-    t.autoend()
     let config = null
 
     t.test('when high_security === true', function (t) {
-      t.autoend()
-
       t.beforeEach(function () {
         config = new Config({ high_security: true })
       })
@@ -151,11 +146,10 @@ tap.test('high security mode', function (t) {
         t.checkServer(config, 'application_logging.forwarding.enabled', false, true)
         t.end()
       })
+      t.end()
     })
 
     t.test('when high_security === false', function (t) {
-      t.autoend()
-
       t.beforeEach(function () {
         config = new Config({ high_security: false })
       })
@@ -167,15 +161,13 @@ tap.test('high security mode', function (t) {
         t.equal(config.ssl, true)
         t.end()
       })
+      t.end()
     })
+    t.end()
   })
 
   t.test('coerces other settings', function (t) {
-    t.autoend()
-
     t.test('_applyHighSecurity during init', function (t) {
-      t.autoend()
-
       const orig = Config.prototype._applyHighSecurity
       let called
 
@@ -201,11 +193,10 @@ tap.test('high security mode', function (t) {
         t.equal(called, false)
         t.end()
       })
+      t.end()
     })
 
     t.test('when high_security === true', function (t) {
-      t.autoend()
-
       t.test('should detect that ssl is off', function (t) {
         t.check('ssl', false, true)
         t.end()
@@ -281,11 +272,12 @@ tap.test('high security mode', function (t) {
         t.same(config.attributes.include, [])
         t.end()
       })
+      t.end()
     })
+    t.end()
   })
 
   t.test('affect custom params', function (t) {
-    t.autoend()
     let agent = null
     let api = null
 
@@ -313,5 +305,7 @@ tap.test('high security mode', function (t) {
         t.end()
       })
     })
+    t.end()
   })
+  t.end()
 })

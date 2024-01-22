@@ -13,7 +13,6 @@ import { STATEMENT_PREFIX } from './common.cjs'
 // see test/versioned/mongodb/common.js
 if (semver.satisfies(pkgVersion, '>=3.2.4 <4.1.4')) {
   tap.test('Bulk operations', (t) => {
-    t.autoend()
     let agent
 
     t.before(() => {
@@ -80,5 +79,6 @@ if (semver.satisfies(pkgVersion, '>=3.2.4 <4.1.4')) {
         })
       }
     )
+    t.end()
   })
 }

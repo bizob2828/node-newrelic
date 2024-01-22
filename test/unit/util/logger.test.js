@@ -9,18 +9,17 @@ const Logger = require('../../../lib/util/logger')
 const { Transform } = require('stream')
 const DEFAULT_KEYS = ['hostname', 'level', 'msg', 'name', 'pid', 'time', 'v']
 
-tap.Test.prototype.addAssert('expectEntry', 4, function expectEntry(entry, msg, level, keys) {
-  this.equal(entry.hostname, 'my-host')
-  this.equal(entry.name, 'my-logger')
-  this.equal(entry.pid, process.pid)
-  this.equal(entry.v, 0)
-  this.equal(entry.level, level)
-  this.equal(entry.msg, msg)
-  this.same(Object.keys(entry).sort(), keys || DEFAULT_KEYS)
-})
+tap.Test.prototype.expectEntry = function expectEntry(entry, msg, level, keys) {
+  this.t.equal(entry.hostname, 'my-host')
+  this.t.equal(entry.name, 'my-logger')
+  this.t.equal(entry.pid, process.pid)
+  this.t.equal(entry.v, 0)
+  this.t.equal(entry.level, level)
+  this.t.equal(entry.msg, msg)
+  this.t.same(Object.keys(entry).sort(), keys || DEFAULT_KEYS)
+}
 
 tap.test('logger', function (t) {
-  t.autoend()
   let results
   let logger
 
@@ -373,10 +372,10 @@ tap.test('logger', function (t) {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('logger write queue', function (t) {
-  t.autoend()
   t.test('should buffer writes', function (t) {
     const bigString = new Array(16 * 1024).join('a')
 
@@ -397,6 +396,7 @@ tap.test('logger write queue', function (t) {
               return a.toString()
             })
             .map(JSON.parse)
+          console.log('here')
           t.expectEntry(parts[0], 'b', 30)
           t.expectEntry(parts[1], 'c', 30)
           t.expectEntry(parts[2], 'd', 30)
@@ -417,4 +417,5 @@ tap.test('logger write queue', function (t) {
     })
     logger.info(bigString)
   })
+  t.end()
 })

@@ -40,8 +40,6 @@ tap.test('requires a callback', (t) => {
 })
 
 tap.test('receiving 200 response, with valid data', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -106,11 +104,10 @@ tap.test('receiving 200 response, with valid data', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('succeeds when given a different port number for redirect', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -241,14 +238,13 @@ tap.test('succeeds when given a different port number for redirect', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 const retryCount = [1, 5]
 
 retryCount.forEach((count) => {
   tap.test(`succeeds after ${count} 503s on preconnect`, (t) => {
-    t.autoend()
-
     let collectorApi = null
     let agent = null
 
@@ -329,12 +325,11 @@ retryCount.forEach((count) => {
         cb()
       })
     }
+    t.end()
   })
 })
 
 tap.test('disconnects on force disconnect (410)', (t) => {
-  t.autoend()
-
   let collectorApi = null
   let agent = null
 
@@ -392,11 +387,10 @@ tap.test('disconnects on force disconnect (410)', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('retries preconnect until forced to disconnect (410)', (t) => {
-  t.autoend()
-
   let collectorApi = null
   let agent = null
 
@@ -459,11 +453,10 @@ tap.test('retries preconnect until forced to disconnect (410)', (t) => {
       cb()
     })
   }
+  t.end()
 })
 
 tap.test('retries on receiving invalid license key (401)', (t) => {
-  t.autoend()
-
   let collectorApi = null
   let agent = null
 
@@ -516,6 +509,7 @@ tap.test('retries on receiving invalid license key (401)', (t) => {
       cb()
     })
   }
+  t.end()
 })
 
 tap.test('retries on misconfigured proxy', (t) => {
@@ -526,7 +520,6 @@ tap.test('retries on misconfigured proxy', (t) => {
       child: sandbox.stub().callsFake(() => loggerMock)
     }
   })
-  t.autoend()
 
   let collectorApi = null
   let agent = null
@@ -599,12 +592,11 @@ to a fully qualified URL(e.g http://proxy-host:8080).'
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('in a LASP/CSP enabled agent', (t) => {
   const SECURITY_POLICIES_TOKEN = 'TEST-TEST-TEST-TEST'
-
-  t.autoend()
 
   let agent = null
   let collectorApi = null
@@ -701,6 +693,7 @@ tap.test('in a LASP/CSP enabled agent', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 function fastSetTimeoutIncrementRef() {

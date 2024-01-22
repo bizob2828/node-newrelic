@@ -11,8 +11,6 @@ const QuerySample = require('../../../lib/db/query-sample')
 const codec = require('../../../lib/util/codec')
 
 tap.test('Query Sample', (t) => {
-  t.autoend()
-
   t.test('should set trace to query with longest duration', (t) => {
     const trace = {
       duration: 3
@@ -143,6 +141,11 @@ tap.test('Query Sample', (t) => {
     })
     process.nextTick(() => {})
 
+    t.teardown(() => {
+      clock.restore()
+      QuerySample.prototype.getParams.restore()
+    })
+
     sinon.stub(QuerySample.prototype, 'getParams').callsFake(() => {})
 
     const querySample = new QuerySample(fakeTracer, fakeSample)
@@ -152,9 +155,6 @@ tap.test('Query Sample', (t) => {
     clock.runAll()
 
     t.ok(getFullNameCalled)
-
-    clock.restore()
-    QuerySample.prototype.getParams.restore()
 
     t.end()
   })
@@ -253,4 +253,5 @@ tap.test('Query Sample', (t) => {
 
     t.end()
   })
+  t.end()
 })

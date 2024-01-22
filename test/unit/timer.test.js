@@ -8,7 +8,6 @@ const tap = require('tap')
 const Timer = require('../../lib/timer')
 
 tap.test('Timer', function (t) {
-  t.autoend()
   t.test("should know when it's active", function (t) {
     const timer = new Timer()
     t.equal(timer.isActive(), true)
@@ -126,7 +125,6 @@ tap.test('Timer', function (t) {
   })
 
   t.test('endsAfter indicates whether the timer ended after another timer', (t) => {
-    t.autoend()
     t.beforeEach(function (t) {
       const start = Date.now()
       const first = new Timer()
@@ -170,10 +168,10 @@ tap.test('Timer', function (t) {
       t.equal(second.endsAfter(first), true)
       t.end()
     })
+    t.end()
   })
 
   t.test('overwriteDurationInMillis', function (t) {
-    t.autoend()
     t.test('stops the timer', function (t) {
       const timer = new Timer()
       timer.begin()
@@ -194,5 +192,7 @@ tap.test('Timer', function (t) {
         t.end()
       }, 2)
     })
+    t.end()
   })
+  t.end()
 })

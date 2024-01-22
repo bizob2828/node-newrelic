@@ -8,13 +8,9 @@
 const tap = require('tap')
 const testMethods = require('./methods')
 
-tap.test('bluebird', function (t) {
-  t.autoend()
-
-  t.test('methods', function (t) {
-    t.autoend()
-    testMethods(t, 'bluebird', loadBluebird)
-  })
+tap.test('bluebird methods', function (t) {
+  testMethods(t, 'bluebird', loadBluebird)
+  t.end()
 })
 
 function loadBluebird() {

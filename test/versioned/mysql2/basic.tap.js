@@ -15,8 +15,6 @@ const params = require('../../lib/params')
 const setup = require('./setup')
 
 tap.test('Basic run through mysql functionality', { timeout: 30 * 1000 }, function (t) {
-  t.autoend()
-
   let agent = null
   let mysql = null
   const poolLogger = logger.child({ component: 'pool' })
@@ -431,6 +429,7 @@ tap.test('Basic run through mysql functionality', { timeout: 30 * 1000 }, functi
       })
     })
   })
+  t.end()
 })
 
 function findSegment(root, segmentName) {

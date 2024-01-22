@@ -15,9 +15,7 @@ function beforeEach(t) {
 }
 
 tap.test('MetricNormalizer', function (t) {
-  t.autoend()
   t.test('normalize', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.test('should throw when instantiated without config', function (t) {
       t.throws(function () {
@@ -121,10 +119,10 @@ tap.test('MetricNormalizer', function (t) {
       t.equal(normalizer.normalize('/rice/is/not/rice').value, 'NormalizedUri/rice/is/not/mochi')
       t.end()
     })
+    t.end()
   })
 
   t.test('with rules captured from the staging collector on 2012-08-29', function (t) {
-    t.autoend()
     t.beforeEach(function (t) {
       beforeEach(t)
       const { normalizer } = t.context
@@ -230,10 +228,10 @@ tap.test('MetricNormalizer', function (t) {
       )
       t.end()
     })
+    t.end()
   })
 
   t.test('when calling addSimple', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.test("won't crash with no parameters", function (t) {
       const { normalizer } = t.context
@@ -264,10 +262,10 @@ tap.test('MetricNormalizer', function (t) {
       t.equal(normalizer.normalize('/test').value, 'NormalizedUri/west')
       t.end()
     })
+    t.end()
   })
 
   t.test('when loading from config', function (t) {
-    t.autoend()
     t.beforeEach(function (t) {
       t.context.config = new Config({
         rules: {
@@ -308,5 +306,7 @@ tap.test('MetricNormalizer', function (t) {
       t.equal(normalizer.rules[4].replacement, 'fourth')
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

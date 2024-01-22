@@ -22,7 +22,6 @@ const Transaction = require('../../lib/transaction')
 const NEWRELIC_TRACE_HEADER = 'newrelic'
 
 tap.test('Trace', (t) => {
-  t.autoend()
   let agent = null
 
   t.beforeEach(() => {
@@ -319,10 +318,10 @@ tap.test('Trace', (t) => {
     t.same(trace.attributes.get(DESTINATIONS.TRANS_TRACE), {})
     t.end()
   })
+  t.end()
 })
 
 tap.test('when serializing synchronously', (t) => {
-  t.autoend()
   let details
 
   let agent = null
@@ -385,11 +384,10 @@ tap.test('when serializing synchronously', (t) => {
     t.equal(json[3], '/***')
     t.end()
   })
+  t.end()
 })
 
 tap.test('when serializing asynchronously', (t) => {
-  t.autoend()
-
   let details
 
   let agent = null
@@ -452,10 +450,10 @@ tap.test('when serializing asynchronously', (t) => {
       t.end()
     }
   )
+  t.end()
 })
 
 tap.test('when inserting segments', (t) => {
-  t.autoend()
   let agent
   let trace = null
   let transaction = null
@@ -748,6 +746,7 @@ tap.test('when inserting segments', (t) => {
     function noop() {}
     t.end()
   })
+  t.end()
 })
 
 tap.test('should set URI to null when request.uri attribute is excluded globally', async (t) => {
@@ -963,8 +962,6 @@ async function makeTrace(t, agent) {
 }
 
 tap.test('infinite tracing', (t) => {
-  t.autoend()
-
   const VALID_HOST = 'infinite-tracing.test'
   const VALID_PORT = '443'
 
@@ -1024,6 +1021,7 @@ tap.test('infinite tracing', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 function addTwoSegments(transaction) {

@@ -21,7 +21,7 @@ import { pkgVersion, STATEMENT_PREFIX } from './common.cjs'
  * @param {Object} params.extraValues extra fields to assert on >=4.0.0 version of module
  * @param {Object} params.legaycValues extra fields to assert on <4.0.0 version of module
  */
-function assertExpectedResult({ t, data, count, keyPrefix, extraValues, legacyValues }) {
+function assertExpectedResult({ t, data, count, keyPrefix, extraValues, legacyValues, match }) {
   if (semver.satisfies(pkgVersion, '<4')) {
     const expectedResult = { ok: 1, ...legacyValues }
     if (count) {
@@ -33,12 +33,14 @@ function assertExpectedResult({ t, data, count, keyPrefix, extraValues, legacyVa
     if (count) {
       expectedResult[`${keyPrefix}Count`] = count
     }
-    t.same(data, expectedResult)
+    // insert contains a symbol within expected result
+    // we will match on those instead of strict equal
+    const assert = match ? 'match' : 'same'
+    t[assert](data, expectedResult)
   }
 }
 
 tap.test('Collection(Update) Tests', (t) => {
-  t.autoend()
   let agent
 
   t.before(() => {
@@ -82,6 +84,7 @@ tap.test('Collection(Update) Tests', (t) => {
         t,
         data,
         count: 1,
+        match: true,
         keyPrefix: 'inserted',
         extraValues: {
           insertedIds: {
@@ -101,6 +104,7 @@ tap.test('Collection(Update) Tests', (t) => {
         t,
         data,
         count: 2,
+        match: true,
         keyPrefix: 'inserted',
         extraValues: {
           insertedIds: {
@@ -120,6 +124,7 @@ tap.test('Collection(Update) Tests', (t) => {
       assertExpectedResult({
         t,
         data,
+        match: true,
         legacyValues: {
           n: 1
         },
@@ -244,4 +249,5 @@ tap.test('Collection(Update) Tests', (t) => {
       verify(null, [`${STATEMENT_PREFIX}/updateOne`, 'Callback: done'], ['updateOne'])
     })
   })
+  t.end()
 })

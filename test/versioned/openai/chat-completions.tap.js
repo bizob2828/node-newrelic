@@ -29,8 +29,6 @@ const { DESTINATIONS } = require('../../../lib/config/attribute-filter')
 const TRACKING_METRIC = `Supportability/Nodejs/ML/OpenAI/${pkgVersion}`
 
 tap.test('OpenAI instrumentation - chat completions', (t) => {
-  t.autoend()
-
   t.before(beforeHook.bind(null, t))
 
   t.afterEach(afterEachHook.bind(null, t))
@@ -448,4 +446,5 @@ tap.test('OpenAI instrumentation - chat completions', (t) => {
       test.end()
     })
   })
+  t.end()
 })

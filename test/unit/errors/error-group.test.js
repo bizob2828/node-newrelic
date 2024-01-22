@@ -18,7 +18,6 @@ function getErrorEvents(errorCollector) {
 }
 
 tap.test('Error Group functionality', (t) => {
-  t.autoend()
   let agent = null
 
   t.beforeEach(() => {
@@ -115,4 +114,5 @@ tap.test('Error Group functionality', (t) => {
 
     t.end()
   })
+  t.end()
 })

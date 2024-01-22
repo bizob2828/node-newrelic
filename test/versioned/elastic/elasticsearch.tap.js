@@ -51,8 +51,6 @@ function setMsearch(body, version) {
 }
 
 test('Elasticsearch instrumentation', (t) => {
-  t.autoend()
-
   let METRIC_HOST_NAME = null
   let HOST_ID = null
 
@@ -494,11 +492,10 @@ test('Elasticsearch instrumentation', (t) => {
       }
     })
   })
+  t.end()
 })
 
 test('Elasticsearch uninstrumented behavior, to check helpers', { skip: false }, (t) => {
-  t.autoend()
-
   let client
   // eslint-disable-next-line no-unused-vars
   let pkgVersion
@@ -584,6 +581,7 @@ test('Elasticsearch uninstrumented behavior, to check helpers', { skip: false },
     // t.equal(resultsA?.hits?.length, 1, 'first search should return one result')
     t.equal(resultsB?.hits?.length, 8, 'second search should return eight results')
   })
+  t.end()
 })
 
 function checkMetrics(t, metrics, expected) {

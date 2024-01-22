@@ -13,7 +13,6 @@ const semver = require('semver')
 process.env.NODE_ENV = 'test'
 
 test('transaction tests', function (t) {
-  t.autoend()
   let agent
 
   t.beforeEach(function () {
@@ -83,6 +82,7 @@ test('transaction tests', function (t) {
     app.use(middleware)
     server = createServerAndMakeRequest({ url: '/foo', expectedData: 'root', t, app, pkgVersion })
   })
+  t.end()
 })
 
 /**

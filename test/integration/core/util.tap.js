@@ -11,7 +11,6 @@ const path = require('path')
 const helper = require('../../lib/agent_helper')
 
 test('promisify', { skip: !util.promisify }, function (t) {
-  t.autoend()
   t.test('should work on setTimeout', function (t) {
     t.plan(2)
     const agent = helper.instrumentMockedAgent()
@@ -101,4 +100,5 @@ test('promisify', { skip: !util.promisify }, function (t) {
         t.error(ex)
       })
   })
+  t.end()
 })

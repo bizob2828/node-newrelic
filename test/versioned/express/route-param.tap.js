@@ -20,7 +20,6 @@ test('Express route param', function (t) {
   })
 
   server.listen(0, function () {
-    t.autoend()
     const port = server.address().port
 
     t.test('pass-through param', function (t) {
@@ -75,6 +74,7 @@ test('Express route param', function (t) {
         t.equal(body.name, 'action', 'should pass through correct parameter name')
       })
     })
+    t.end()
   })
 })
 

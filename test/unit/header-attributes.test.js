@@ -34,10 +34,7 @@ function afterEach(t) {
 }
 
 tap.test('header-attributes', (t) => {
-  t.autoend()
-
   t.test('#collectRequestHeaders', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -192,10 +189,10 @@ tap.test('header-attributes', (t) => {
         })
       }
     )
+    t.end()
   })
 
   t.test('#collectResponseHeaders', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test(
@@ -245,5 +242,7 @@ tap.test('header-attributes', (t) => {
         })
       }
     )
+    t.end()
   })
+  t.end()
 })

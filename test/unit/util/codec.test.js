@@ -11,9 +11,7 @@ const DATA = { foo: 'bar' }
 const ENCODED = 'eJyrVkrLz1eyUkpKLFKqBQAdegQ0'
 
 test('codec', function (t) {
-  t.autoend()
   t.test('.encode', function (t) {
-    t.autoend()
     t.test('should zip and base-64 encode the data', function (t) {
       codec.encode(DATA, function (err, encoded) {
         t.error(err)
@@ -34,6 +32,7 @@ test('codec', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('.decode should parse the encoded payload', function (t) {
@@ -55,4 +54,5 @@ test('codec', function (t) {
     t.same(data, DATA)
     t.end()
   })
+  t.end()
 })

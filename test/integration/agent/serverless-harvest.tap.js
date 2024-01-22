@@ -19,8 +19,6 @@ const TEST_EX_ENV = 'test-AWS_Lambda_nodejs8.10'
 const PROTOCOL_VERSION = 16
 
 tap.test('Serverless mode harvest', (t) => {
-  t.autoend()
-
   let agent = null
   let logSpy = null
 
@@ -371,6 +369,7 @@ tap.test('Serverless mode harvest', (t) => {
       agent.harvestSync()
     })
   })
+  t.end()
 })
 
 function findMetric(metrics, name) {

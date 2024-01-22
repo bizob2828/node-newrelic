@@ -14,8 +14,6 @@ const urltils = require('../../../lib/util/urltils')
 const { USER, DATABASE } = setup
 
 tap.test('mysql2 promises', { timeout: 30000 }, (t) => {
-  t.autoend()
-
   let mysql = null
   let client = null
   let agent = null
@@ -126,6 +124,7 @@ tap.test('mysql2 promises', { timeout: 30000 }, (t) => {
       })
       .then(() => checkQueries(t, agent))
   })
+  t.end()
 })
 
 function checkQueries(t, agent) {

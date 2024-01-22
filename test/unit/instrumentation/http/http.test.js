@@ -20,8 +20,6 @@ const NEWRELIC_APP_DATA_HEADER = 'x-newrelic-app-data'
 const NEWRELIC_TRANSACTION_HEADER = 'x-newrelic-transaction'
 
 test('built-in http module instrumentation', (t) => {
-  t.autoend()
-
   let http = null
   let agent = null
 
@@ -40,8 +38,6 @@ test('built-in http module instrumentation', (t) => {
     '</html>'
 
   t.test('should not cause bootstrapping to fail', (t) => {
-    t.autoend()
-
     let initialize
 
     t.beforeEach(() => {
@@ -64,11 +60,10 @@ test('built-in http module instrumentation', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('after loading', (t) => {
-    t.autoend()
-
     t.beforeEach(() => {
       agent = helper.instrumentMockedAgent()
     })
@@ -90,11 +85,10 @@ test('built-in http module instrumentation', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('with outbound request mocked', (t) => {
-    t.autoend()
-
     let options
 
     t.beforeEach(() => {
@@ -136,11 +130,10 @@ test('built-in http module instrumentation', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('when running a request', (t) => {
-    t.autoend()
-
     let transaction = null
     let transaction2 = null
     let server = null
@@ -277,6 +270,8 @@ test('built-in http module instrumentation', (t) => {
       'when allow_all_headers is true, collect all headers not filtered by `exclude` rules',
       (t) => {
         agent.config.allow_all_headers = true
+        agent.config.attributes.exclude = ['request.headers.x*']
+        agent.config.emit('attributes.exclude')
         transaction = null
         makeRequest(
           {
@@ -435,7 +430,7 @@ test('built-in http module instrumentation', (t) => {
           'span attributes'
         )
         t.equal(callStats.callCount, 2, 'records unscoped path stats after a normal request')
-        t.ok(
+        t.equal(
           dispatcherStats.callCount,
           2,
           'record unscoped HTTP dispatcher stats after a normal request'
@@ -458,6 +453,7 @@ test('built-in http module instrumentation', (t) => {
         t.end()
       }
     })
+    t.end()
   })
 
   t.test('inbound http requests when cat is enabled', (t) => {
@@ -489,7 +485,9 @@ test('built-in http module instrumentation', (t) => {
 
         res.end()
         req.socket.end()
-        server.close(t.end())
+        server.close(() => {
+          t.end()
+        })
       })
 
       const transactionHeader = ['789', false, 'trip-id-1', '1234abcd']
@@ -514,7 +512,9 @@ test('built-in http module instrumentation', (t) => {
         t.notOk(transaction.referringPathHash)
         res.end()
         req.socket.end()
-        server.close(t.end())
+        server.close(() => {
+          t.end()
+        })
       })
 
       const transactionHeader = ['789', false, 'trip-id-1', {}]
@@ -537,7 +537,9 @@ test('built-in http module instrumentation', (t) => {
         // NEED SOME DEFINITIVE TEST HERE
         res.end()
         req.socket.end()
-        server.close(t.end())
+        server.close(() => {
+          t.end()
+        })
       })
 
       const headers = {}
@@ -579,7 +581,9 @@ test('built-in http module instrumentation', (t) => {
 
         res.end()
         req.socket.end()
-        server.close(t.end())
+        server.close(() => {
+          t.end()
+        })
       })
 
       const transactionHeader = ['789', false, 'trip-id-1', '1234abcd']
@@ -598,7 +602,6 @@ test('built-in http module instrumentation', (t) => {
 
       helper.startServerWithRandomPortRetry(server)
     })
-
     t.end()
   })
 
@@ -643,7 +646,9 @@ test('built-in http module instrumentation', (t) => {
           t.equal(data[5], '789')
           t.equal(data[6], false)
           res.resume()
-          server.close(t.end())
+          server.close(() => {
+            t.end()
+          })
         })
       })
 
@@ -666,7 +671,9 @@ test('built-in http module instrumentation', (t) => {
           )
           t.equal(data[4], -1)
           res.resume()
-          server.close(t.end())
+          server.close(() => {
+            t.end()
+          })
         })
       })
 
@@ -686,7 +693,9 @@ test('built-in http module instrumentation', (t) => {
         http.get({ host: 'localhost', port: port, headers: headers }, function (res) {
           t.notOk(res.headers['x-newrelic-app-data'])
           res.resume()
-          server.close(t.end())
+          server.close(() => {
+            t.end()
+          })
         })
       })
 
@@ -710,7 +719,9 @@ test('built-in http module instrumentation', (t) => {
           )
           t.equal(data[1], 'WebTransaction/Nodejs/GET//abc')
           res.resume()
-          server.close(t.end())
+          server.close(() => {
+            t.end()
+          })
         })
       })
 
@@ -762,7 +773,9 @@ test('built-in http module instrumentation', (t) => {
         const port = server.address().port
         http.get({ host: 'localhost', port: port, headers: headers }, function (res) {
           res.resume()
-          server.close(t.end())
+          server.close(() => {
+            t.end()
+          })
         })
       })
 
@@ -793,7 +806,9 @@ test('built-in http module instrumentation', (t) => {
         const port = server.address().port
         http.get({ host: 'localhost', port: port, headers: headers }, function (res) {
           res.resume()
-          server.close(t.end())
+          server.close(() => {
+            t.end()
+          })
         })
       })
 
@@ -825,7 +840,9 @@ test('built-in http module instrumentation', (t) => {
         const port = server.address().port
         http.get({ host: 'localhost', port: port, headers: headers }, function (res) {
           res.resume()
-          server.close(t.end())
+          server.close(() => {
+            t.end()
+          })
         })
       })
 
@@ -1075,12 +1092,15 @@ test('built-in http module instrumentation', (t) => {
         t.equal(hadExpect, 1)
         agent.getTransaction().end()
         helper.unloadAgent(agent)
-        server.close(t.end())
+        server.close(() => {
+          t.end()
+        })
       }
     })
 
     t.end()
   })
+  t.end()
 })
 
 test('http.createServer should trace errors in top-level handlers', (t) => {
@@ -1106,14 +1126,15 @@ test('http.createServer should trace errors in top-level handlers', (t) => {
     // abort request to close connection and
     // allow server to close fast instead of after timeout
     request.abort()
-    server.close(t.end)
+    server.close(() => {
+      t.end()
+    })
   })
 
   let swallowedError
   server.listen(8182, function () {
     request = http.get({ host: 'localhost', port: 8182 }, function () {
       t.equal(swallowedError.message, err.message, 'error should have been swallowed')
-      t.end()
     })
 
     request.on('error', function swallowError(err) {
@@ -1139,7 +1160,7 @@ test('http.request should trace errors in listeners', (t) => {
 
   process.once('uncaughtException', function () {
     const errors = agent.errors.traceAggregator.errors
-    t.equal(errors.length, 1)
+    t.equal(errors.length, 1, 'error occurred')
 
     server.close(() => {
       t.end()

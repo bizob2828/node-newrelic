@@ -23,8 +23,6 @@ const {
 } = utils
 
 tap.test('gRPC Server: Unary Requests', (t) => {
-  t.autoend()
-
   let agent
   let client
   let server
@@ -206,4 +204,5 @@ tap.test('gRPC Server: Unary Requests', (t) => {
       t.end()
     })
   })
+  t.end()
 })

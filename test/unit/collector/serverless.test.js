@@ -21,8 +21,6 @@ const serverfulAPI = require('../../../lib/collector/api')
 const path = require('path')
 
 tap.test('ServerlessCollector API', (t) => {
-  t.autoend()
-
   let api = null
   let agent = null
 
@@ -60,8 +58,6 @@ tap.test('ServerlessCollector API', (t) => {
   })
 
   t.test('#isConnected', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -69,11 +65,10 @@ tap.test('ServerlessCollector API', (t) => {
       t.equal(api.isConnected(), true)
       t.end()
     })
+    t.end()
   })
 
   t.test('#shutdown', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -84,6 +79,7 @@ tap.test('ServerlessCollector API', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   const testMethods = [
@@ -100,8 +96,6 @@ tap.test('ServerlessCollector API', (t) => {
 
   testMethods.forEach(({ key, name }) => {
     t.test(name, (t) => {
-      t.autoend()
-
       t.beforeEach(beforeTest)
       t.afterEach(afterTest)
 
@@ -121,12 +115,11 @@ tap.test('ServerlessCollector API', (t) => {
           t.end()
         })
       })
+      t.end()
     })
   })
 
   t.test('#flushPayloadSync', (t) => {
-    t.autoend()
-
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -149,11 +142,10 @@ tap.test('ServerlessCollector API', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('#flushPayload', (t) => {
-    t.autoend()
-
     let outputSpy = null
 
     t.beforeEach(() => {
@@ -208,12 +200,12 @@ tap.test('ServerlessCollector API', (t) => {
         })
       })
     })
+    t.end()
   })
+  t.end()
 })
 
 tap.test('ServerlessCollector with output to custom pipe', (t) => {
-  t.autoend()
-
   const customPath = path.resolve('/tmp', 'custom-output')
 
   let api = null
@@ -286,4 +278,5 @@ tap.test('ServerlessCollector with output to custom pipe', (t) => {
       })
     })
   })
+  t.end()
 })

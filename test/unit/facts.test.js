@@ -78,8 +78,6 @@ const DISABLE_ALL_DETECTIONS = {
 const APP_NAMES = ['a', 'c', 'b']
 
 tap.test('fun facts about apps that New Relic is interested in include', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -266,11 +264,10 @@ tap.test('fun facts about apps that New Relic is interested in include', (t) => 
       })
     }
   )
+  t.end()
 })
 
 tap.test('utilization', (t) => {
-  t.autoend()
-
   let agent = null
   const awsInfo = require('../../lib/utilization/aws-info')
   const azureInfo = require('../../lib/utilization/azure-info')
@@ -497,10 +494,10 @@ tap.test('utilization', (t) => {
       )
     }
   }
+  t.end()
 })
 
 tap.test('boot_id', (t) => {
-  t.autoend()
   let agent = null
   const common = require('../../lib/utilization/common')
 
@@ -621,11 +618,10 @@ tap.test('boot_id', (t) => {
       t.equal(metric.callCount, expectedMetrics[expectedMetric].call_count)
     })
   }
+  t.end()
 })
 
 tap.test('display_host', { timeout: 20000 }, (t) => {
-  t.autoend()
-
   const originalHostname = os.hostname
 
   let agent = null
@@ -790,6 +786,7 @@ tap.test('display_host', { timeout: 20000 }, (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 function createMock(output) {

@@ -12,8 +12,6 @@ const sinon = require('sinon')
 const shimmer = require('../../../lib/shimmer')
 
 tap.test('Agent API - instrumentConglomerate', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -59,4 +57,5 @@ tap.test('Agent API - instrumentConglomerate', (t) => {
 
     t.end()
   })
+  t.end()
 })

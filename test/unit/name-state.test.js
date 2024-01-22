@@ -8,7 +8,6 @@ const tap = require('tap')
 const NameState = require('../../lib/transaction/name-state.js')
 
 tap.test('NameState', function (t) {
-  t.autoend()
   t.test('should handle basic naming', function (t) {
     const state = new NameState('Nodejs', 'GET', '/', 'path1')
     state.appendPath('path2')
@@ -97,4 +96,5 @@ tap.test('NameState', function (t) {
     t.equal(state.isEmpty(), false)
     t.end()
   })
+  t.end()
 })

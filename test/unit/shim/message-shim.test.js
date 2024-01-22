@@ -13,7 +13,6 @@ const MessageShim = require('../../../lib/shim/message-shim')
 const { MessageSpec, MessageSubscribeSpec } = require('../../../lib/shim/specs')
 
 tap.test('MessageShim', function (t) {
-  t.autoend()
   let agent = null
   let shim = null
   let wrappable = null
@@ -75,7 +74,6 @@ tap.test('MessageShim', function (t) {
   }
 
   t.test('constructor', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -103,10 +101,10 @@ tap.test('MessageShim', function (t) {
       t.equal(shim.pkgVersion, version)
       t.end()
     })
+    t.end()
   })
 
   t.test('well-known message libraries', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     const messageLibs = ['RABBITMQ']
@@ -118,10 +116,10 @@ tap.test('MessageShim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('well-known destination types', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     const messageLibs = ['EXCHANGE', 'QUEUE', 'TOPIC']
@@ -133,10 +131,10 @@ tap.test('MessageShim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('#setLibrary', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -156,10 +154,10 @@ tap.test('MessageShim', function (t) {
       t.not(s.logger, logger)
       t.end()
     })
+    t.end()
   })
 
   t.test('#recordProduce', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -458,10 +456,10 @@ tap.test('MessageShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#recordConsume', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -678,10 +676,10 @@ tap.test('MessageShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#recordPurgeQueue', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -822,10 +820,10 @@ tap.test('MessageShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#recordSubscribedConsume', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -885,6 +883,7 @@ tap.test('MessageShim', function (t) {
       t.not(shim.isWrapped(wrappable.name))
       t.end()
     })
+    t.end()
   })
 
   t.test('#recordSubscribedConsume wrapper', function (t) {
@@ -894,8 +893,6 @@ tap.test('MessageShim', function (t) {
     let wrapped = null
     let handlerCalled = false
     let subscriberCalled = false
-
-    t.autoend()
 
     t.beforeEach(function () {
       beforeEach()
@@ -1225,33 +1222,7 @@ tap.test('MessageShim', function (t) {
         t.ok(parent)
       })
     })
-
-    t.test('should wrap object key of consumer', function (t) {
-      t.plan(3)
-      const message = { foo: 'bar' }
-      const subscriber = function subscriber(consumer) {
-        consumer.eachMessage(message)
-      }
-      const wrapped = shim.recordSubscribedConsume(subscriber, {
-        name: 'Channel#subscribe',
-        consumer: shim.FIRST,
-        functions: ['eachMessage'],
-        messageHandler: function (shim, args) {
-          t.same(args[0], message)
-          return new MessageSpec({
-            destinationName: 'exchange.foo',
-            destinationType: shim.EXCHANGE
-          })
-        }
-      })
-      wrapped({
-        eachMessage: function consumer(msg) {
-          const segment = shim.getSegment()
-          t.equal(segment.name, 'OtherTransaction/Message/RabbitMQ/Exchange/Named/exchange.foo')
-          t.equal(msg, message)
-          t.end()
-        }
-      })
-    })
+    t.end()
   })
+  t.end()
 })

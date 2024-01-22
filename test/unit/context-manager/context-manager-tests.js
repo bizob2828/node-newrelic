@@ -34,8 +34,6 @@ function runLegacyTests(t, createContextManager) {
   })
 
   t.test('runInContext()', (t) => {
-    t.autoend()
-
     t.test('should execute callback synchronously', (t) => {
       const contextManager = createContextManager()
 
@@ -167,6 +165,7 @@ function runLegacyTests(t, createContextManager) {
         )
       }
     })
+    t.end()
   })
 }
 

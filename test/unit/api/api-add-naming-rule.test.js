@@ -10,8 +10,6 @@ const API = require('../../../api')
 const helper = require('../../lib/agent_helper')
 
 tap.test('Agent API - addNamingRule', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -126,6 +124,7 @@ tap.test('Agent API - addNamingRule', (t) => {
       transaction.end()
     })
   })
+  t.end()
 })
 
 function addNamingRuleGoldenPath(agent, api, cb) {

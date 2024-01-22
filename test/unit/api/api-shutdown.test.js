@@ -11,8 +11,6 @@ const helper = require('../../lib/agent_helper')
 const sinon = require('sinon')
 
 tap.test('Agent API - shutdown', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -95,8 +93,6 @@ tap.test('Agent API - shutdown', (t) => {
   })
 
   t.test('when `options.collectPendingData` is `true`', (t) => {
-    t.autoend()
-
     t.beforeEach(setupAgentApi)
     t.afterEach(cleanupAgentApi)
 
@@ -152,11 +148,10 @@ tap.test('Agent API - shutdown', (t) => {
 
       t.end()
     })
+    t.end()
   })
 
   t.test('when `options.waitForIdle` is `true`', (t) => {
-    t.autoend()
-
     t.beforeEach(setupAgentApi)
     t.afterEach(cleanupAgentApi)
 
@@ -188,6 +183,7 @@ tap.test('Agent API - shutdown', (t) => {
         })
       })
     })
+    t.end()
   })
 
   t.test('calls forceHarvestAll when a timeout is given and not reached', (t) => {
@@ -334,4 +330,5 @@ tap.test('Agent API - shutdown', (t) => {
     // Waits for agent to start before harvesting and shutting down
     agent.setState('started')
   })
+  t.end()
 })

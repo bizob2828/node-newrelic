@@ -37,8 +37,6 @@ tap.test('should throw if called without a callback', (t) => {
 })
 
 tap.test('when initialized properly and response status is 200', (t) => {
-  t.autoend()
-
   const response = { statusCode: 200 }
   const methodName = 'TEST'
 
@@ -145,11 +143,10 @@ tap.test('when initialized properly and response status is 200', (t) => {
     const parser = parse(methodName, response, callback)
     parser(new Error('oh no!'), null)
   })
+  t.end()
 })
 
 tap.test('when initialized properly and response status is 503', (t) => {
-  t.autoend()
-
   const response = { statusCode: 503 }
   const methodName = 'TEST'
 
@@ -178,4 +175,5 @@ tap.test('when initialized properly and response status is 503', (t) => {
     const parser = parse(methodName, response, callback)
     parser(null, '{}')
   })
+  t.end()
 })

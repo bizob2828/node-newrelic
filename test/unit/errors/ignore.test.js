@@ -11,8 +11,6 @@ const helper = require('../../lib/agent_helper')
 const NAMES = require('../../../lib/metrics/names.js')
 
 tap.test('Ignored Errors', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -262,4 +260,5 @@ tap.test('Ignored Errors', (t) => {
       t.end()
     })
   })
+  t.end()
 })

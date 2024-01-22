@@ -9,7 +9,6 @@ const helper = require('../../lib/agent_helper.js')
 const proxyquire = require('proxyquire')
 
 test('getVendors', function (t) {
-  t.autoend()
   let agent
 
   t.beforeEach(function () {
@@ -96,4 +95,5 @@ test('getVendors', function (t) {
       t.end()
     })
   })
+  t.end()
 })

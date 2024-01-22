@@ -12,7 +12,6 @@ const { createFakeConnection, createMetricAggregator } = require('./span-streame
 const BatchSpanStreamer = require('../../../lib/spans/batch-span-streamer')
 
 tap.test('BatchSpanStreamer', (t) => {
-  t.autoend()
   let fakeConnection
   let spanStreamer
 
@@ -230,4 +229,5 @@ tap.test('BatchSpanStreamer', (t) => {
     )
     t.end()
   })
+  t.end()
 })

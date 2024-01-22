@@ -22,8 +22,6 @@ import { readFileSync } from 'node:fs'
 const { version: pkgVersion } = JSON.parse(readFileSync('./node_modules/express/package.json'))
 
 test('transaction naming tests', (t) => {
-  t.autoend()
-
   let agent
   t.before(() => {
     agent = helper.instrumentMockedAgent()
@@ -617,4 +615,5 @@ test('transaction naming tests', (t) => {
       'transaction has expected name'
     )
   }
+  t.end()
 })

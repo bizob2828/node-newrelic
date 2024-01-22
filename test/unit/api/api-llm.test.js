@@ -11,7 +11,6 @@ const proxyquire = require('proxyquire')
 const helper = require('../../lib/agent_helper')
 
 tap.test('Agent API LLM methods', (t) => {
-  t.autoend()
   let loggerMock
   let API
 
@@ -165,4 +164,5 @@ tap.test('Agent API LLM methods', (t) => {
       )
     }
   )
+  t.end()
 })

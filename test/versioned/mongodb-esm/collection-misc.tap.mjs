@@ -15,7 +15,6 @@ function verifyAggregateData(t, data) {
 }
 
 tap.test('Collection(Index) Tests', (t) => {
-  t.autoend()
   let agent
 
   t.before(() => {
@@ -312,4 +311,5 @@ tap.test('Collection(Index) Tests', (t) => {
       verify(null, [`${STATEMENT_PREFIX}/stats`, 'Callback: done'], ['stats'])
     })
   })
+  t.end()
 })

@@ -17,8 +17,6 @@ let server
 let port
 
 tap.test('Hapi segments', function (t) {
-  t.autoend()
-
   t.beforeEach(function () {
     agent = helper.instrumentMockedAgent()
 
@@ -246,6 +244,7 @@ tap.test('Hapi segments', function (t) {
       }
     )
   })
+  t.end()
 })
 
 function runTest(t, callback) {

@@ -12,8 +12,6 @@ const common = require('./common')
 const originalSetImmediate = setImmediate
 
 tap.test('fastify with new state tracking', (t) => {
-  t.autoend()
-
   let agent = null
   let fastify = null
 
@@ -79,4 +77,5 @@ tap.test('fastify with new state tracking', (t) => {
 
     t.equal(transactions.length, 2)
   })
+  t.end()
 })

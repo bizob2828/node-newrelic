@@ -13,7 +13,6 @@ const moduleName = 'TestMod'
 const modulePath = './node_modules/TestMod'
 
 test('instrument', (t) => {
-  t.autoend()
   let agent
   let api
 
@@ -177,4 +176,5 @@ test('instrument', (t) => {
       t.end()
     }
   )
+  t.end()
 })

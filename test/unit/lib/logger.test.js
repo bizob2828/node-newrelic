@@ -11,8 +11,6 @@ const proxyquire = require('proxyquire').noPreserveCache()
 const EventEmitter = require('events').EventEmitter
 
 tap.test('Bootstrapped Logger', (t) => {
-  t.autoend()
-
   let fakeLoggerConfigure
   let fakeStreamPipe
   let fakeLogger
@@ -193,4 +191,5 @@ tap.test('Bootstrapped Logger', (t) => {
 
     t.end()
   })
+  t.end()
 })

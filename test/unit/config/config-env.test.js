@@ -13,8 +13,6 @@ const VALID_HOST = 'infinite-tracing.test'
 const VALID_QUEUE_SIZE = 20000 // should not be 10k which is the default
 
 tap.test('when overriding configuration values via environment variables', (t) => {
-  t.autoend()
-
   t.test('should pick up on infinite tracing env vars', (t) => {
     const env = {
       NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST: VALID_HOST,
@@ -774,4 +772,5 @@ tap.test('when overriding configuration values via environment variables', (t) =
       t.end()
     })
   })
+  t.end()
 })

@@ -11,9 +11,9 @@ const { isSimpleObject } = require('../../lib/util/objects')
 
 exports.findSegment = findSegment
 exports.getMetricHostName = getMetricHostName
-tap.Test.prototype.addAssert('assertMetrics', 4, assertMetrics)
-tap.Test.prototype.addAssert('assertSegments', 3, assertSegments)
-tap.Test.prototype.addAssert('assertMetricValues', 3, assertMetricValues)
+tap.Test.prototype.assertMetrics = assertMetrics
+tap.Test.prototype.assertSegments = assertSegments
+tap.Test.prototype.assertMetricValues = assertMetricValues
 
 /**
  * @param {Metrics} metrics         metrics under test
@@ -37,9 +37,9 @@ function assertMetrics(metrics, expected, exclusive, assertValues) {
   // Assertions about arguments because maybe something returned undefined
   // unexpectedly and is passed in, or a return type changed. This will
   // hopefully help catch that and make it obvious.
-  this.ok(isSimpleObject(metrics), 'first argument required to be an Metrics object')
-  this.ok(Array.isArray(expected), 'second argument required to be an array of metrics')
-  this.ok(typeof exclusive === 'boolean', 'third argument required to be a boolean if provided')
+  this.t.ok(isSimpleObject(metrics), 'first argument required to be an Metrics object')
+  this.t.ok(Array.isArray(expected), 'second argument required to be an array of metrics')
+  this.t.ok(typeof exclusive === 'boolean', 'third argument required to be a boolean if provided')
 
   if (assertValues === undefined) {
     assertValues = true
@@ -48,15 +48,15 @@ function assertMetrics(metrics, expected, exclusive, assertValues) {
   for (let i = 0, len = expected.length; i < len; i++) {
     const expectedMetric = expected[i]
     const metric = metrics.getMetric(expectedMetric[0].name, expectedMetric[0].scope)
-    this.ok(metric)
+    this.t.ok(metric)
     if (assertValues) {
-      this.same(metric.toJSON(), expectedMetric[1])
+      this.t.same(metric.toJSON(), expectedMetric[1])
     }
   }
 
   if (exclusive) {
     const metricsList = metrics.toJSON()
-    this.equal(metricsList.length, expected.length)
+    this.t.equal(metricsList.length, expected.length)
   }
 }
 
@@ -94,14 +94,14 @@ function assertMetricValues(transaction, expected, exact) {
     }
 
     const metric = metrics.getMetric(name, scope)
-    this.ok(metric, 'should have expected metric name')
+    this.t.ok(metric, 'should have expected metric name')
 
-    this.strictSame(metric.toJSON(), expectedMetric[1], 'metric values should match')
+    this.t.strictSame(metric.toJSON(), expectedMetric[1], 'metric values should match')
   }
 
   if (exact) {
     const metricsJSON = metrics.toJSON()
-    this.equal(metricsJSON.length, expected.length, 'metrics length should match')
+    this.t.equal(metricsJSON.length, expected.length, 'metrics length should match')
   }
 }
 
@@ -147,7 +147,7 @@ function assertSegments(parent, expected, options) {
 
       if (typeof sequenceItem === 'string') {
         child = children[childCount++]
-        this.equal(
+        this.t.equal(
           child ? child.name : undefined,
           sequenceItem,
           'segment "' +
@@ -162,7 +162,7 @@ function assertSegments(parent, expected, options) {
         // child has no children
         if (!Array.isArray(expected[i + 1])) {
           // var children = child.children
-          this.ok(
+          this.t.ok(
             getChildren(child).length === 0,
             'segment "' + child.name + '" should not have any children'
           )
@@ -173,7 +173,7 @@ function assertSegments(parent, expected, options) {
     }
 
     // check if correct number of children was found
-    this.equal(children.length, childCount)
+    this.t.equal(children.length, childCount)
   } else {
     for (let i = 0; i < expected.length; i++) {
       const sequenceItem = expected[i]
@@ -185,7 +185,7 @@ function assertSegments(parent, expected, options) {
             child = parent.children[j]
           }
         }
-        this.ok(child, 'segment "' + parent.name + '" should have child "' + sequenceItem + '"')
+        this.t.ok(child, 'segment "' + parent.name + '" should have child "' + sequenceItem + '"')
         if (typeof expected[i + 1] === 'object') {
           this.assertSegments(child, expected[i + 1], exact)
         }

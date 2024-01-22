@@ -26,8 +26,6 @@ const { version: pkgVersion } = JSON.parse(
 const { DESTINATIONS } = require('../../../lib/config/attribute-filter')
 
 tap.test('OpenAI instrumentation - embedding', (t) => {
-  t.autoend()
-
   t.before(beforeHook.bind(null, t))
 
   t.afterEach(afterEachHook.bind(null, t))
@@ -168,4 +166,5 @@ tap.test('OpenAI instrumentation - embedding', (t) => {
       test.end()
     })
   })
+  t.end()
 })

@@ -11,8 +11,6 @@ const API = require('../../../stub_api')
 const EXPECTED_API_COUNT = 36
 
 tap.test('Agent API - Stubbed Agent API', (t) => {
-  t.autoend()
-
   let api = null
 
   t.beforeEach(() => {
@@ -360,4 +358,5 @@ tap.test('Agent API - Stubbed Agent API', (t) => {
     t.type(api.ignoreApdex, 'function')
     t.end()
   })
+  t.end()
 })

@@ -11,11 +11,7 @@ const sinon = require('sinon')
 const { getReleaseDate } = require('../prepare-release')
 
 tap.test('Prepare Release script', (testHarness) => {
-  testHarness.autoend()
-
   testHarness.test('generateConventionalReleaseNotes', (t) => {
-    t.autoend()
-
     let mockConventionalCommands
     let MockConventionalChangelog
     let mockGithubCommands
@@ -135,11 +131,10 @@ tap.test('Prepare Release script', (testHarness) => {
         t.equal(mockConventionalCommands.writeJsonChangelog.callCount, 0)
       }
     )
+    t.end()
   })
 
   testHarness.test('isValid', (t) => {
-    t.autoend()
-
     let mockGitCommands
     let script
 
@@ -187,7 +182,9 @@ tap.test('Prepare Release script', (testHarness) => {
       t.equal(result, false)
       t.end()
     })
+    t.end()
   })
+  testHarness.end()
 })
 
 tap.test('getReleaseDate', async (t) => {

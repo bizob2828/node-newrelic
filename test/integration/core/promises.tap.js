@@ -10,19 +10,17 @@ const { test } = require('tap')
 const runTests = require('./promises')
 
 test('Promises (await_support: false)', (t) => {
-  t.autoend()
-
   runTests(t, {
     await_support: false,
     legacy_context_manager: true
   })
+  t.end()
 })
 
 test('Promises (await_support: true)', (t) => {
-  t.autoend()
-
   runTests(t, {
     await_support: true,
     legacy_context_manager: true
   })
+  t.end()
 })

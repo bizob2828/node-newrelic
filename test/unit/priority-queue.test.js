@@ -9,12 +9,9 @@ const tap = require('tap')
 const PriorityQueue = require('../../lib/priority-queue')
 
 tap.test('PriorityQueue', function (t) {
-  t.autoend()
   let queue = null
 
   t.test('#add', function (t) {
-    t.autoend()
-
     t.test('structures the data as a min heap', function (t) {
       queue = new PriorityQueue()
 
@@ -49,11 +46,10 @@ tap.test('PriorityQueue', function (t) {
       t.equal(queue.length, 0)
       t.end()
     })
+    t.end()
   })
 
   t.test('#merge', function (t) {
-    t.autoend()
-
     t.test('merges two sources and maintains the limit', function (t) {
       const queueLimit = 4
       const queue1 = new PriorityQueue(queueLimit)
@@ -68,11 +64,10 @@ tap.test('PriorityQueue', function (t) {
       t.equal(queue1.length, queueLimit)
       t.end()
     })
+    t.end()
   })
 
   t.test('#setLimit', function (t) {
-    t.autoend()
-
     t.test('resets the limit property and slices the data if necessary', function (t) {
       queue = new PriorityQueue(5)
 
@@ -91,5 +86,7 @@ tap.test('PriorityQueue', function (t) {
       t.equal(queue.length, 5)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

@@ -11,8 +11,6 @@ const test = tap.test
 const helper = require('../../../lib/agent_helper')
 
 test('Domains', (t) => {
-  t.autoend()
-
   let agent = null
   let d = null
   const tasks = []
@@ -75,4 +73,5 @@ test('Domains', (t) => {
       })
     })
   })
+  t.end()
 })

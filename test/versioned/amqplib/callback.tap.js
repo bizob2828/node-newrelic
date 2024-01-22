@@ -24,8 +24,6 @@ consumer
  */
 
 tap.test('amqplib callback instrumentation', function (t) {
-  t.autoend()
-
   let amqplib = null
   let conn = null
   let channel = null
@@ -375,7 +373,7 @@ tap.test('amqplib callback instrumentation', function (t) {
               function (msg) {
                 const consumeTxnHandle = api.getTransaction()
                 const consumeTxn = consumeTxnHandle._transaction
-                t.notEqual(consumeTxn, tx, 'should not be in original transaction')
+                t.not(consumeTxn, tx, 'should not be in original transaction')
                 t.ok(msg, 'should receive a message')
 
                 const body = msg.content.toString('utf8')
@@ -502,4 +500,5 @@ tap.test('amqplib callback instrumentation', function (t) {
       })
     })
   })
+  t.end()
 })

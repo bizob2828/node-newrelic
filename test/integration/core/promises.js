@@ -14,8 +14,8 @@ const testTransactionState = require(genericTestDir + 'transaction-state')
 module.exports = function runTests(t, flags) {
   t.test('transaction state', function (t) {
     const agent = helper.loadTestAgent(t, { feature_flag: flags })
-    t.autoend()
     testTransactionState(t, agent, Promise)
+    t.end()
   })
 
   // XXX Promise segments in native instrumentation are currently less than ideal
@@ -23,8 +23,8 @@ module.exports = function runTests(t, flags) {
   // XXX are created, but the heirarchy is not correct.
   t.test('segments', function (t) {
     const agent = helper.loadTestAgent(t, { feature_flag: flags })
-    t.autoend()
     testPromiseSegments(t, agent, Promise)
+    t.end()
   })
 
   t.test('then', function testThen(t) {

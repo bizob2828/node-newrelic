@@ -44,8 +44,6 @@ function afterEach(t) {
 }
 
 tap.test('TraceAggregator', function (t) {
-  t.autoend()
-
   t.beforeEach(beforeEach)
   t.afterEach(afterEach)
 
@@ -330,10 +328,10 @@ tap.test('TraceAggregator', function (t) {
     t.equal(aggregator.syntheticsTraces.length, 0)
     t.end()
   })
+  t.end()
 })
 
 tap.test('TraceAggregator with top n support', function (t) {
-  t.autoend()
   t.beforeEach(function () {
     beforeEach(t)
     t.context.config = configurator.initialize({
@@ -435,4 +433,5 @@ tap.test('TraceAggregator with top n support', function (t) {
     // Step through recursively
     txnCreator(0, maxTraces, testCallback)
   })
+  t.end()
 })

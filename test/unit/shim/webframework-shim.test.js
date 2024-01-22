@@ -16,7 +16,6 @@ const { MiddlewareSpec, RenderSpec } = require('../../../lib/shim/specs')
 test.runOnly = true
 
 test('WebFrameworkShim', function (t) {
-  t.autoend()
   let agent = null
   let shim = null
   let wrappable = null
@@ -60,7 +59,6 @@ test('WebFrameworkShim', function (t) {
   }
 
   t.test('constructor', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should inherit from Shim', function (t) {
@@ -92,10 +90,10 @@ test('WebFrameworkShim', function (t) {
       t.equal(shim.pkgVersion, version)
       t.end()
     })
+    t.end()
   })
 
   t.test('enumerations', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -116,10 +114,10 @@ test('WebFrameworkShim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('#logger', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -140,10 +138,10 @@ test('WebFrameworkShim', function (t) {
       t.ok(shim.logger.error instanceof Function)
       t.end()
     })
+    t.end()
   })
 
   t.test('#setRouteParser', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should set the function used to parse routes', function (t) {
@@ -165,11 +163,10 @@ test('WebFrameworkShim', function (t) {
       t.ok(called)
       t.end()
     })
+    t.end()
   })
 
   t.test('#setFramework', function (t) {
-    t.autoend()
-
     t.beforeEach(function () {
       beforeEach()
       // Use a shim without a datastore set for these tests.
@@ -210,10 +207,10 @@ test('WebFrameworkShim', function (t) {
       t.same(env.get('Framework'), ['Restify'])
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapMiddlewareMounter', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -415,10 +412,10 @@ test('WebFrameworkShim', function (t) {
       t.equal(funcs.length, callCount)
       t.end()
     })
+    t.end()
   })
 
   t.test('#recordMiddleware', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -626,7 +623,7 @@ test('WebFrameworkShim', function (t) {
         const filePathSplit = attrs['code.filepath'].split('/')
         t.equal(filePathSplit[filePathSplit.length - 1], 'webframework-shim.test.js')
         t.equal(attrs['code.function'], 'getActiveSegment')
-        t.equal(attrs['code.lineno'], 40)
+        t.equal(attrs['code.lineno'], 39)
         t.equal(attrs['code.column'], 50)
         t.end()
       })
@@ -876,10 +873,10 @@ test('WebFrameworkShim', function (t) {
         }
       })
     })
+    t.end()
   })
 
   t.test('#recordMiddleware when middleware returns a promise', function (t) {
-    t.autoend()
     let unwrappedTimeout = null
     let middleware = null
     let wrapped = null
@@ -1018,10 +1015,10 @@ test('WebFrameworkShim', function (t) {
         })
       })
     })
+    t.end()
   })
 
   t.test('#recordMiddleware when middleware returns promise and spec.appendPath is false', (t) => {
-    t.autoend()
     let unwrappedTimeout = null
     let middleware = null
     let wrapped = null
@@ -1091,10 +1088,10 @@ test('WebFrameworkShim', function (t) {
         })
       })
     })
+    t.end()
   })
 
   t.test('#recordParamware', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1277,10 +1274,10 @@ test('WebFrameworkShim', function (t) {
         })
       })
     })
+    t.end()
   })
 
   t.test('#recordRender', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1342,10 +1339,10 @@ test('WebFrameworkShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#savePossibleTransactionName', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1367,10 +1364,10 @@ test('WebFrameworkShim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('#noticeError', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1405,10 +1402,10 @@ test('WebFrameworkShim', function (t) {
       t.ok(txInfo.errorHandled)
       t.end()
     })
+    t.end()
   })
 
   t.test('#errorHandled', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1431,10 +1428,10 @@ test('WebFrameworkShim', function (t) {
       t.notOk(txInfo.errorHandled)
       t.end()
     })
+    t.end()
   })
 
   t.test('#setErrorPredicate', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1450,5 +1447,7 @@ test('WebFrameworkShim', function (t) {
       t.ok(called)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

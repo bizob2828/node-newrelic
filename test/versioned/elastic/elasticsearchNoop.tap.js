@@ -17,8 +17,6 @@ function randomString() {
 }
 
 test('Elasticsearch instrumentation', (t) => {
-  t.autoend()
-
   let agent
   let client
 
@@ -58,4 +56,5 @@ test('Elasticsearch instrumentation', (t) => {
       await client.indices.delete({ index: DB_INDEX })
     })
   })
+  t.end()
 })

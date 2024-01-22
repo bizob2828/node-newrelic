@@ -13,7 +13,6 @@ const PROXY_URL_WITH_PORT = `https://${PROXY_HOST}:${PROXY_PORT}`
 const PROXY_URL_WITHOUT_PORT = `https://${PROXY_HOST}`
 
 tap.test('keepAlive agent', (t) => {
-  t.autoend()
   let agent
   let moduleName
   let keepAliveAgent
@@ -50,9 +49,9 @@ tap.test('keepAlive agent', (t) => {
     t.same(agent, agent2)
     t.end()
   })
+  t.end()
 })
 tap.test('proxy agent', (t) => {
-  t.autoend()
   let agent
   let moduleName
   let proxyAgent
@@ -176,4 +175,5 @@ tap.test('proxy agent', (t) => {
     t.not(agent.proxy.password, 'should not have basic auth password')
     t.end()
   })
+  t.end()
 })

@@ -11,15 +11,11 @@ const helper = require('../../lib/agent_helper')
 const tap = require('tap')
 const testTransactionState = require(testsDir + '/transaction-state')
 
-tap.test('bluebird', function (t) {
-  t.autoend()
-
-  t.test('transaction state', function (t) {
-    const agent = setupAgent(t)
-    const Promise = require('bluebird')
-    testTransactionState(t, agent, Promise)
-    t.autoend()
-  })
+tap.test('bluebird transaction state', function (t) {
+  const agent = setupAgent(t)
+  const Promise = require('bluebird')
+  testTransactionState(t, agent, Promise)
+  t.end()
 })
 
 function setupAgent(t, enableSegments) {

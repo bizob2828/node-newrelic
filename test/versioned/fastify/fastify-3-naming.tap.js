@@ -34,8 +34,6 @@ function getExpectedSegments(uri) {
 }
 
 tap.test('Test Transaction Naming - Standard Export', (test) => {
-  test.autoend()
-
   test.beforeEach(async (t) => {
     const agent = helper.instrumentMockedAgent()
     const fastify = require('fastify')()
@@ -55,11 +53,10 @@ tap.test('Test Transaction Naming - Standard Export', (test) => {
   })
 
   createTests(test, getExpectedSegments)
+  test.end()
 })
 
 tap.test('Test Transaction Naming - Fastify Property', (test) => {
-  test.autoend()
-
   test.beforeEach(async (t) => {
     const agent = helper.instrumentMockedAgent({
       feature_flag: {
@@ -83,11 +80,10 @@ tap.test('Test Transaction Naming - Fastify Property', (test) => {
   })
 
   createTests(test, getExpectedSegments)
+  test.end()
 })
 
 tap.test('Test Transaction Naming - Default Property', (test) => {
-  test.autoend()
-
   test.beforeEach(async (t) => {
     const agent = helper.instrumentMockedAgent({
       feature_flag: {
@@ -111,4 +107,5 @@ tap.test('Test Transaction Naming - Default Property', (test) => {
   })
 
   createTests(test, getExpectedSegments)
+  test.end()
 })

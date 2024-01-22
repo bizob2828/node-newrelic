@@ -30,16 +30,12 @@ function flush(memcached) {
 }
 
 test('memcached instrumentation', { timeout: 5000 }, function (t) {
-  t.autoend()
-
   let agent
   let Memcached
   let memcached
   let HOST_ID
 
   t.test('generates correct metrics and trace segments', function (t) {
-    t.autoend()
-
     t.beforeEach(async () => {
       agent = helper.instrumentMockedAgent()
 
@@ -415,11 +411,10 @@ test('memcached instrumentation', { timeout: 5000 }, function (t) {
         })
       })
     })
+    t.end()
   })
 
   t.test('captures attributes', function (t) {
-    t.autoend()
-
     t.beforeEach(async () => {
       agent = helper.instrumentMockedAgent()
 
@@ -495,11 +490,10 @@ test('memcached instrumentation', { timeout: 5000 }, function (t) {
         })
       })
     })
+    t.end()
   })
 
   t.test('captures datastore instance attributes', function (t) {
-    t.autoend()
-
     t.beforeEach(async () => {
       agent = helper.instrumentMockedAgent()
 
@@ -567,11 +561,10 @@ test('memcached instrumentation', { timeout: 5000 }, function (t) {
         })
       })
     })
+    t.end()
   })
 
   t.test('does not capture datastore instance attributes when disabled', function (t) {
-    t.autoend()
-
     t.beforeEach(async () => {
       agent = helper.instrumentMockedAgent()
 
@@ -638,10 +631,10 @@ test('memcached instrumentation', { timeout: 5000 }, function (t) {
         })
       })
     })
+    t.end()
   })
 
   t.test('captures datastore instance attributes with multiple hosts', function (t) {
-    t.autoend()
     let origCommand = null
     const realServer = params.memcached_host + ':' + params.memcached_port
 
@@ -730,7 +723,9 @@ test('memcached instrumentation', { timeout: 5000 }, function (t) {
         })
       })
     })
+    t.end()
   })
+  t.end()
 })
 
 function verifySegments(t, rootSegment, expected) {

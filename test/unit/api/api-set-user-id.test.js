@@ -20,7 +20,6 @@ const { createError, Exception } = require('../../../lib/errors')
 const { DESTINATIONS } = require('../../../lib/config/attribute-filter')
 
 tap.test('Agent API = set user id', (t) => {
-  t.autoend()
   let agent = null
   let api
 
@@ -88,4 +87,5 @@ tap.test('Agent API = set user id', (t) => {
     t.equal(loggerMock.warn.args[0][0], WARN_MSG)
     t.end()
   })
+  t.end()
 })

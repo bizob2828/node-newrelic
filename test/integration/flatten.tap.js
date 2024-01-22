@@ -9,8 +9,6 @@ const tap = require('tap')
 const flatten = require('../../lib/util/flatten')
 
 tap.test('util.flatten', function (t) {
-  t.autoend()
-
   t.test('flattens things', function (t) {
     t.same(flatten({}, '', { a: 5, b: true }), { a: 5, b: true }, '1 level')
     t.same(
@@ -35,11 +33,10 @@ tap.test('util.flatten', function (t) {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('util.flatten.keys', function (t) {
-  t.autoend()
-
   t.test('gets flattened keys', function (t) {
     t.same(flatten.keys({ a: 5, b: true }), ['a', 'b'], '1 level')
     t.same(flatten.keys({ a: 5, b: { c: true, d: 7 } }), ['a', 'b.c', 'b.d'], '2 levels')
@@ -59,4 +56,5 @@ tap.test('util.flatten.keys', function (t) {
     t.same(flatten.keys(obj), [])
     t.end()
   })
+  t.end()
 })

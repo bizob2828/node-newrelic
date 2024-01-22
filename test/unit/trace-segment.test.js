@@ -14,7 +14,6 @@ const TraceSegment = require('../../lib/transaction/trace/segment')
 const Transaction = require('../../lib/transaction')
 
 tap.test('TraceSegment', (t) => {
-  t.autoend()
   let agent = null
 
   t.beforeEach(() => {
@@ -63,7 +62,9 @@ tap.test('TraceSegment', (t) => {
     t.doesNotThrow(function noCallback() {
       new TraceSegment(trans, 'UnitTest') // eslint-disable-line no-new
     })
-    const working = new TraceSegment(trans, 'UnitTest', t.end)
+    const working = new TraceSegment(trans, 'UnitTest', () => {
+      t.end()
+    })
     working.end()
     trans.end()
   })
@@ -117,8 +118,6 @@ tap.test('TraceSegment', (t) => {
   })
 
   t.test('#getSpanId', (t) => {
-    t.autoend()
-
     t.test('should return the segment id when dt and spans are enabled', (t) => {
       const trans = new Transaction(agent)
       const segment = new TraceSegment(trans, 'Test')
@@ -145,6 +144,7 @@ tap.test('TraceSegment', (t) => {
       t.ok(segment.getSpanId() === null)
       t.end()
     })
+    t.end()
   })
 
   t.test('updates root segment timer when end() is called', (t) => {
@@ -203,7 +203,6 @@ tap.test('TraceSegment', (t) => {
   })
 
   t.test('with children created from URLs', (t) => {
-    t.autoend()
     let webChild
 
     t.beforeEach(() => {
@@ -270,10 +269,10 @@ tap.test('TraceSegment', (t) => {
       ])
       t.end()
     })
+    t.end()
   })
 
   t.test('with parameters parsed out by framework', (t) => {
-    t.autoend()
     let webChild
     let trace
 
@@ -343,10 +342,10 @@ tap.test('TraceSegment', (t) => {
       t.same(webChild.toJSON(), expected)
       t.end()
     })
+    t.end()
   })
 
   t.test('with attributes.enabled set to false', (t) => {
-    t.autoend()
     let webChild
 
     t.beforeEach(() => {
@@ -381,10 +380,10 @@ tap.test('TraceSegment', (t) => {
       t.same(webChild.toJSON(), expected)
       t.end()
     })
+    t.end()
   })
 
   t.test('with attributes.enabled set', (t) => {
-    t.autoend()
     let webChild
     let attributes = null
 
@@ -454,11 +453,10 @@ tap.test('TraceSegment', (t) => {
       ])
       t.end()
     })
+    t.end()
   })
 
   t.test('when ended', (t) => {
-    t.autoend()
-
     t.test('stops its timer', (t) => {
       const trans = new Transaction(agent)
       const segment = new TraceSegment(trans, 'UnitTest')
@@ -487,11 +485,10 @@ tap.test('TraceSegment', (t) => {
       ])
       t.end()
     })
+    t.end()
   })
 
   t.test('#finalize', (t) => {
-    t.autoend()
-
     t.test('should add nr_exclusive_duration_millis attribute', (t) => {
       const transaction = new Transaction(agent)
       const segment = new TraceSegment(transaction, 'TestSegment')
@@ -529,12 +526,12 @@ tap.test('TraceSegment', (t) => {
       t.equal(root.getDurationInMillis(), 4)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })
 
 tap.test('when serialized', (t) => {
-  t.autoend()
-
   let agent = null
   let trans = null
   let segment = null
@@ -584,11 +581,10 @@ tap.test('when serialized', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('getSpanContext', (t) => {
-  t.autoend()
-
   let agent = null
   let transaction = null
   let segment = null
@@ -641,4 +637,5 @@ tap.test('getSpanContext', (t) => {
     t.equal(originalContext, secondContext)
     t.end()
   })
+  t.end()
 })

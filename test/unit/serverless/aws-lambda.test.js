@@ -22,8 +22,6 @@ const EVENTSOURCE_ARN = 'aws.lambda.eventSource.arn'
 const EVENTSOURCE_TYPE = 'aws.lambda.eventSource.eventType'
 
 tap.test('AwsLambda.patchLambdaHandler', (t) => {
-  t.autoend()
-
   const groupName = 'Function'
   const functionName = 'testName'
   const expectedTransactionName = groupName + '/' + functionName
@@ -112,8 +110,6 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
   })
 
   t.test('when invoked with API Gateway Lambda proxy event', (t) => {
-    t.autoend()
-
     const validResponse = {
       isBase64Encoded: false,
       statusCode: 200,
@@ -537,17 +533,17 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
         t.end()
       }
     })
+    t.end()
   })
 
   t.test('should create a segment for handler', (t) => {
-    t.autoend()
-
     const wrappedHandler = awsLambda.patchLambdaHandler((event, context, callback) => {
       const segment = awsLambda.shim.getSegment()
       t.not(segment, null)
       t.equal(segment.name, functionName)
 
       callback(null, 'worked')
+      t.end()
     })
 
     wrappedHandler(stubEvent, stubContext, stubCallback)
@@ -962,8 +958,6 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
   })
 
   t.test('when callback used', (t) => {
-    t.autoend()
-
     t.test('should end appropriately', (t) => {
       let transaction
 
@@ -1023,11 +1017,10 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
         t.end()
       }
     })
+    t.end()
   })
 
   t.test('when context.done used', (t) => {
-    t.autoend()
-
     t.test('should end appropriately', (t) => {
       let transaction
 
@@ -1087,11 +1080,10 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
 
       wrappedHandler(stubEvent, stubContext, stubCallback)
     })
+    t.end()
   })
 
   t.test('when context.succeed used', (t) => {
-    t.autoend()
-
     t.test('should end appropriately', (t) => {
       let transaction
 
@@ -1110,11 +1102,10 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
 
       wrappedHandler(stubEvent, stubContext, stubCallback)
     })
+    t.end()
   })
 
   t.test('when context.fail used', (t) => {
-    t.autoend()
-
     t.test('should end appropriately', (t) => {
       let transaction
 
@@ -1172,6 +1163,7 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
 
       wrappedHandler(stubEvent, stubContext, stubCallback)
     })
+    t.end()
   })
 
   t.test('should create a transaction for handler', (t) => {
@@ -1191,8 +1183,6 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
   })
 
   t.test('should end transactions on a beforeExit event on process', (t) => {
-    helper.temporarilyRemoveListeners(t, process, 'beforeExit')
-
     const wrappedHandler = awsLambda.patchLambdaHandler(() => {
       const transaction = agent.tracer.getTransaction()
 
@@ -1203,7 +1193,7 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
 
       process.emit('beforeExit')
 
-      t.equal(transaction.isActive(), false)
+      t.equal(transaction.isActive(), false, 'tx not active after beforeExit')
       t.end()
     })
 
@@ -1357,33 +1347,33 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
   )
 
   t.test('should record error event when error is thrown', (t) => {
-    helper.temporarilyOverrideTapUncaughtBehavior(tap, t)
+    t.throws(() => {
+      agent.on('harvestStarted', confirmErrorCapture)
+      const wrappedHandler = awsLambda.patchLambdaHandler(() => {
+        const transaction = agent.tracer.getTransaction()
+        t.ok(transaction)
+        t.equal(transaction.type, 'bg')
+        t.equal(transaction.getFullName(), expectedBgTransactionName)
+        t.ok(transaction.isActive())
 
-    agent.on('harvestStarted', confirmErrorCapture)
-    const wrappedHandler = awsLambda.patchLambdaHandler(() => {
-      const transaction = agent.tracer.getTransaction()
-      t.ok(transaction)
-      t.equal(transaction.type, 'bg')
-      t.equal(transaction.getFullName(), expectedBgTransactionName)
-      t.ok(transaction.isActive())
+        throw error
+      })
 
-      throw error
+      wrappedHandler(stubEvent, stubContext, stubCallback)
+
+      // eslint-disable-next-line sonarjs/no-identical-functions
+      function confirmErrorCapture() {
+        const errors = agent.errors.traceAggregator.errors
+        t.equal(errors.length, 1)
+
+        const noticedError = errors[0]
+        const [, transactionName, message, type] = noticedError
+        t.equal(transactionName, expectedBgTransactionName)
+        t.equal(message, errorMessage)
+        t.equal(type, 'SyntaxError')
+      }
     })
-
-    wrappedHandler(stubEvent, stubContext, stubCallback)
-
-    function confirmErrorCapture() {
-      const errors = agent.errors.traceAggregator.errors
-      t.equal(errors.length, 1)
-
-      const noticedError = errors[0]
-      const [, transactionName, message, type] = noticedError
-      t.equal(transactionName, expectedBgTransactionName)
-      t.equal(message, errorMessage)
-      t.equal(type, 'SyntaxError')
-
-      t.end()
-    }
+    t.end()
   })
 
   t.test('should not end transactions twice', (t) => {
@@ -1459,6 +1449,7 @@ tap.test('AwsLambda.patchLambdaHandler', (t) => {
       t.end()
     }
   })
+  t.end()
 })
 
 function getMetrics(agent) {

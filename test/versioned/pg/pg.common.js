@@ -193,8 +193,6 @@ module.exports = function runTests(name, clientFactory) {
   }
 
   test('Postgres instrumentation: ' + name, function (t) {
-    t.autoend()
-
     let agent = null
     let pg = null
 
@@ -677,5 +675,6 @@ module.exports = function runTests(name, clientFactory) {
         })
       }
     )
+    t.end()
   })
 }

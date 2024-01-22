@@ -91,7 +91,6 @@ function assertSegments(test, baseSegment, isCLMEnabled) {
 }
 
 tap.test('Fastify CLM Middleware Based', (test) => {
-  test.autoend()
   ;[true, false].forEach((isCLMEnabled) => {
     test.test(isCLMEnabled ? 'should add attributes' : 'should not add attributes', async (t) => {
       await setup(t, { code_level_metrics: { enabled: isCLMEnabled } })
@@ -112,4 +111,5 @@ tap.test('Fastify CLM Middleware Based', (test) => {
       t.equal(calls.test, calls.middleware, 'should be the same value')
     })
   })
+  test.end()
 })

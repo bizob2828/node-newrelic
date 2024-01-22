@@ -297,11 +297,7 @@ function runTests(conf) {
             "Cannot read property 'ohno' of undefined",
             "Cannot read properties of undefined (reading 'ohno')"
           ]
-          t.ok(
-            expectedError.includes(first[2]),
-            "Cannot read property 'ohno' of undefined",
-            'got the expected error'
-          )
+          t.ok(expectedError.includes(first[2]), 'got the expected error')
 
           t.end()
         })
@@ -364,8 +360,6 @@ function runTests(conf) {
   })
 
   test('trapping errors', function (t) {
-    t.autoend()
-
     t.test('collects the actual error object that is thrown', function (t) {
       const agent = helper.instrumentMockedAgent(conf)
 
@@ -611,6 +605,7 @@ function runTests(conf) {
         })
       })
     })
+    t.end()
   })
 
   test('layer wrapping', function (t) {

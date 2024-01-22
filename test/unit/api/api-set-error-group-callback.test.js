@@ -19,7 +19,6 @@ const API = proxyquire('../../../api', {
 const NAMES = require('../../../lib/metrics/names')
 
 tap.test('Agent API = set Error Group callback', (t) => {
-  t.autoend()
   let agent = null
   let api
 
@@ -106,4 +105,5 @@ tap.test('Agent API = set Error Group callback', (t) => {
     )
     t.end()
   })
+  t.end()
 })

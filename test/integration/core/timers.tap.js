@@ -20,8 +20,6 @@ tap.test('setTimeout', function testSetTimeout(t) {
 })
 
 tap.test('setImmediate', function testSetImmediate(t) {
-  t.autoend()
-
   t.test('segments', function (t) {
     t.plan(2)
     const { agent } = setupAgent(t)
@@ -105,6 +103,7 @@ tap.test('setImmediate', function testSetImmediate(t) {
       })
     })
   })
+  t.end()
 })
 
 tap.test('setInterval', function testSetInterval(t) {
@@ -196,7 +195,9 @@ tap.test('clearImmediate', (t) => {
       const timer2 = setImmediate(t.fail)
       t.notOk(transaction.trace.root.children[0])
       clearImmediate(timer2)
-      setImmediate(t.end.bind(t))
+      setImmediate(() => {
+        t.end()
+      })
     })
   })
 })
@@ -208,7 +209,9 @@ tap.test('clearTimeout should function outside of transaction context', (t) => {
 
   clearTimeout(timer)
 
-  setImmediate(t.end)
+  setImmediate(() => {
+    t.end()
+  })
 })
 
 tap.test('clearTimeout should ignore segment created for timer', (t) => {
@@ -225,7 +228,9 @@ tap.test('clearTimeout should ignore segment created for timer', (t) => {
       clearTimeout(timer)
       t.equal(timerSegment.ignore, true)
 
-      setTimeout(t.end)
+      setTimeout(() => {
+        t.end()
+      })
     })
   })
 })
@@ -249,7 +254,9 @@ tap.test('clearTimeout should not ignore parent segment when opaque', (t) => {
         clearTimeout(timer)
         t.equal(parentSegment.ignore, false)
 
-        setTimeout(t.end)
+        setTimeout(() => {
+          t.end()
+        })
       })
     })
   })
@@ -274,7 +281,9 @@ tap.test('clearTimeout should not ignore parent segment when internal', (t) => {
         clearTimeout(timer)
         t.equal(parentSegment.ignore, false)
 
-        setTimeout(t.end)
+        setTimeout(() => {
+          t.end()
+        })
       })
     })
   })

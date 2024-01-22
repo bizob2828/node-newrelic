@@ -17,7 +17,6 @@ let initialize = null
 let shim = null
 
 test('PrismaClient unit tests', (t) => {
-  t.autoend()
   let sandbox
 
   t.beforeEach(function () {
@@ -261,4 +260,5 @@ test('PrismaClient unit tests', (t) => {
     t.notOk(shim.isWrapped(client._executeRequest), 'should not instrument @prisma/client')
     t.end()
   })
+  t.end()
 })

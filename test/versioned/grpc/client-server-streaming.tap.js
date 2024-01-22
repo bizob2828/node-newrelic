@@ -20,8 +20,6 @@ const {
 } = require('./util.cjs')
 
 tap.test('gRPC Client: Server Streaming', (t) => {
-  t.autoend()
-
   let agent
   let client
   let server
@@ -168,4 +166,5 @@ tap.test('gRPC Client: Server Streaming', (t) => {
       })
     })
   })
+  t.end()
 })

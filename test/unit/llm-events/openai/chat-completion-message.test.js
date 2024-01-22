@@ -210,6 +210,5 @@ tap.test('LlmChatCompletionMessage', (t) => {
       })
     }
   )
-
   t.end()
 })

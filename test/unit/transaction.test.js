@@ -17,8 +17,6 @@ const hashes = require('../../lib/util/hashes')
 const sinon = require('sinon')
 
 tap.test('Transaction unit tests', (t) => {
-  t.autoend()
-
   let agent = null
   let txn = null
 
@@ -212,10 +210,10 @@ tap.test('Transaction unit tests', (t) => {
     t.notOk(metric)
     t.end()
   })
+  t.end()
 })
 
 tap.test('Transaction naming tests', (t) => {
-  t.autoend()
   let agent = null
   let txn = null
   function beforeEach() {
@@ -234,7 +232,6 @@ tap.test('Transaction naming tests', (t) => {
   })
 
   t.test('getName', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
 
     t.test('base test', (t) => {
@@ -265,10 +262,10 @@ tap.test('Transaction naming tests', (t) => {
       t.equal(txn.getName(), 'foo/bar', 'name should be as set')
       t.end()
     })
+    t.end()
   })
 
   t.test('isIgnored', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
 
     t.test('should return true if a transaction is ignored by a rule', (t) => {
@@ -278,10 +275,10 @@ tap.test('Transaction naming tests', (t) => {
       t.ok(txn.isIgnored(), 'should ignore the transaction')
       t.end()
     })
+    t.end()
   })
 
   t.test('getFullName', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
 
     t.test('should return null if it does not have name, partialName, or url', (t) => {
@@ -328,10 +325,10 @@ tap.test('Transaction naming tests', (t) => {
       t.equal(txn.getFullName(), 'WebTransaction/ForcedName')
       t.end()
     })
+    t.end()
   })
 
   t.test('with no partial name set', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
 
     t.test('produces a normalized (backstopped) name when status is 200', (t) => {
@@ -442,11 +439,10 @@ tap.test('Transaction naming tests', (t) => {
       t.not(txn.name, 'WebTransaction/Uri/test/1337')
       t.end()
     })
+    t.end()
   })
 
   t.test('with a custom partial name set', (t) => {
-    t.autoend()
-
     t.beforeEach(() => {
       beforeEach()
       txn.nameState.setPrefix('Custom')
@@ -522,10 +518,10 @@ tap.test('Transaction naming tests', (t) => {
       t.ok(txn.isIgnored())
       t.end()
     })
+    t.end()
   })
 
   t.test('pathHashes', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
 
     t.test('should add up to 10 items to to pathHashes', (t) => {
@@ -572,11 +568,12 @@ tap.test('Transaction naming tests', (t) => {
       t.equal(txn.alternatePathHashes(), null)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })
 
 tap.test('Transaction methods', (t) => {
-  t.autoend()
   let txn = null
   let agent = null
 
@@ -592,7 +589,6 @@ tap.test('Transaction methods', (t) => {
   }
 
   t.test('hasErrors', (t) => {
-    t.autoend()
     bookends(t)
 
     t.test('should return true if exceptions property is not empty', (t) => {
@@ -607,10 +603,10 @@ tap.test('Transaction methods', (t) => {
       t.ok(txn.hasErrors())
       t.end()
     })
+    t.end()
   })
 
   t.test('isSampled', (t) => {
-    t.autoend()
     bookends(t)
 
     t.test('should be true when the transaction is sampled', (t) => {
@@ -625,10 +621,10 @@ tap.test('Transaction methods', (t) => {
       t.notOk(txn.isSampled())
       t.end()
     })
+    t.end()
   })
 
   t.test('getIntrinsicAttributes', (t) => {
-    t.autoend()
     bookends(t)
 
     t.test('includes CAT attributes when enabled', (t) => {
@@ -702,10 +698,10 @@ tap.test('Transaction methods', (t) => {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('getResponseDurationInMillis', (t) => {
-    t.autoend()
     bookends(t)
 
     t.test('for web transactions', (t) => {
@@ -744,11 +740,12 @@ tap.test('Transaction methods', (t) => {
       )
       t.end()
     })
+    t.end()
   })
+  t.end()
 })
 
 tap.test('_acceptDistributedTracePayload', (t) => {
-  t.autoend()
   let txn = null
   let agent = null
 
@@ -995,8 +992,6 @@ tap.test('_acceptDistributedTracePayload', (t) => {
 })
 
 tap.test('_getParsedPayload', (t) => {
-  t.autoend()
-
   let txn = null
   let agent = null
   let payload = null
@@ -1050,11 +1045,10 @@ tap.test('_getParsedPayload', (t) => {
     t.equal(res, null)
     t.end()
   })
+  t.end()
 })
 
 tap.test('_createDistributedTracePayload', (t) => {
-  t.autoend()
-
   let txn = null
   let agent = null
   let contextManager = null
@@ -1150,11 +1144,10 @@ tap.test('_createDistributedTracePayload', (t) => {
     t.ok(txn.isDistributedTrace)
     t.end()
   })
+  t.end()
 })
 
 tap.test('acceptDistributedTraceHeaders', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(() => {
@@ -1347,11 +1340,10 @@ tap.test('acceptDistributedTraceHeaders', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('insertDistributedTraceHeaders', (t) => {
-  t.autoend()
-
   let agent = null
   let contextManager = null
 
@@ -1528,11 +1520,10 @@ tap.test('insertDistributedTraceHeaders', (t) => {
     t.type(txn.sampled, 'boolean')
     t.end()
   })
+  t.end()
 })
 
 tap.test('acceptTraceContextPayload', (t) => {
-  t.autoend()
-
   let agent = null
 
   t.beforeEach(function () {
@@ -1649,11 +1640,10 @@ tap.test('acceptTraceContextPayload', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('addDistributedTraceIntrinsics', (t) => {
-  t.autoend()
-
   let txn = null
   let attributes = null
   let agent = null
@@ -1718,11 +1708,10 @@ tap.test('addDistributedTraceIntrinsics', (t) => {
     t.hasProp(attributes, 'parent.transportDuration')
     t.end()
   })
+  t.end()
 })
 
 tap.test('transaction end', (t) => {
-  t.autoend()
-
   let agent = null
   let transaction = null
 
@@ -1772,11 +1761,10 @@ tap.test('transaction end', (t) => {
 
     transaction.end()
   })
+  t.end()
 })
 
 tap.test('when being named with finalizeNameFromUri', (t) => {
-  t.autoend()
-
   let agent = null
   let contextManager = null
   let transaction = null
@@ -1926,11 +1914,10 @@ tap.test('when being named with finalizeNameFromUri', (t) => {
       t.end()
     }
   )
+  t.end()
 })
 
 tap.test('requestd', (t) => {
-  t.autoend()
-
   let agent = null
   let contextManager = null
   let transaction = null
@@ -1976,11 +1963,10 @@ tap.test('requestd', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('when being named with finalizeName', (t) => {
-  t.autoend()
-
   let agent = null
   let contextManager = null
   let transaction = null
@@ -2055,6 +2041,7 @@ tap.test('when being named with finalizeName', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 function setupNameState(transaction) {

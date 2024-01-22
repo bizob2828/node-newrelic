@@ -88,8 +88,8 @@ function assertChatCompletionMessages({
       }
     }
 
-    this.equal(msg[0].type, 'LlmChatCompletionMessage')
-    this.match(msg[1], expectedChatMsg, 'should match chat completion message')
+    this.t.equal(msg[0].type, 'LlmChatCompletionMessage')
+    this.t.match(msg[1], expectedChatMsg, 'should match chat completion message')
   })
 }
 
@@ -121,5 +121,5 @@ function assertChatCompletionSummary({ tx, model, chatSummary, error = false }) 
   this.match(chatSummary[1], expectedChatSummary, 'should match chat summary message')
 }
 
-tap.Test.prototype.addAssert('llmMessages', 1, assertChatCompletionMessages)
-tap.Test.prototype.addAssert('llmSummary', 1, assertChatCompletionSummary)
+tap.Test.prototype.llmMessages = assertChatCompletionMessages
+tap.Test.prototype.llmSummary = assertChatCompletionSummary

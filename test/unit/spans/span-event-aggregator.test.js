@@ -18,8 +18,6 @@ const MAX_LIMIT = 10000
 const DEFAULT_PERIOD = 60000
 
 tap.test('SpanAggregator', (t) => {
-  t.autoend()
-
   let spanEventAggregator = null
   let agent = null
 
@@ -342,4 +340,5 @@ tap.test('SpanAggregator', (t) => {
     t.equal(recordValueStub.args[0][0], harvestLimit, `should set limit to ${harvestLimit}`)
     t.end()
   })
+  t.end()
 })

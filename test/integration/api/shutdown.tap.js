@@ -18,8 +18,6 @@ const TEST_COLLECTOR_URL = `https://${TEST_DOMAIN}`
 
 // TODO: should work after the agent has restarted
 tap.test('#shutdown', (t) => {
-  t.autoend()
-
   let agent = null
   let api = null
 
@@ -80,6 +78,7 @@ tap.test('#shutdown', (t) => {
       })
     })
   })
+  t.end()
 })
 
 function setupShutdownEndpoints(runId) {

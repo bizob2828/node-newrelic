@@ -9,10 +9,7 @@ const { test } = require('tap')
 const byteUtils = require('../../../lib/util/byte-limit')
 
 test('byte-limit', (t) => {
-  t.autoend()
-
   t.test('#isValidLength', (t) => {
-    t.autoend()
     t.test('returns false when the string is larger than the limit', (t) => {
       t.notOk(byteUtils.isValidLength('12345', 4))
       t.end()
@@ -27,9 +24,9 @@ test('byte-limit', (t) => {
       t.ok(byteUtils.isValidLength('12345', 6))
       t.end()
     })
+    t.end()
   })
   t.test('#compareLength', (t) => {
-    t.autoend()
     t.test('returns -1 when the string is smaller than the limit', (t) => {
       const str = '123456789'
       const cmpVal = byteUtils.compareLength(str, 255)
@@ -48,10 +45,10 @@ test('byte-limit', (t) => {
       t.ok(cmpVal > 0)
       t.end()
     })
+    t.end()
   })
 
   t.test('#truncate', (t) => {
-    t.autoend()
     t.test('truncates string value to given limit', (t) => {
       let str = '123456789'
       str = byteUtils.truncate(str, 5)
@@ -78,5 +75,7 @@ test('byte-limit', (t) => {
       t.equal(str, '')
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

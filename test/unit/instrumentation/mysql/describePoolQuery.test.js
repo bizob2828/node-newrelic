@@ -10,8 +10,6 @@ const sinon = require('sinon')
 const instrumentation = require('../../../../lib/instrumentation/mysql/mysql')
 
 tap.test('describeQuery', (t) => {
-  t.autoend()
-
   t.test('should pull the configuration for the query segment', (t) => {
     const mockShim = {
       logger: {
@@ -36,4 +34,5 @@ tap.test('describeQuery', (t) => {
 
     t.end()
   })
+  t.end()
 })

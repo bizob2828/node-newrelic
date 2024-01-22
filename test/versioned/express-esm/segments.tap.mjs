@@ -14,8 +14,6 @@ const assertSegmentsOptions = {
 }
 
 test('transaction segments tests', (t) => {
-  t.autoend()
-
   let agent
   t.before(() => {
     agent = helper.instrumentMockedAgent()
@@ -766,6 +764,7 @@ test('transaction segments tests', (t) => {
     t.equal(agent.errors.traceAggregator.errors.length, errors, `should have ${errors} errors`)
     return { rootSegment, transaction }
   }
+  t.end()
 })
 
 function checkMetrics(t, metrics, expected, path) {

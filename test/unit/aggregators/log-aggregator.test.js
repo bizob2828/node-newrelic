@@ -14,7 +14,6 @@ const RUN_ID = 1337
 const LIMIT = 5
 
 test('Log Aggregator', (t) => {
-  t.autoend()
   let logEventAggregator
   let agentStub
   let log
@@ -137,7 +136,7 @@ test('Log Aggregator', (t) => {
     agentStub.getTransaction.returns(transaction)
     const line = { key: 'value' }
     logEventAggregator.add(line)
-    t.ok(transaction.logs.add.callCount, 1, 'should add log to transaction')
+    t.equal(transaction.logs.add.callCount, 1, 'should add log to transaction')
     t.same(transaction.logs.add.args[0], [line])
     t.same(logEventAggregator.getEvents(), [], 'log aggregator should be empty')
     t.end()
@@ -170,11 +169,10 @@ test('Log Aggregator', (t) => {
     t.equal(logEventAggregator.getEvents().length, 3)
     t.end()
   })
+  t.end()
 })
 
 test('big red button', (t) => {
-  t.autoend()
-
   let agent
 
   t.beforeEach(() => {
@@ -225,4 +223,5 @@ test('big red button', (t) => {
       t.notOk(payload)
     })
   })
+  t.end()
 })

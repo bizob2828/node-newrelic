@@ -26,6 +26,20 @@ const INITIAL_SESSION_ID = 'initial_session_id'
 const EXPECTED_SEGMENT_NAME = 'Test Segment'
 const EXPECTED_SEGMENT_NAME_2 = 'Test Segment 2'
 
+/**
+ * Helper to determine if all spans were processed and we can end test
+ *
+ * @param {Tap.Test} t tap test instance
+ */
+function waitForProcessing(t) {
+  const timer = setInterval(() => {
+    if (t.context.isDone) {
+      t.end()
+      clearInterval(timer)
+    }
+  }, 1)
+}
+
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -34,31 +48,31 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true
 })
 
-tap.Test.prototype.addAssert('batch', 1, function assertBatch(spans) {
-  this.ok(spans.length === 2, 'should have 2 spans')
+tap.Test.prototype.batch = function assertBatch(spans) {
+  this.t.ok(spans.length === 2, 'should have 2 spans')
 
   spans.forEach((span, i) => {
     const { name } = span.intrinsics
 
     if (i === 0) {
-      this.equal(name.string_value, EXPECTED_SEGMENT_NAME)
+      this.t.equal(name.string_value, EXPECTED_SEGMENT_NAME)
     } else {
-      this.equal(name.string_value, EXPECTED_SEGMENT_NAME_2)
+      this.t.equal(name.string_value, EXPECTED_SEGMENT_NAME_2)
     }
   })
-})
+}
 
-tap.Test.prototype.addAssert('single', 2, function assertSpan(span, i) {
-  this.ok(span)
+tap.Test.prototype.single = function assertSpan(span, i) {
+  this.t.ok(span)
 
   const { name } = span.intrinsics
 
   if (i === 0) {
-    this.equal(name.string_value, EXPECTED_SEGMENT_NAME)
+    this.t.equal(name.string_value, EXPECTED_SEGMENT_NAME)
   } else {
-    this.equal(name.string_value, EXPECTED_SEGMENT_NAME_2)
+    this.t.equal(name.string_value, EXPECTED_SEGMENT_NAME_2)
   }
-})
+}
 
 const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com.newrelic.trace.v1
 
@@ -88,14 +102,13 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
   }
 ].forEach((config) => {
   tap.test(`Infinite tracing - Batching Connection Handling ${JSON.stringify(config)}`, (t) => {
-    t.autoend()
-
     let server = null
     let agent = null
     let startingEndpoints = null
     let spanReceivedListener = null
 
     t.beforeEach(async (t) => {
+      t.context.isDone = false
       await new Promise((resolve) => {
         testSetup(t, config, resolve)
       })
@@ -122,6 +135,7 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
       t.context.config = config
       t.context.expectedRunId = INITIAL_RUN_ID
       t.context.expectedSessionId = INITIAL_SESSION_ID
+      t.context.expectedSpans = 2
       spanReceivedListener = defaultSpanListener(t)
 
       agent.start((error) => {
@@ -129,6 +143,7 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
 
         createTestData(agent, EXPECTED_SEGMENT_NAME)
         createTestData(agent, EXPECTED_SEGMENT_NAME_2)
+        waitForProcessing(t)
       })
     })
 
@@ -146,6 +161,7 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
         t.context.config = config
         t.context.expectedRunId = RESTARTED_RUN_ID
         t.context.expectedSessionId = RESTARTED_SESSION_ID
+        t.context.expectedSpans = 2
         spanReceivedListener = defaultSpanListener(t)
 
         agent.start((error) => {
@@ -169,6 +185,7 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
           agent.forceHarvestAll(() => {
             // if this wasn't hit, something else went wrong with the test
             t.ok(restartMetricEndpoint.isDone())
+            waitForProcessing(t)
           })
         })
       }
@@ -196,13 +213,12 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
 
         // ensure test valid / hit the import assertion
         t.ok(initialHarvestCalled)
-
         t.end()
       })
     })
 
     function defaultSpanListener(t) {
-      const { config, expectedRunId, expectedSessionId } = t.context
+      const { config, expectedRunId, expectedSessionId, expectedSpans } = t.context
 
       let i = 0
 
@@ -223,8 +239,8 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
         const [sessionId] = metadata.get('session_id')
         t.equal(sessionId, expectedSessionId, 'should persist new request_headers_map on metadata')
 
-        if (config.batching || i === 1) {
-          t.end()
+        if (config.batching || i === expectedSpans) {
+          t.context.isDone = true
         }
       }
     }
@@ -322,20 +338,17 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
           t.error(err)
         })
     }
+    t.end()
   })
 })
 
-function createTestData(agent, segmentName, callback) {
+function createTestData(agent, segmentName) {
   helper.runInTransaction(agent, (transaction) => {
     const segment = transaction.trace.add(segmentName)
     segment.overwriteDurationInMillis(1)
 
     transaction.finalizeNameFromUri('/some/test/url', 200)
     transaction.end()
-
-    if (callback) {
-      callback()
-    }
   })
 }
 

@@ -64,8 +64,6 @@ const exampleMarkdown = `### v1.0.0 (2020-04-03)
 `
 
 tap.test('Conventional Changelog Class', (testHarness) => {
-  testHarness.autoend()
-
   let clock
   let MockGithubSdk
   let mockGetPrByCommit
@@ -73,7 +71,7 @@ tap.test('Conventional Changelog Class', (testHarness) => {
   let ConventionalChangelog
 
   testHarness.beforeEach(() => {
-    clock = sinon.useFakeTimers(new Date('2020-04-03'))
+    clock = sinon.useFakeTimers({ now: new Date('2020-04-03'), toFake: ['Date'] })
     mockGetPrByCommit = sinon.stub()
     MockGithubSdk = sinon.stub().returns({
       getPullRequestByCommit: mockGetPrByCommit
@@ -299,4 +297,5 @@ tap.test('Conventional Changelog Class', (testHarness) => {
     t.equal(mockWriteFile.args[0][2], 'utf-8')
     t.end()
   })
+  testHarness.end()
 })

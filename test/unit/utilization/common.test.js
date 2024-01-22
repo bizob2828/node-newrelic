@@ -16,9 +16,7 @@ while (BIG.length < 300) {
 }
 
 tap.test('Utilization Common Components', function (t) {
-  t.autoend()
   t.test('common.checkValueString', function (t) {
-    t.autoend()
     t.test('should fail for strings of invalid size', function (t) {
       t.notOk(common.checkValueString(null))
       t.notOk(common.checkValueString({}))
@@ -39,10 +37,10 @@ tap.test('Utilization Common Components', function (t) {
       t.ok(common.checkValueString('f1B_./- \xff'))
       t.end()
     })
+    t.end()
   })
 
   t.test('common.getKeys', function (t) {
-    t.autoend()
     t.test('should return null if any key is missing', function (t) {
       t.equal(common.getKeys({}, ['foo']), null)
       t.equal(common.getKeys({ foo: 'bar' }, ['foo', 'bar']), null)
@@ -75,10 +73,10 @@ tap.test('Utilization Common Components', function (t) {
       t.same(common.getKeys(obj, ['foo']), { foo: 'foo' })
       t.end()
     })
+    t.end()
   })
 
   t.test('common.request', (t) => {
-    t.autoend()
     let agent = null
 
     t.before(() => {
@@ -155,5 +153,7 @@ tap.test('Utilization Common Components', function (t) {
         t.end()
       }
     })
+    t.end()
   })
+  t.end()
 })

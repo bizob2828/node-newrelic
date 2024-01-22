@@ -15,7 +15,6 @@ const LIMIT = 5
 const EXPECTED_METHOD = 'custom_event_data'
 
 tap.test('Custom Event Aggregator', (t) => {
-  t.autoend()
   let eventAggregator
 
   t.beforeEach(() => {
@@ -65,4 +64,5 @@ tap.test('Custom Event Aggregator', (t) => {
     t.notOk(payload)
     t.end()
   })
+  t.end()
 })

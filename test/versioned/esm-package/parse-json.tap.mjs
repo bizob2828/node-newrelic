@@ -16,8 +16,6 @@ shimmer.registerInstrumentation({
 })
 
 tap.test('ESM Package Instrumentation', (t) => {
-  t.autoend()
-
   let agent
   let parseJson
   let JSONError
@@ -42,4 +40,5 @@ tap.test('ESM Package Instrumentation', (t) => {
     t.ok(err.isInstrumented, 'JSONError should be instrumented')
     t.end()
   })
+  t.end()
 })

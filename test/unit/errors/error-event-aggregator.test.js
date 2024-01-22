@@ -15,7 +15,6 @@ const RUN_ID = 1337
 const LIMIT = 5
 
 tap.test('Error Event Aggregator', (t) => {
-  t.autoend()
   let errorEventAggregator
 
   t.beforeEach(() => {
@@ -73,6 +72,7 @@ tap.test('Error Event Aggregator', (t) => {
     t.notOk(payload)
     t.end()
   })
+
   ;[
     {
       callCount: 1,
@@ -98,4 +98,5 @@ tap.test('Error Event Aggregator', (t) => {
       t.end()
     })
   })
+  t.end()
 })

@@ -21,8 +21,6 @@ tap.test('should handle a directly passed minimal configuration', (t) => {
 })
 
 tap.test('when loading invalid configuration file', (t) => {
-  t.autoend()
-
   let realpathSyncStub
   const fsUnwrapped = require('../../../lib/util/unwrapped-core').fs
 
@@ -48,11 +46,10 @@ tap.test('when loading invalid configuration file', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('when loading options via constructor', (t) => {
-  t.autoend()
-
   t.test('should properly pick up on expected_messages', (t) => {
     const options = {
       expected_messages: {
@@ -96,11 +93,10 @@ tap.test('when loading options via constructor', (t) => {
 
     t.end()
   })
+  t.end()
 })
 
 tap.test('#publicSettings', (t) => {
-  t.autoend()
-
   let configuration
 
   t.beforeEach(() => {
@@ -170,4 +166,5 @@ tap.test('#publicSettings', (t) => {
 
     t.end()
   })
+  t.end()
 })

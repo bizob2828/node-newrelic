@@ -11,8 +11,6 @@ const semver = require('semver')
 const { runTest } = require('./common')
 
 tap.test('Restify transaction naming', (t) => {
-  t.autoend()
-
   let agent = null
   let restify = null
   let restifyPkg = null
@@ -352,4 +350,5 @@ tap.test('Restify transaction naming', (t) => {
 
     runTest({ agent, server, t, endpoint: '/path1', expectedName: 'GET//path1' })
   })
+  t.end()
 })

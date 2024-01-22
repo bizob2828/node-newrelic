@@ -13,7 +13,6 @@ const symbols = require('../../../lib/symbols')
 const { RecorderSpec } = require('../../../lib/shim/specs')
 
 tap.test('Shim', function (t) {
-  t.autoend()
   let agent = null
   let contextManager = null
   let shim = null
@@ -54,7 +53,6 @@ tap.test('Shim', function (t) {
   }
 
   t.test('constructor', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -82,10 +80,10 @@ tap.test('Shim', function (t) {
       t.equal(shim.pkgVersion, version)
       t.end()
     })
+    t.end()
   })
 
   t.test('.defineProperty', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -110,10 +108,10 @@ tap.test('Shim', function (t) {
       t.ok(getterCalled)
       t.end()
     })
+    t.end()
   })
 
   t.test('.defineProperties', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -129,10 +127,10 @@ tap.test('Shim', function (t) {
       t.same(Object.keys(foo), ['bar', 'fiz'])
       t.end()
     })
+    t.end()
   })
 
   t.test('#FIRST through #LAST', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     const keys = ['FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST']
@@ -148,10 +146,10 @@ tap.test('Shim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#agent', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -166,10 +164,10 @@ tap.test('Shim', function (t) {
       t.equal(s.agent, foo)
       t.end()
     })
+    t.end()
   })
 
   t.test('#tracer', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -184,10 +182,10 @@ tap.test('Shim', function (t) {
       t.equal(s.tracer, foo.tracer)
       t.end()
     })
+    t.end()
   })
 
   t.test('#moduleName', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -201,10 +199,10 @@ tap.test('Shim', function (t) {
       t.equal(s.moduleName, 'some-module-name')
       t.end()
     })
+    t.end()
   })
 
   t.test('#logger', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -221,10 +219,10 @@ tap.test('Shim', function (t) {
       t.ok(shim.logger.error instanceof Function)
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrap', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -292,13 +290,13 @@ tap.test('Shim', function (t) {
       t.ok(shim.isWrapped(wrapped))
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrap with properties', function (t) {
     let barTestWrapper = null
     let originalBar = null
     let ret = null
-    t.autoend()
 
     t.beforeEach(function () {
       beforeEach()
@@ -354,10 +352,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isWrapped(wrappable, 'fiz'))
       t.end()
     })
+    t.end()
   })
 
   t.test('with a function', function (t) {
-    t.autoend()
     let wrapper = null
 
     t.beforeEach(function () {
@@ -379,10 +377,10 @@ tap.test('Shim', function (t) {
       t.equal(wrappable.bar.length, 0)
       t.end()
     })
+    t.end()
   })
 
   t.test('#bindSegment', function (t) {
-    t.autoend()
     let segment
     let startingSegment
 
@@ -506,10 +504,10 @@ tap.test('Shim', function (t) {
       t.equal(activeSegment, segment)
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapReturn', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -587,10 +585,10 @@ tap.test('Shim', function (t) {
       t.ok(typeof child.parentMethod === 'function', 'should have parent methods')
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapReturn wrapper', function (t) {
-    t.autoend()
     let executed
     let toWrap
     let returned
@@ -725,10 +723,10 @@ tap.test('Shim', function (t) {
       toWrap.foo()
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapClass', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -765,10 +763,10 @@ tap.test('Shim', function (t) {
       t.equal(shim.unwrap(wrappable.bar), original)
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapClass wrapper', function (t) {
-    t.autoend()
     let executed = null
     let toWrap = null
     let original = null
@@ -838,10 +836,10 @@ tap.test('Shim', function (t) {
       t.ok(foo)
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapExport', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -865,10 +863,10 @@ tap.test('Shim', function (t) {
       t.not(xport, original)
       t.end()
     })
+    t.end()
   })
 
   t.test('#record', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1028,10 +1026,10 @@ tap.test('Shim', function (t) {
         })
       }
     )
+    t.end()
   })
 
   t.test('#record with a stream', function (t) {
-    t.autoend()
     let stream = null
     let toWrap = null
 
@@ -1190,10 +1188,10 @@ tap.test('Shim', function (t) {
       t.equal(eventSegment.getAttributes().count, 3)
       t.end()
     })
+    t.end()
   })
 
   t.test('#record with a promise', function (t) {
-    t.autoend()
     let promise = null
     let toWrap = null
 
@@ -1412,10 +1410,10 @@ tap.test('Shim', function (t) {
         promise.reject(expectedResult)
       }, 5)
     })
+    t.end()
   })
 
   t.test('#record wrapper when called without a transaction', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should not create a segment', function (t) {
@@ -1477,10 +1475,10 @@ tap.test('Shim', function (t) {
       })
       wrapped(cb)
     })
+    t.end()
   })
 
   t.test('#record wrapper when called in an active transaction', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create a segment', function (t) {
@@ -1568,10 +1566,10 @@ tap.test('Shim', function (t) {
         wrapped(cb)
       })
     })
+    t.end()
   })
 
   t.test('#record wrapper when callback required', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create segment if method has callback', function (t) {
@@ -1630,10 +1628,10 @@ tap.test('Shim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#record wrapper when called with an inactive transaction', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should not create a segment', function (t) {
@@ -1705,10 +1703,10 @@ tap.test('Shim', function (t) {
         wrapped(cb)
       })
     })
+    t.end()
   })
 
   t.test('#isWrapped', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should return true if the object was wrapped', function (t) {
@@ -1756,10 +1754,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isWrapped(wrappable, 'this does not exist'))
       t.end()
     })
+    t.end()
   })
 
   t.test('#unwrap', function (t) {
-    t.autoend()
     let original
     let wrapped
 
@@ -1830,10 +1828,10 @@ tap.test('Shim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('#unwrapOnce', function (t) {
-    t.autoend()
     let original
     let wrapped
 
@@ -1917,10 +1915,10 @@ tap.test('Shim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('#getSegment', function (t) {
-    t.autoend()
     let segment = null
 
     t.beforeEach(function () {
@@ -1949,10 +1947,10 @@ tap.test('Shim', function (t) {
       t.equal(shim.getSegment(), segment)
       t.end()
     })
+    t.end()
   })
 
   t.test('#getActiveSegment', function (t) {
-    t.autoend()
     let segment = null
 
     t.beforeEach(function () {
@@ -2028,10 +2026,10 @@ tap.test('Shim', function (t) {
         t.end()
       }
     )
+    t.end()
   })
 
   t.test('#storeSegment', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -2056,10 +2054,10 @@ tap.test('Shim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('#bindCallbackSegment', function (t) {
-    t.autoend()
     let cbCalled = false
     let cb = null
 
@@ -2198,10 +2196,10 @@ tap.test('Shim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#applySegment', function (t) {
-    t.autoend()
     let segment
 
     t.beforeEach(function () {
@@ -2348,10 +2346,10 @@ tap.test('Shim', function (t) {
         t.end()
       }
     )
+    t.end()
   })
 
   t.test('#createSegment', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create a segment with the correct name', function (t) {
@@ -2443,10 +2441,10 @@ tap.test('Shim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#createSegment when an `parameters` object is provided', function (t) {
-    t.autoend()
     let segment = null
     let parameters = null
 
@@ -2514,10 +2512,10 @@ tap.test('Shim', function (t) {
         t.end()
       }
     )
+    t.end()
   })
 
   t.test('#getName', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -2538,10 +2536,10 @@ tap.test('Shim', function (t) {
       )
       t.end()
     })
+    t.end()
   })
 
   t.test('#isObject', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should detect if an item is an object', function (t) {
@@ -2557,10 +2555,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isObject(undefined))
       t.end()
     })
+    t.end()
   })
 
   t.test('#isFunction', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should detect if an item is a function', function (t) {
@@ -2576,10 +2574,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isFunction(undefined))
       t.end()
     })
+    t.end()
   })
 
   t.test('#isString', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should detect if an item is a string', function (t) {
@@ -2596,10 +2594,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isString(undefined))
       t.end()
     })
+    t.end()
   })
 
   t.test('#isNumber', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should detect if an item is a number', function (t) {
@@ -2615,10 +2613,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isNumber(undefined))
       t.end()
     })
+    t.end()
   })
 
   t.test('#isBoolean', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should detect if an item is a boolean', function (t) {
@@ -2634,10 +2632,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isBoolean(undefined))
       t.end()
     })
+    t.end()
   })
 
   t.test('#isArray', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should detect if an item is an array', function (t) {
@@ -2653,10 +2651,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isArray(undefined))
       t.end()
     })
+    t.end()
   })
 
   t.test('#isNull', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should detect if an item is null', function (t) {
@@ -2672,10 +2670,10 @@ tap.test('Shim', function (t) {
       t.notOk(shim.isNull(undefined))
       t.end()
     })
+    t.end()
   })
 
   t.test('#toArray', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should convert array-like objects into arrays', function (t) {
@@ -2696,10 +2694,10 @@ tap.test('Shim', function (t) {
       }
       t.end()
     })
+    t.end()
   })
 
   t.test('#normalizeIndex', function (t) {
-    t.autoend()
     let args = null
 
     t.beforeEach(function () {
@@ -2729,10 +2727,10 @@ tap.test('Shim', function (t) {
       t.equal(shim.normalizeIndex(args.length, -10), null)
       t.end()
     })
+    t.end()
   })
 
   t.test('#defineProperty', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create an enumerable, configurable property', function (t) {
@@ -2769,10 +2767,10 @@ tap.test('Shim', function (t) {
       t.notOk(descriptor.value)
       t.end()
     })
+    t.end()
   })
 
   t.test('#defineProperties', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should create properties for each key on `props`', function (t) {
@@ -2784,10 +2782,10 @@ tap.test('Shim', function (t) {
       t.equal(obj.fiz, 'bang')
       t.end()
     })
+    t.end()
   })
 
   t.test('#setDefaults', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('should copy over defaults when provided object is null', function (t) {
@@ -2822,10 +2820,10 @@ tap.test('Shim', function (t) {
       t.same(defaulted, { foo: 1, bar: 2 })
       t.end()
     })
+    t.end()
   })
 
   t.test('#proxy', function (t) {
-    t.autoend()
     let original = null
     let proxied = null
 
@@ -2870,11 +2868,11 @@ tap.test('Shim', function (t) {
       t.equal(original.bar, 'another')
       t.end()
     })
+    t.end()
   })
 
   t.test('assignOriginal', (t) => {
     const mod = 'originalShimTests'
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -2918,12 +2916,12 @@ tap.test('Shim', function (t) {
       t.equal(wrapped[symbols.original], firstOriginal)
       t.end()
     })
+    t.end()
   })
 
   t.test('assignId', (t) => {
     const mod1 = 'mod1'
     const mod2 = 'mod2'
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -2946,10 +2944,10 @@ tap.test('Shim', function (t) {
       t.not(shim.id, shim2.id, 'ids should not be the same')
       t.end()
     })
+    t.end()
   })
 
   t.test('prefixRouteParameters', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -2970,10 +2968,10 @@ tap.test('Shim', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('getOriginalOnce', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -3033,10 +3031,10 @@ tap.test('Shim', function (t) {
       t.equal(shim.getOriginalOnce(nodule), undefined)
       t.end()
     })
+    t.end()
   })
 
   t.test('getOriginal', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -3088,6 +3086,7 @@ tap.test('Shim', function (t) {
       t.equal(shim.getOriginal(nodule), undefined)
       t.end()
     })
+    t.end()
   })
 
   t.test('_moduleRoot', (t) => {
@@ -3172,4 +3171,5 @@ tap.test('Shim', function (t) {
     t.notOk(spec.functions)
     t.end()
   })
+  t.end()
 })

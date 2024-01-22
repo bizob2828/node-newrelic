@@ -11,7 +11,6 @@ const loggingUtils = require('../../../lib/util/application-logging')
 const { LOGGING } = require('../../../lib/metrics/names')
 
 tap.test('truncate', (t) => {
-  t.autoend()
   t.test('Should truncate string > 1024 chars', (t) => {
     const longString =
       '1111111111111111111111111111111111111111111111111111111111111111' +
@@ -65,10 +64,10 @@ tap.test('truncate', (t) => {
       t.end()
     })
   })
+  t.end()
 })
 
 tap.test('Application Logging Config Tests', (t) => {
-  t.autoend()
   const features = [
     { feature: 'metrics', method: 'isMetricsEnabled' },
     { feature: 'forwarding', method: 'isLogForwardingEnabled' },
@@ -125,10 +124,10 @@ tap.test('Application Logging Config Tests', (t) => {
     t.equal(loggingUtils.isApplicationLoggingEnabled(config), false)
     t.end()
   })
+  t.end()
 })
 
 tap.test('incrementLoggingLinesMetrics', (t) => {
-  t.autoend()
   let callCountStub = null
   let metricsStub = null
   t.beforeEach(() => {
@@ -178,4 +177,5 @@ tap.test('incrementLoggingLinesMetrics', (t) => {
     t.equal(callCountStub.incrementCallCount.callCount, 2, 'should increment each metric')
     t.end()
   })
+  t.end()
 })

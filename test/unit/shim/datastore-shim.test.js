@@ -15,7 +15,6 @@ const ParsedStatement = require('../../../lib/db/parsed-statement')
 const { QuerySpec, OperationSpec } = require('../../../lib/shim/specs')
 
 test('DatastoreShim', function (t) {
-  t.autoend()
   let agent = null
   let shim = null
   let wrappable = null
@@ -52,7 +51,6 @@ test('DatastoreShim', function (t) {
   }
 
   t.test('constructor', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -95,10 +93,10 @@ test('DatastoreShim', function (t) {
       t.equal(shim.pkgVersion, version)
       t.end()
     })
+    t.end()
   })
 
   t.test('well-known datastores', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -119,10 +117,10 @@ test('DatastoreShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#logger', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -143,10 +141,10 @@ test('DatastoreShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#setDatastore', (t) => {
-    t.autoend()
     let dsAgent = null
     let dsShim = null
 
@@ -185,10 +183,10 @@ test('DatastoreShim', function (t) {
       t.ok(dsShim.logger.extra.datastore, 'Cassandra')
       t.end()
     })
+    t.end()
   })
 
   t.test('#setParser', (t) => {
-    t.autoend()
     let parserAgent = null
     let parserShim = null
 
@@ -274,9 +272,9 @@ test('DatastoreShim', function (t) {
       t.ok(testValue)
       t.end()
     })
+    t.end()
   })
   t.test('#recordOperation', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -447,10 +445,10 @@ test('DatastoreShim', function (t) {
         wrapped(cb)
       })
     })
+    t.end()
   })
 
   t.test('with `parameters`', function (t) {
-    t.autoend()
     let localhost = null
     t.beforeEach(function () {
       beforeEach()
@@ -541,10 +539,10 @@ test('DatastoreShim', function (t) {
         }
       )
     })
+    t.end()
   })
 
   t.test('recorder', function (t) {
-    t.autoend()
     t.beforeEach(function () {
       beforeEach()
       shim.recordOperation(wrappable, 'getActiveSegment', function () {
@@ -579,11 +577,11 @@ test('DatastoreShim', function (t) {
       t.ok(metrics['Datastore/instance/Cassandra/some_host/1234'])
       t.end()
     })
+    t.end()
   })
 
   t.test('#recordQuery', function (t) {
     const query = 'SELECT property FROM my_table'
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -772,11 +770,11 @@ test('DatastoreShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#recordBatchQuery', function (t) {
     const query = 'SELECT property FROM my_table'
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -843,10 +841,10 @@ test('DatastoreShim', function (t) {
       t.ok(executed)
       t.end()
     })
+    t.end()
   })
 
   t.test('#parseQuery', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -864,10 +862,10 @@ test('DatastoreShim', function (t) {
       t.equal(shim.parseQuery('select * from `table`').collection, 'table')
       t.end()
     })
+    t.end()
   })
 
   t.test('#bindRowCallbackSegment', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -961,10 +959,10 @@ test('DatastoreShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#captureInstanceAttributes', function (t) {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1015,10 +1013,10 @@ test('DatastoreShim', function (t) {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('#getDatabaseNameFromUseQuery', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
 
@@ -1060,5 +1058,7 @@ test('DatastoreShim', function (t) {
       t.equal(shim.getDatabaseNameFromUseQuery('use oasidfjaosdfij 123;'), null)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

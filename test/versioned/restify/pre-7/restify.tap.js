@@ -12,8 +12,6 @@ require('../../../lib/metrics_helper')
 const METRIC = 'WebTransaction/Restify/GET//hello/:name'
 
 tap.test('Restify', (t) => {
-  t.autoend()
-
   let agent = null
   let restify = null
   t.beforeEach(() => {
@@ -166,4 +164,5 @@ tap.test('Restify', (t) => {
       })
     })
   })
+  t.end()
 })

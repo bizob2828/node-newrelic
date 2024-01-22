@@ -12,7 +12,6 @@ const { initPrismaApp, getPostgresUrl } = require('./setup')
 const { upsertUsers } = require('./app')
 
 tap.test('Basic run through prisma functionality', { timeout: 30 * 1000 }, (t) => {
-  t.autoend()
   let agent = null
   let PrismaClient = null
   let prisma = null
@@ -135,4 +134,5 @@ tap.test('Basic run through prisma functionality', { timeout: 30 * 1000 }, (t) =
       t.end()
     })
   })
+  t.end()
 })

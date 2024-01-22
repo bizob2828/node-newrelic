@@ -254,8 +254,6 @@ tap.test('distributed tracing', (t) => {
   let MIDDLE_PORT
   let END_PORT
 
-  t.autoend()
-
   // simulation of the callback used by the async library, used by generateServer and close
   const cb = () => new Promise((resolve) => resolve())
 
@@ -335,6 +333,7 @@ tap.test('distributed tracing', (t) => {
       })
     })
   })
+  t.end()
 })
 
 function generateServer(http, api, started, responseHandler) {

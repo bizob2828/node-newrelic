@@ -7,20 +7,16 @@
 const tap = require('tap')
 const Stats = require('../../lib/stats')
 
-function verifyStats(actualStats, expectedStats) {
-  this.equal(actualStats.callCount, expectedStats.callCount)
-  this.equal(actualStats.total, expectedStats.totalTime)
-  this.equal(actualStats.totalExclusive, expectedStats.totalExclusive)
-  this.equal(actualStats.min, expectedStats.min)
-  this.equal(actualStats.max, expectedStats.max)
-  this.equal(actualStats.sumOfSquares, expectedStats.sumOfSquares)
+tap.Test.prototype.verifyStats = function verifyStats(actualStats, expectedStats) {
+  this.t.equal(actualStats.callCount, expectedStats.callCount)
+  this.t.equal(actualStats.total, expectedStats.totalTime)
+  this.t.equal(actualStats.totalExclusive, expectedStats.totalExclusive)
+  this.t.equal(actualStats.min, expectedStats.min)
+  this.t.equal(actualStats.max, expectedStats.max)
+  this.t.equal(actualStats.sumOfSquares, expectedStats.sumOfSquares)
 }
 
-tap.Test.prototype.addAssert('verifyStats', 2, verifyStats)
-
 tap.test('Stats', function (t) {
-  t.autoend()
-
   t.beforeEach(function (t) {
     t.context.statistics = new Stats()
   })
@@ -63,7 +59,6 @@ tap.test('Stats', function (t) {
   })
 
   t.test('incrementCallCount', function (t) {
-    t.autoend()
     t.test('should increment by 1 by default', function (t) {
       const { statistics } = t.context
       const expectedStats = {
@@ -111,6 +106,7 @@ tap.test('Stats', function (t) {
       t.verifyStats(statistics, expectedStats)
       t.end()
     })
+    t.end()
   })
 
   t.test('should correctly merge summaries', function (t) {
@@ -165,7 +161,6 @@ tap.test('Stats', function (t) {
   })
 
   t.test('recordValueInBytes', function (t) {
-    t.autoend()
     const MEGABYTE = 1024 ** 2
 
     t.test('should measure bytes as megabytes', function (t) {
@@ -191,5 +186,7 @@ tap.test('Stats', function (t) {
       t.equal(statistics.totalExclusive, MEGABYTE)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

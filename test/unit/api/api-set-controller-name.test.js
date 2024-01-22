@@ -10,8 +10,6 @@ const API = require('../../../api')
 const helper = require('../../lib/agent_helper')
 
 tap.test('Agent API - setControllerName', (t) => {
-  t.autoend()
-
   const TEST_URL = '/test/path/31337'
   const NAME = 'WebTransaction/Uri/test/path/31337'
 
@@ -147,4 +145,5 @@ tap.test('Agent API - setControllerName', (t) => {
       })
     })
   }
+  t.end()
 })

@@ -15,8 +15,6 @@ const DESTS = require('../../lib/config/attribute-filter').DESTINATIONS
 const LIMIT = 10
 
 tap.test('Analytics events', function (t) {
-  t.autoend()
-
   let agent = null
   let trans = null
 
@@ -41,8 +39,6 @@ tap.test('Analytics events', function (t) {
   })
 
   t.test('when there are attributes on transaction', function (t) {
-    t.autoend()
-
     t.beforeEach(function () {
       trans = new Transaction(agent)
     })
@@ -59,11 +55,10 @@ tap.test('Analytics events', function (t) {
       t.equal(firstEvent[agentAttrs].test, 'TEST')
       t.end()
     })
+    t.end()
   })
 
   t.test('when host name is specified by user', function (t) {
-    t.autoend()
-
     t.beforeEach(function () {
       agent.config.process_host.display_name = 'test-value'
       trans = new Transaction(agent)
@@ -82,11 +77,10 @@ tap.test('Analytics events', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('when analytics events are disabled', function (t) {
-    t.autoend()
-
     t.test('collector cannot enable remotely', function (t) {
       agent.config.transaction_events.enabled = false
       t.doesNotThrow(function () {
@@ -95,11 +89,10 @@ tap.test('Analytics events', function (t) {
       t.equal(agent.config.transaction_events.enabled, false)
       t.end()
     })
+    t.end()
   })
 
   t.test('when analytics events are enabled', function (t) {
-    t.autoend()
-
     t.test('collector can disable remotely', function (t) {
       agent.config.transaction_events.enabled = true
       t.doesNotThrow(function () {
@@ -108,11 +101,10 @@ tap.test('Analytics events', function (t) {
       t.equal(agent.config.transaction_events.enabled, false)
       t.end()
     })
+    t.end()
   })
 
   t.test('on transaction finished', function (t) {
-    t.autoend()
-
     t.beforeEach(function () {
       trans = new Transaction(agent)
     })
@@ -288,7 +280,9 @@ tap.test('Analytics events', function (t) {
       t.equal(getTransactionEvents(agent).length, LIMIT)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })
 
 function getTransactionEvents(agent) {

@@ -10,15 +10,13 @@ const helper = require('../../lib/agent_helper')
 const PromiseShim = require('../../../lib/shim/promise-shim')
 const Shim = require('../../../lib/shim/shim')
 
-tap.Test.prototype.addAssert('sameTransaction', 2, function expectSameTransaction(tx1, tx2) {
-  this.ok(tx1, 'current transaction exists')
-  this.ok(tx2, 'active transaction exists')
-  this.equal(tx1.id, tx2.id, 'current transaction id should match active transaction id')
-})
+tap.Test.prototype.sameTransaction = function expectSameTransaction(tx1, tx2) {
+  this.t.ok(tx1, 'current transaction exists')
+  this.t.ok(tx2, 'active transaction exists')
+  this.t.equal(tx1.id, tx2.id, 'current transaction id should match active transaction id')
+}
 
 tap.test('PromiseShim', (t) => {
-  t.autoend()
-
   // ensure the test does not exist before all pending
   // runOutOfContext tasks are executed
   helper.outOfContextQueueInterval.ref()
@@ -48,7 +46,6 @@ tap.test('PromiseShim', (t) => {
   }
 
   t.test('constructor', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -78,10 +75,10 @@ tap.test('PromiseShim', (t) => {
       t.equal(shim.pkgVersion, version)
       t.end()
     })
+    t.end()
   })
 
   t.test('.Contextualizer', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -90,10 +87,10 @@ tap.test('PromiseShim', (t) => {
       t.ok(PromiseShim.Contextualizer instanceof Function)
       t.end()
     })
+    t.end()
   })
 
   t.test('#logger', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -116,10 +113,10 @@ tap.test('PromiseShim', (t) => {
       t.ok(shim.logger.error instanceof Function)
       t.end()
     })
+    t.end()
   })
 
   t.test('#setClass', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -139,10 +136,10 @@ tap.test('PromiseShim', (t) => {
       t.notOk(shim.isPromiseInstance({}))
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapConstructor', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -248,7 +245,6 @@ tap.test('PromiseShim', (t) => {
     })
 
     t.test('should reinstate lost context', async (t) => {
-      t.autoend()
       helper.runInTransaction(agent, async (tx) => {
         shim.setClass(TestPromise)
         const WrappedPromise = shim.wrapConstructor(TestPromise)
@@ -281,10 +277,10 @@ tap.test('PromiseShim', (t) => {
         txTest(false, () => txTest(true))
       })
     })
+    t.end()
   })
 
   t.test('#wrapExecutorCaller', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -416,10 +412,10 @@ tap.test('PromiseShim', (t) => {
         txTest(false, () => txTest(true))
       })
     })
+    t.end()
   })
 
   t.test('#wrapCast', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -462,10 +458,10 @@ tap.test('PromiseShim', (t) => {
         })
       })
     })
+    t.end()
   })
 
   t.test('#wrapThen', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -525,10 +521,10 @@ tap.test('PromiseShim', (t) => {
       t.not(p.rej, reject)
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapCatch', (t) => {
-    t.autoend()
     t.beforeEach(beforeTest)
     t.afterEach(afterTest)
 
@@ -586,10 +582,10 @@ tap.test('PromiseShim', (t) => {
       t.not(p.rej, reject)
       t.end()
     })
+    t.end()
   })
 
   t.test('#wrapPromisify', (t) => {
-    t.autoend()
     let asyncFn = null
     t.beforeEach(() => {
       beforeTest()
@@ -644,5 +640,7 @@ tap.test('PromiseShim', (t) => {
         })
       })
     })
+    t.end()
   })
+  t.end()
 })

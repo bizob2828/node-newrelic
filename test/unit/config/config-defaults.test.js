@@ -11,8 +11,6 @@ const path = require('path')
 const Config = require('../../../lib/config')
 
 tap.test('with default properties', (t) => {
-  t.autoend()
-
   let configuration = null
 
   t.beforeEach(() => {
@@ -314,4 +312,5 @@ tap.test('with default properties', (t) => {
     t.equal(configuration.ai_monitoring.streaming.enabled, true)
     t.end()
   })
+  t.end()
 })

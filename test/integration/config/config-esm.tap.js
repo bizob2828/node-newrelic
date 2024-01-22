@@ -10,8 +10,6 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
 tap.test('should gracefully handle ESM imports', (t) => {
-  t.autoend()
-
   t.test('when newrelic.js is misnamed', async (t) => {
     const { stderr } = await exec('node index.mjs', { cwd: `${__dirname}/esm-bad` })
     t.match(stderr, 'ERR_REQUIRE_ESM', 'should mention ERR_REQUIRE_ESM in error message')
@@ -24,4 +22,5 @@ tap.test('should gracefully handle ESM imports', (t) => {
     t.same(stderr, '', 'all should be quiet in stderr')
     t.end()
   })
+  t.end()
 })

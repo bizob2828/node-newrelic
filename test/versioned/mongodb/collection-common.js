@@ -28,10 +28,8 @@ function collectionTest(name, run) {
     let client = null
     let db = null
     let collection = null
-    t.autoend()
 
     t.test('remote connection', function (t) {
-      t.autoend()
       t.beforeEach(async function () {
         agent = helper.instrumentMockedAgent()
 
@@ -182,13 +180,13 @@ function collectionTest(name, run) {
           })
         })
       })
+      t.end()
     })
 
     // this seems to break in 3.x up to 3.6.0
     // I think it is because of this https://jira.mongodb.org/browse/NODE-2452
     if (semver.satisfies(pkgVersion, '>=3.6.0')) {
       t.test('replica set string remote connection', function (t) {
-        t.autoend()
         t.beforeEach(async function () {
           agent = helper.instrumentMockedAgent()
 
@@ -280,8 +278,10 @@ function collectionTest(name, run) {
             )
           })
         })
+        t.end()
       })
     }
+    t.end()
   })
 }
 

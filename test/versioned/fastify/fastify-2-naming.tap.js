@@ -25,8 +25,6 @@ function getExpectedSegments(uri) {
 }
 
 tap.test('Test Transaction Naming', (test) => {
-  test.autoend()
-
   test.beforeEach(() => {
     const agent = helper.instrumentMockedAgent()
     const fastify = require('fastify')()
@@ -45,4 +43,5 @@ tap.test('Test Transaction Naming', (test) => {
   })
 
   createTests(test, getExpectedSegments)
+  test.end()
 })

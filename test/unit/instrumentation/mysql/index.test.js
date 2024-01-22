@@ -12,8 +12,6 @@ const proxyquire = require('proxyquire')
 const symbols = require('../../../../lib/symbols')
 
 tap.test('mysql instrumentation', (t) => {
-  t.autoend()
-
   let mockShim
   let mockMysql
   let instrumentation
@@ -77,4 +75,5 @@ tap.test('mysql instrumentation', (t) => {
     )
     t.end()
   })
+  t.end()
 })

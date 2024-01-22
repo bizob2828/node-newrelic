@@ -50,9 +50,7 @@ function afterEach(t) {
 }
 
 tap.test('recordDistributedTrace', (t) => {
-  t.autoend()
   t.test('when a trace payload was received', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('records metrics with payload information', (t) => {
@@ -136,10 +134,10 @@ tap.test('recordDistributedTrace', (t) => {
       t.assertMetrics(tx.metrics, result, true, true)
       t.end()
     })
+    t.end()
   })
 
   t.test('when no trace payload was received', (t) => {
-    t.autoend()
     t.beforeEach(beforeEach)
     t.afterEach(afterEach)
     t.test('records metrics with Unknown payload information', (t) => {
@@ -165,5 +163,7 @@ tap.test('recordDistributedTrace', (t) => {
       t.assertMetrics(tx.metrics, result, true, true)
       t.end()
     })
+    t.end()
   })
+  t.end()
 })

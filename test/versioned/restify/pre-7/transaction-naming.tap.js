@@ -10,8 +10,6 @@ const tap = require('tap')
 const semver = require('semver')
 
 tap.test('Restify transaction naming', (t) => {
-  t.autoend()
-
   let agent = null
   let restify = null
   let restifyPkg = null
@@ -371,4 +369,5 @@ tap.test('Restify transaction naming', (t) => {
       helper.makeGetRequest(`http://localhost:${port}${endpoint}`, cfg.requestOpts || null)
     })
   }
+  t.end()
 })

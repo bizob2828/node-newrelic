@@ -15,7 +15,6 @@ const errorHelper = require('../../../lib/errors/helper')
 const API = require('../../../api')
 
 tap.test('Expected Errors, when expected configuration is present', (t) => {
-  t.autoend()
   let agent
 
   t.beforeEach(() => {
@@ -386,4 +385,5 @@ tap.test('Expected Errors, when expected configuration is present', (t) => {
       t.end()
     })
   })
+  t.end()
 })

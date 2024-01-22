@@ -19,7 +19,10 @@ const MEGABYTE = 1024 * 1024
 
 tap.test('Metric Aggregator', (t) => {
   t.beforeEach((t) => {
-    t.context.testClock = sinon.useFakeTimers({ now: EXPECTED_START_SECONDS * 1000 })
+    t.context.testClock = sinon.useFakeTimers({
+      now: EXPECTED_START_SECONDS * 1000,
+      toFake: ['setInterval', 'clearInterval', 'Date']
+    })
 
     const fakeCollectorApi = { send: sinon.stub() }
     const fakeHarvester = { add: sinon.stub() }

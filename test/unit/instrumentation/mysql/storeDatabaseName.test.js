@@ -11,8 +11,6 @@ const proxyquire = require('proxyquire')
 const symbols = require('../../../../lib/symbols')
 
 tap.test('storeDatabaseName', (t) => {
-  t.autoend()
-
   let mockDbUtils
   let instrumentation
 
@@ -78,4 +76,5 @@ tap.test('storeDatabaseName', (t) => {
 
     t.end()
   })
+  t.end()
 })

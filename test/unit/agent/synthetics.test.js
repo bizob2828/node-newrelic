@@ -9,8 +9,6 @@ const tap = require('tap')
 const helper = require('../../lib/agent_helper')
 
 tap.test('synthetics transaction traces', (t) => {
-  t.autoend()
-
   let agent
 
   t.beforeEach(() => {
@@ -42,4 +40,5 @@ tap.test('synthetics transaction traces', (t) => {
       t.end()
     })
   })
+  t.end()
 })

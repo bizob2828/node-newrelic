@@ -10,7 +10,6 @@ const proxyquire = require('proxyquire')
 const url = require('url')
 
 tap.test('NR URL utilities', function (t) {
-  t.autoend()
   t.beforeEach(function () {
     const loggerStub = {
       warn: sinon.stub()
@@ -30,7 +29,6 @@ tap.test('NR URL utilities', function (t) {
   })
 
   t.test('parsing parameters', function (t) {
-    t.autoend()
     t.test('should find empty object of params in url lacking query', function (t) {
       const { urltils } = t.context
       t.same(urltils.parseParameters('/favicon.ico'), {})
@@ -54,10 +52,10 @@ tap.test('NR URL utilities', function (t) {
       t.same(urltils.parseParameters(url.parse('/status?v=1', true)), { v: '1' })
       t.end()
     })
+    t.end()
   })
 
   t.test('determining whether an HTTP status code is an error', function (t) {
-    t.autoend()
     let config = { error_collector: { ignore_status_codes: [] } }
 
     t.test('should not throw when called with no params', function (t) {
@@ -236,10 +234,10 @@ tap.test('NR URL utilities', function (t) {
       t.equal(urltils.isError(config, '404'), true)
       t.end()
     })
+    t.end()
   })
 
   t.test('isIgnoredError', function (t) {
-    t.autoend()
     const config = { error_collector: { ignore_status_codes: [] } }
 
     t.test('returns true if the status code is an HTTP error in the ignored list', (t) => {
@@ -267,10 +265,10 @@ tap.test('NR URL utilities', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('copying parameters from a query hash', function (t) {
-    t.autoend()
     t.beforeEach(function (t) {
       t.context.source = {}
       t.context.dest = {}
@@ -364,10 +362,10 @@ tap.test('NR URL utilities', function (t) {
       })
       t.end()
     })
+    t.end()
   })
 
   t.test('obfuscates path by regex', function (t) {
-    t.autoend()
     t.beforeEach((t) => {
       t.context.config = {
         url_obfuscation: {
@@ -458,5 +456,7 @@ tap.test('NR URL utilities', function (t) {
         t.end()
       }
     )
+    t.end()
   })
+  t.end()
 })

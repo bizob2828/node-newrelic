@@ -10,8 +10,6 @@ const helper = require('../../lib/agent_helper')
 const API = require('../../../api')
 
 tap.test('api.setErrorGroupCallback()', (t) => {
-  t.autoend()
-
   let agent
   let api
   let http
@@ -324,4 +322,5 @@ tap.test('api.setErrorGroupCallback()', (t) => {
       )
     })
   })
+  t.end()
 })

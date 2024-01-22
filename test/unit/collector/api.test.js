@@ -18,8 +18,6 @@ const URL = 'https://' + HOST
 const RUN_ID = 1337
 
 tap.test('reportSettings', (t) => {
-  t.autoend()
-
   let agent = null
   let collectorApi = null
 
@@ -115,6 +113,7 @@ tap.test('reportSettings', (t) => {
     agent.logs.add(toFind)
     agent.logs.send()
   })
+  t.end()
 })
 
 /**
@@ -274,8 +273,6 @@ const apiMethods = [
 ]
 apiMethods.forEach(({ key, data }) => {
   tap.test(key, (t) => {
-    t.autoend()
-
     t.test('requires errors to send', (t) => {
       const agent = setupMockedAgent()
       const collectorApi = new CollectorApi(agent)
@@ -307,8 +304,6 @@ apiMethods.forEach(({ key, data }) => {
     })
 
     t.test('receiving 200 response, with valid data', (t) => {
-      t.autoend()
-
       let agent = null
       let collectorApi = null
 
@@ -365,13 +360,13 @@ apiMethods.forEach(({ key, data }) => {
           t.end()
         })
       })
+      t.end()
     })
+    t.end()
   })
 })
 
 tap.test('shutdown', (t) => {
-  t.autoend()
-
   t.test('requires a callback', (t) => {
     const agent = setupMockedAgent()
     const collectorApi = new CollectorApi(agent)
@@ -388,8 +383,6 @@ tap.test('shutdown', (t) => {
   })
 
   t.test('receiving 200 response, with valid data', (t) => {
-    t.autoend()
-
     let agent = null
     let collectorApi = null
 
@@ -443,11 +436,10 @@ tap.test('shutdown', (t) => {
         t.end()
       })
     })
+    t.end()
   })
 
   t.test('fail on a 503 status code', (t) => {
-    t.autoend()
-
     let agent = null
     let collectorApi = null
 
@@ -508,7 +500,9 @@ tap.test('shutdown', (t) => {
         t.end()
       })
     })
+    t.end()
   })
+  t.end()
 })
 
 function setupMockedAgent() {

@@ -16,14 +16,15 @@ function checkMetric(t, metrics, name, scope) {
 }
 
 tap.test('recording database metrics', (t) => {
-  t.autoend()
-
   let agent = null
   let metrics = null
 
-  t.test('setup', (t) => {
+  t.before(() => {
     agent = helper.loadMockedAgent()
-    t.end()
+  })
+
+  t.teardown(() => {
+    helper.unloadAgent(agent)
   })
 
   t.test('on scoped transactions with parsed statements - with collection', (t) => {
@@ -149,13 +150,11 @@ tap.test('recording database metrics', (t) => {
     t.end()
   })
 
-  t.test('reset', (t) => {
-    helper.unloadAgent(agent)
-    agent = helper.loadMockedAgent()
-    t.end()
-  })
-
   t.test('on unscoped transactions with parsed statements', (t) => {
+    t.before(() => {
+      helper.unloadAgent(agent)
+      agent = helper.loadMockedAgent()
+    })
     t.test('with collection', (t) => {
       t.beforeEach(() => {
         const ps = new ParsedStatement('NoSQL', 'select', 'test_collection')
@@ -268,15 +267,10 @@ tap.test('recording database metrics', (t) => {
     t.end()
   })
 
-  t.test('teardown', (t) => {
-    helper.unloadAgent(agent)
-    t.end()
-  })
+  t.end()
 })
 
 tap.test('recording slow queries', (t) => {
-  t.autoend()
-
   t.test('with collection', (t) => {
     let transaction
     let segment
@@ -462,4 +456,5 @@ tap.test('recording slow queries', (t) => {
 
     t.end()
   })
+  t.end()
 })

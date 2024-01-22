@@ -18,7 +18,6 @@ import helper from '../../lib/agent_helper.js'
 import { pkgVersion, STATEMENT_PREFIX, COLLECTIONS } from './common.cjs'
 
 tap.test('Cursor Tests', (t) => {
-  t.autoend()
   let agent
 
   t.before(() => {
@@ -78,7 +77,6 @@ tap.test('Cursor Tests', (t) => {
 
   if (semver.satisfies(pkgVersion, '<4')) {
     t.test('piping cursor stream hides internal calls', function (t) {
-      t.autoend()
       let client = null
       let db = null
       let collection = null
@@ -126,6 +124,8 @@ tap.test('Cursor Tests', (t) => {
           collection.find({}).pipe(destination)
         })
       })
+      t.end()
     })
   }
+  t.end()
 })

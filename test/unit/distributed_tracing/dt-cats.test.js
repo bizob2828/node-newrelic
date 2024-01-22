@@ -15,7 +15,6 @@ const recordSupportability = require('../../../lib/agent').prototype.recordSuppo
 const testCases = require('../../lib/cross_agent_tests/distributed_tracing/distributed_tracing.json')
 
 tap.test('distributed tracing', function (t) {
-  t.autoend()
   t.beforeEach((t) => {
     const agent = helper.loadMockedAgent({ distributed_tracing: { enabled: true } })
     agent.recordSupportability = recordSupportability
@@ -148,4 +147,5 @@ tap.test('distributed tracing', function (t) {
       })
     })
   })
+  t.end()
 })
