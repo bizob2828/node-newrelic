@@ -22,6 +22,7 @@ tap.test('Basic run through prisma functionality', { timeout: 30 * 1000 }, (t) =
   })
 
   t.beforeEach(async () => {
+    debugger
     process.env.DATABASE_URL = getPostgresUrl()
     agent = helper.instrumentMockedAgent()
     ;({ PrismaClient } = require('@prisma/client'))
