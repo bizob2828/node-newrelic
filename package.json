@@ -275,5 +275,10 @@
     "bin/tracetractor",
     "bin/test-naming-rules.js",
     "esm-loader.mjs"
-  ]
+  ],
+  "tap": {
+    "plugin": [
+      "!@tapjs/typescript"
+    ]
+  }
 }
