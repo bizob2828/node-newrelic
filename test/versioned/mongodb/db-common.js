@@ -69,7 +69,7 @@ function dbTest(name, run) {
     // The domain socket tests should only be run if there is a domain socket
     // to connect to, which only happens if there is a Mongo instance running on
     // the same box as these tests.
-    const shouldTestDomain = domainPath
+    const shouldTestDomain = domainPath && semver.gte(common.pkgVersion, '4.0.0')
 
     t.test('domain socket', { skip: !shouldTestDomain }, function (t) {
       t.autoend()

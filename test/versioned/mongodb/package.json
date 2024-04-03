@@ -20,7 +20,8 @@
         "legacy/find.tap.js",
         "legacy/index.tap.js",
         "legacy/misc.tap.js",
-        "legacy/update.tap.js"
+        "legacy/update.tap.js",
+        "legacy/socket.tap.js"
       ]
     },
     {
@@ -37,7 +38,8 @@
         "collection-misc.tap.js",
         "collection-update.tap.js",
         "cursor.tap.js",
-        "db.tap.js"
+        "db.tap.js",
+        "socket.tap.js"
       ]
     }
   ],
