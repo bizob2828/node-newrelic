@@ -54,9 +54,13 @@ function verifySubscribe(t, tx, exchange, routingKey) {
 
   t.assertSegments(tx.trace.root, segments)
 
+  debugger
   t.assertMetrics(
     tx.metrics,
-    [[{ name: 'MessageBroker/RabbitMQ/Exchange/Produce/Named/' + exchange }]],
+    [[
+      { name: 'MessageBroker/RabbitMQ/Exchange/Produce/Named/' + exchange },
+      { name: `MessageBroker/RabbitMQ/${params.rabbitmq_host}/${params.rabbitmq_port}/Exchange/Produce/Named/${exchange}` }
+    ]],
     false,
     false
   )
@@ -108,6 +112,7 @@ function verifyDistributedTrace(t, produceTransaction, consumeTransaction) {
 
 function verifyConsumeTransaction(t, tx, exchange, queue, routingKey) {
   t.doesNotThrow(function () {
+    debugger
     t.assertMetrics(
       tx.metrics,
       [
@@ -146,6 +151,7 @@ function verifyConsumeTransaction(t, tx, exchange, queue, routingKey) {
 function verifySendToQueue(t, tx) {
   t.assertSegments(tx.trace.root, ['MessageBroker/RabbitMQ/Exchange/Produce/Named/Default'])
 
+  debugger
   t.assertMetrics(
     tx.metrics,
     [[{ name: 'MessageBroker/RabbitMQ/Exchange/Produce/Named/Default' }]],
@@ -208,6 +214,7 @@ function verifyProduce(t, tx, exchangeName, routingKey) {
 
   t.assertSegments(tx.trace.root, segments, 'should have expected segments')
 
+  debugger
   t.assertMetrics(
     tx.metrics,
     [[{ name: 'MessageBroker/RabbitMQ/Exchange/Produce/Named/' + exchangeName }]],
@@ -236,6 +243,7 @@ function verifyGet({ t, tx, exchangeName, routingKey, queue, assertAttr }) {
   } else {
     t.assertSegments(tx.trace.root, [produceName, consumeName])
   }
+  debugger
   t.assertMetrics(tx.metrics, [[{ name: produceName }], [{ name: consumeName }]], false, false)
   if (assertAttr) {
     const segment = metrics.findSegment(tx.trace.root, consumeName)
@@ -286,6 +294,7 @@ function verifyPurge(t, tx) {
 
   t.assertSegments(tx.trace.root, segments, 'should have expected segments')
 
+  debugger
   t.assertMetrics(tx.metrics, [[{ name: 'MessageBroker/RabbitMQ/Queue/Purge/Temp' }]], false, false)
 }
 
