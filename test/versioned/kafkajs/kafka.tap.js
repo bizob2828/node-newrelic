@@ -14,7 +14,11 @@ const utils = require('./utils')
 const broker = `${params.kafka_host}:${params.kafka_port}`
 
 tap.beforeEach(async (t) => {
-  t.context.agent = helper.instrumentMockedAgent()
+  t.context.agent = helper.instrumentMockedAgent({
+    feature_flag: {
+      kafkajs_instrumentation: true
+    }
+  })
 
   const { Kafka, logLevel } = require('kafkajs')
   t.context.Kafka = Kafka
@@ -123,12 +127,13 @@ tap.test('send passes along DT headers', (t) => {
   agent.on('transactionFinished', (tx) => {
     t.equal(tx.isDistributedTrace, true)
 
-    const headers = {}
+    /*const headers = {}
     tx.traceContext.addTraceContextHeaders(headers)
     t.match(headers, {
       traceparent: /00-4bf92f3577b34da6a3ce929d0e0e4736-[a-z0-9]{16}-00/,
       tracestate: /42@nr=0-0-account_1-app_1-[a-z0-9]{16}-[a-z0-9]{16}-0-0.123000-1717426365982/
     })
+    */
 
     t.end()
   })
@@ -137,7 +142,7 @@ tap.test('send passes along DT headers', (t) => {
     // This acceptTraceContextPayload is how we are simulating that the agent
     // received a distributed trace context that has resulted in the Kafka
     // payload production.
-    tx.acceptTraceContextPayload(traceparent, tracestate)
+    //tx.acceptTraceContextPayload(traceparent, tracestate)
 
     await consumer.subscribe({ topic, fromBeginning: true })
 
@@ -146,6 +151,10 @@ tap.test('send passes along DT headers', (t) => {
       consumer.run({
         eachMessage: async ({ message: actualMessage }) => {
           t.equal(messages.includes(actualMessage.value.toString()), true)
+          const expectedTraceState = actualMessage.headers.tracestate.toString()
+          const expectedTraceParent = actualMessage.headers.traceparent.toString()
+          t.equal(expectedTraceState, tracestate)
+          t.equal(expectedTraceParent, traceparent)
           msgCount += 1
           if (msgCount === 3) {
             resolve()
