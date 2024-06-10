@@ -11,8 +11,6 @@ const common = require('../aws-sdk-v3/common')
 const { createEmptyResponseServer, FAKE_CREDENTIALS } = require('../../lib/aws-server-stubs')
 
 tap.test('S3 buckets', (t) => {
-  t.autoend()
-
   t.beforeEach(async (t) => {
     const server = createEmptyResponseServer()
 
@@ -93,6 +91,7 @@ tap.test('S3 buckets', (t) => {
       setImmediate(finish, ...args)
     })
   })
+  t.end()
 })
 
 function finish(t, tx) {

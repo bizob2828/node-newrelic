@@ -22,8 +22,6 @@ const config = {
 const { DESTINATIONS } = require('../../../lib/config/attribute-filter')
 
 tap.test('Langchain instrumentation - runnable sequence', (t) => {
-  t.autoend()
-
   t.beforeEach(async (t) => {
     const { host, port, server } = await createOpenAIMockServer()
     t.context.server = server
@@ -423,4 +421,5 @@ tap.test('Langchain instrumentation - runnable sequence', (t) => {
       t.end()
     })
   })
+  t.end()
 })

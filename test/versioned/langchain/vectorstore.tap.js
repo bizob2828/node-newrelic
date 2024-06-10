@@ -34,8 +34,6 @@ const config = {
 }
 
 tap.test('Langchain instrumentation - vectorstore', (t) => {
-  t.autoend()
-
   t.beforeEach(async (t) => {
     const { host, port, server } = await createOpenAIMockServer()
     t.context.server = server
@@ -253,4 +251,5 @@ tap.test('Langchain instrumentation - vectorstore', (t) => {
       t.end()
     })
   })
+  t.end()
 })

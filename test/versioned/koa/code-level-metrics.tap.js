@@ -92,8 +92,6 @@ async function teardownApp(server, agent) {
 }
 
 tap.test('Vanilla koa, no router', (t) => {
-  t.autoend()
-
   let agent
   let app
   let server
@@ -138,11 +136,10 @@ tap.test('Vanilla koa, no router', (t) => {
       })
     })
   })
+  t.end()
 })
 
 tap.test('Using koa-router', { skip: !koaRouterAvailable }, (t) => {
-  t.autoend()
-
   let agent
   let app
   let server
@@ -198,11 +195,10 @@ tap.test('Using koa-router', { skip: !koaRouterAvailable }, (t) => {
       })
     })
   })
+  t.end()
 })
 
 tap.test('Using @koa/router', { skip: !atKoaRouterAvailable }, (t) => {
-  t.autoend()
-
   let agent
   let app
   let server
@@ -259,4 +255,5 @@ tap.test('Using @koa/router', { skip: !atKoaRouterAvailable }, (t) => {
       })
     })
   })
+  t.end()
 })

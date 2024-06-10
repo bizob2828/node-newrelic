@@ -10,7 +10,7 @@ const proxyquire = require('proxyquire')
 const url = require('url')
 
 tap.test('NR URL utilities', function (t) {
-  t.beforeEach(function () {
+  t.beforeEach(function (t) {
     const loggerStub = {
       warn: sinon.stub()
     }

@@ -40,8 +40,6 @@ tap.test('Utility Functions', (t) => {
 })
 
 tap.test('DB parameters', (t) => {
-  t.autoend()
-
   t.test('default values', (t) => {
     const input = {}
     const endpoint = {}
@@ -94,4 +92,5 @@ tap.test('DB parameters', (t) => {
     )
     t.end()
   })
+  t.end()
 })

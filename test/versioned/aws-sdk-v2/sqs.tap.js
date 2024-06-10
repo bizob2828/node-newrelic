@@ -12,8 +12,6 @@ const { createResponseServer, FAKE_CREDENTIALS } = require('../../lib/aws-server
 const AWS_REGION = 'us-east-1'
 
 tap.test('SQS API', (t) => {
-  t.autoend()
-
   let sendMessageRequestId = null
   let sendMessageBatchRequestId = null
   let receiveMessageRequestId = null
@@ -137,6 +135,7 @@ tap.test('SQS API', (t) => {
       })
     })
   })
+  t.end()
 
   function finish({ t, transaction, queueName }) {
     const expectedSegmentCount = 3

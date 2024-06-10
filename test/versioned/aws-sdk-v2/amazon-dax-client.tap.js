@@ -19,8 +19,6 @@ const DAX_ENDPOINTS = [
 ]
 
 tap.test('amazon-dax-client', (t) => {
-  t.autoend()
-
   t.beforeEach(() => {
     t.context.agent = helper.instrumentMockedAgent()
     const AWS = require('aws-sdk')
@@ -87,6 +85,7 @@ tap.test('amazon-dax-client', (t) => {
       })
     })
   })
+  t.end()
 })
 
 function getDocItemParams(tableName, uniqueArtist) {

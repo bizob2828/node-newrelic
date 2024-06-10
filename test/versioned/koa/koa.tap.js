@@ -11,8 +11,6 @@ const helper = require('../../lib/agent_helper')
 require('../../lib/metrics_helper')
 
 tap.test('Koa instrumentation', (t) => {
-  t.autoend()
-
   t.beforeEach(() => {
     t.context.agent = helper.instrumentMockedAgent()
     const Koa = require('koa')
@@ -396,6 +394,7 @@ tap.test('Koa instrumentation', (t) => {
       })
     })
   }
+  t.end()
 })
 
 function checkSegments(t, tx) {

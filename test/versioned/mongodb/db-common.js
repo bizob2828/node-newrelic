@@ -23,46 +23,42 @@ function dbTest(name, run) {
     let db = null
     let client = null
 
-    t.autoend()
+    t.beforeEach(async function () {
+      // mongo >= 3.6.9 fails if you try to create an existing collection
+      // drop before executing tests
+      if (name === 'createCollection') {
+        await collectionCommon.dropTestCollections(mongodb)
+      }
+      MONGO_HOST = common.getHostName(agent)
+      MONGO_PORT = common.getPort()
 
-    t.test('remote connection', function (t) {
-      t.autoend()
-      t.beforeEach(async function () {
-        // mongo >= 3.6.9 fails if you try to create an existing collection
-        // drop before executing tests
-        if (name === 'createCollection') {
-          await collectionCommon.dropTestCollections(mongodb)
-        }
-        MONGO_HOST = common.getHostName(agent)
-        MONGO_PORT = common.getPort()
+      const res = await common.connect(mongodb)
+      client = res.client
+      db = res.db
+    })
 
-        const res = await common.connect(mongodb)
-        client = res.client
-        db = res.db
+    t.afterEach(async function () {
+      await common.close(client, db)
+    })
+
+    t.test('without transaction', function (t) {
+      run(t, db, function () {
+        t.notOk(agent.getTransaction(), 'should not have transaction')
+        t.end()
       })
+    })
 
-      t.afterEach(async function () {
-        await common.close(client, db)
-      })
-
-      t.test('without transaction', function (t) {
-        run(t, db, function () {
-          t.notOk(agent.getTransaction(), 'should not have transaction')
+    t.test('with transaction', function (t) {
+      t.notOk(agent.getTransaction(), 'should not have transaction')
+      helper.runInTransaction(agent, function (transaction) {
+        run(t, db, function (names, opts = {}) {
+          verifyMongoSegments(t, agent, transaction, names, opts)
+          transaction.end()
           t.end()
         })
       })
-
-      t.test('with transaction', function (t) {
-        t.notOk(agent.getTransaction(), 'should not have transaction')
-        helper.runInTransaction(agent, function (transaction) {
-          run(t, db, function (names, opts = {}) {
-            verifyMongoSegments(t, agent, transaction, names, opts)
-            transaction.end()
-            t.end()
-          })
-        })
-      })
     })
+    t.end()
   })
 }
 

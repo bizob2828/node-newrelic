@@ -11,8 +11,6 @@ const common = require('../aws-sdk-v3/common')
 const { createEmptyResponseServer, FAKE_CREDENTIALS } = require('../../lib/aws-server-stubs')
 
 tap.test('AWS HTTP Services', (t) => {
-  t.autoend()
-
   t.beforeEach(async (t) => {
     const server = createEmptyResponseServer()
 
@@ -235,6 +233,7 @@ tap.test('AWS HTTP Services', (t) => {
       )
     })
   })
+  t.end()
 })
 
 function finish(t, service, operation, tx) {

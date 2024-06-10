@@ -12,8 +12,6 @@ const { createEmptyResponseServer, FAKE_CREDENTIALS } = require('../../lib/aws-s
 const TopicArn = null
 
 tap.test('SNS', (t) => {
-  t.autoend()
-
   t.beforeEach(async (t) => {
     const server = createEmptyResponseServer()
 
@@ -69,6 +67,7 @@ tap.test('SNS', (t) => {
       setImmediate(finish, ...args)
     })
   })
+  t.end()
 })
 
 function finish(t, tx) {

@@ -10,8 +10,6 @@ const helper = require('../../lib/agent_helper')
 const instrumentationHelper = require('../../../lib/instrumentation/aws-sdk/v2/instrumentation-helper')
 
 tap.test('instrumentation is not supported', (t) => {
-  t.autoend()
-
   t.beforeEach((t) => {
     t.context.agent = helper.instrumentMockedAgent()
     t.context.AWS = require('aws-sdk')
@@ -39,4 +37,5 @@ tap.test('instrumentation is not supported', (t) => {
     )
     t.end()
   })
+  t.end()
 })

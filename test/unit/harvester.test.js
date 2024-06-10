@@ -63,7 +63,7 @@ tap.test('Harvester should have aggregators property', (t) => {
 
 tap.test('Harvester should add aggregator to this.aggregators', (t) => {
   const { harvester, aggregators } = t.context
-  t.ok(harvester.aggregators.length, 2, 'should add 2 aggregators')
+  t.equal(harvester.aggregators.length, 2, 'should add 2 aggregators')
   t.same(harvester.aggregators, aggregators)
   t.end()
 })

@@ -52,8 +52,6 @@ module.exports = (pkg) => {
     t.test('with single router', (t) => {
       t.beforeEach(testSetup)
       t.afterEach(tearDown)
-      t.autoend()
-
       t.test('should name and produce segments for matched path', (t) => {
         const { agent, router, app } = t.context
         router.get(
@@ -420,13 +418,12 @@ module.exports = (pkg) => {
           run({ path: '/', context: t.context })
         }
       )
+      t.end()
     })
 
     t.test('using multipler routers', (t) => {
       t.beforeEach(testSetup)
       t.afterEach(tearDown)
-      t.autoend()
-
       t.test('should name transaction after last route for identical matches', (t) => {
         const { agent, router, app } = t.context
         const Router = require(pkg)
@@ -504,13 +501,12 @@ module.exports = (pkg) => {
         })
         run({ path: '/first', context: t.context })
       })
+      t.end()
     })
 
     t.test('using nested or prefixed routers', (t) => {
       t.beforeEach(testSetup)
       t.afterEach(tearDown)
-      t.autoend()
-
       t.test('should name after most last matched path', (t) => {
         const { agent, router, Router, app } = t.context
         const router2 = new Router()
@@ -604,11 +600,10 @@ module.exports = (pkg) => {
         })
         run({ path: '/123/second', context: t.context })
       })
+      t.end()
     })
 
     t.test('using allowedMethods', (t) => {
-      t.autoend()
-
       t.test('with throw: true', (t) => {
         t.beforeEach(testSetup)
         t.afterEach(tearDown)
@@ -881,6 +876,7 @@ module.exports = (pkg) => {
           run({ context: t.context })
         })
       })
+      t.end()
     })
     t.end()
   })

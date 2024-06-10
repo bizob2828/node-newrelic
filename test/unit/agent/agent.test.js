@@ -1267,8 +1267,6 @@ tap.test('getNRLinkingMetadata', (t) => {
 })
 
 tap.test('_reset*', (t) => {
-  t.autoend()
-
   t.beforeEach(() => {
     const agent = helper.loadMockedAgent()
     const sandbox = sinon.createSandbox()
@@ -1317,4 +1315,5 @@ tap.test('_reset*', (t) => {
     t.equal(agent.customEventAggregator.clear.callCount, 1)
     t.end()
   })
+  t.end()
 })

@@ -13,8 +13,6 @@ const symbols = require('../../../lib/symbols')
 const { createEmptyResponseServer, FAKE_CREDENTIALS } = require('../../lib/aws-server-stubs')
 
 tap.test('aws-sdk', (t) => {
-  t.autoend()
-
   t.beforeEach(async (t) => {
     const server = createEmptyResponseServer()
 
@@ -114,4 +112,5 @@ tap.test('aws-sdk', (t) => {
       }
     }
   })
+  t.end()
 })
