@@ -171,6 +171,7 @@
     "test": "npm run integration && npm run unit",
     "third-party-updates": "oss third-party manifest --includeOptDeps && oss third-party notices --includeOptDeps && git add THIRD_PARTY_NOTICES.md third_party_manifest.json",
     "unit": "rm -f newrelic_agent.log && time c8 -o ./coverage/unit tap --include='test/unit/**/*.test.js' --timeout=180 --disable-coverage --reporter base",
+    "unit:no-cov": "rm -f newrelic_agent.log && time tap --include='test/unit/**/*.test.js' --timeout=180 --disable-coverage --reporter base",
     "unit:scripts": "time c8 -o ./coverage/scripts-unit tap --include='bin/test/*.test.js' --timeout=180 --disable-coverage --reporter base",
     "update-cross-agent-tests": "./bin/update-cats.sh",
     "versioned-tests": "./bin/run-versioned-tests.sh",

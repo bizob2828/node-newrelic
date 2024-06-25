@@ -3887,7 +3887,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### tap
 
-This product includes source derived from [tap](https://github.com/tapjs/tapjs) ([v19.2.3](https://github.com/tapjs/tapjs/tree/v19.2.3)), distributed under the [BlueOak-1.0.0 License](https://github.com/tapjs/tapjs/blob/v19.2.3/LICENSE.md):
+This product includes source derived from [tap](https://github.com/tapjs/tapjs) ([v19.2.5](https://github.com/tapjs/tapjs/tree/v19.2.5)), distributed under the [BlueOak-1.0.0 License](https://github.com/tapjs/tapjs/blob/v19.2.5/LICENSE.md):
 
 ```
 # Blue Oak Model License
