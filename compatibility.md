@@ -23,7 +23,7 @@ version.
 | `@grpc/grpc-js` | 1.4.0 | 1.11.3 | 8.17.0 |
 | `@hapi/hapi` | 20.1.2 | 21.3.10 | 9.0.0 |
 | `@koa/router` | 11.0.2 | 13.1.0 | 3.2.0 |
-| `@langchain/core` | 0.1.17 | 0.3.2 | 11.13.0 |
+| `@langchain/core` | 0.1.17 | 0.3.3 | 11.13.0 |
 | `@nestjs/cli` | 9.0.0 | 10.4.5 | 10.1.0 |
 | `@prisma/client` | 5.0.0 | 5.19.1 | 11.0.0 |
 | `@smithy/smithy-client` | 2.0.0 | 3.3.2 | 11.0.0 |
