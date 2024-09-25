@@ -21,7 +21,7 @@ test('createServer', function createServerTest(t) {
 
     server.listen(4123, function listening() {
       // leave transaction
-      contextManager.setContext(null)
+      contextManager.setContext({ segment: null })
       const socket = net.connect({ port: 4123 })
       socket.write('test123')
       socket.end()
@@ -30,11 +30,8 @@ test('createServer', function createServerTest(t) {
     function handler(socket) {
       t.equal(id(agent.getTransaction()), id(transaction), 'should maintain tx')
       socket.end('test')
-      t.equal(
-        contextManager.getContext().name,
-        'net.Server.onconnection',
-        'child segment should have correct name'
-      )
+      const segment = contextManager.getSegment()
+      t.equal(segment.name, 'net.Server.onconnection', 'child segment should have correct name')
 
       socket.on('data', function onData(data) {
         t.equal(id(agent.getTransaction()), id(transaction), 'should maintain tx')
@@ -149,11 +146,8 @@ test('createServer and connect', function createServerTest(t) {
     function handler(socket) {
       t.equal(id(agent.getTransaction()), id(transaction), 'should maintain tx')
       socket.end('test')
-      t.equal(
-        contextManager.getContext().name,
-        'net.Server.onconnection',
-        'child segment should have correct name'
-      )
+      const segment = contextManager.getSegment()
+      t.equal(segment.name, 'net.Server.onconnection', 'child segment should have correct name')
 
       socket.on('data', function onData(data) {
         t.equal(id(agent.getTransaction()), id(transaction), 'should maintain tx')

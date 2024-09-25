@@ -28,6 +28,17 @@ test('setContext should update the current context', () => {
   assert.equal(context, expectedContext)
 })
 
+test('getSegment should get segment from context manager', () => {
+  const contextManager = new AsyncLocalContextManager({})
+
+  const expectedContext = { name: 'new context' }
+
+  contextManager.setContext({ segment: expectedContext })
+  const context = contextManager.getSegment()
+
+  assert.equal(context, expectedContext)
+})
+
 test('runInContext()', async (t) => {
   await t.test('should execute callback synchronously', () => {
     const contextManager = new AsyncLocalContextManager({})

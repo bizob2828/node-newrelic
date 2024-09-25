@@ -148,7 +148,7 @@ function step(n, rejection) {
 }
 
 function name(newName) {
-  const segment = helper.getContextManager().getContext()
+  const { segment } = helper.getContextManager().getContext()
   segment.name = newName
 }
 
@@ -157,9 +157,10 @@ function checkTrace(t, tx) {
   assert.equal(segment.name, 'a')
   assert.equal(segment.children.length, 0)
   // verify current segment is same as trace root
+  const ctx = helper.getContextManager().getContext()
   assert.deepEqual(
     segment.name,
-    helper.getContextManager().getContext().name,
+    ctx.segment.name,
     'current segment is same as one in async context manager'
   )
   return Promise.resolve()

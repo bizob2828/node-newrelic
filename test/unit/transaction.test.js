@@ -1143,7 +1143,7 @@ test('_createDistributedTracePayload', async (t) => {
   await t.test('adds the current span id as the parent span id', (t) => {
     const { agent, txn, contextManager } = t.nr
     agent.config.span_events.enabled = true
-    contextManager.setContext(txn.trace.root)
+    contextManager.setContext({ segment: txn.trace.root })
     txn.sampled = true
     const payload = JSON.parse(txn._createDistributedTracePayload().text())
     assert.equal(payload.d.id, txn.trace.root.id)
@@ -1156,7 +1156,7 @@ test('_createDistributedTracePayload', async (t) => {
     agent.config.span_events.enabled = true
     txn._calculatePriority()
     txn.sampled = false
-    contextManager.setContext(txn.trace.root)
+    contextManager.setContext({ segment: txn.trace.root })
     const payload = JSON.parse(txn._createDistributedTracePayload().text())
     assert.equal(payload.d.id, undefined)
     contextManager.setContext(null)
@@ -1459,7 +1459,7 @@ test('insertDistributedTraceHeaders', async (t) => {
 
     const txn = new Transaction(agent)
 
-    contextManager.setContext(txn.trace.root)
+    contextManager.setContext({ segment: txn.trace.root })
 
     const outboundHeaders = createHeadersAndInsertTrace(txn)
     const traceparent = outboundHeaders.traceparent
@@ -1486,7 +1486,7 @@ test('insertDistributedTraceHeaders', async (t) => {
     const txn = new Transaction(agent)
     const lowercaseHexRegex = /^[a-f0-9]+/
 
-    contextManager.setContext(txn.trace.root)
+    contextManager.setContext({ segment: txn.trace.root })
 
     const outboundHeaders = createHeadersAndInsertTrace(txn)
     const traceparent = outboundHeaders.traceparent
@@ -1505,7 +1505,7 @@ test('insertDistributedTraceHeaders', async (t) => {
 
     const txn = new Transaction(agent)
 
-    contextManager.setContext(txn.trace.root)
+    contextManager.setContext({ segment: txn.trace.root })
     txn.sampled = true
 
     const outboundHeaders = createHeadersAndInsertTrace(txn)
@@ -1527,7 +1527,7 @@ test('insertDistributedTraceHeaders', async (t) => {
 
     txn.acceptTraceContextPayload(traceparent, tracestate)
 
-    contextManager.setContext(txn.trace.root)
+    contextManager.setContext({ segment: txn.trace.root })
 
     const outboundHeaders = createHeadersAndInsertTrace(txn)
     const traceparentParts = outboundHeaders.traceparent.split('-')
@@ -1951,7 +1951,7 @@ test('requestd', async (t) => {
 
     txn.finalizeNameFromUri('/some/random/path', 200)
 
-    const segment = contextManager.getContext()
+    const segment = contextManager.getSegment()
 
     match(segment.attributes.get(AttributeFilter.DESTINATIONS.SPAN_EVENT), {
       'request.parameters.foo': 'biz',
@@ -2055,7 +2055,7 @@ function createHeadersAndInsertTrace(transaction) {
 
 function addSegmentInContext(contextManager, transaction, name) {
   const segment = new Segment(transaction, name)
-  contextManager.setContext(segment)
+  contextManager.setContext({ segment })
 
   return segment
 }

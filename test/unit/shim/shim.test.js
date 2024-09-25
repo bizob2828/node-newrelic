@@ -35,7 +35,7 @@ test('Shim', async function (t) {
       },
       anony: function () {},
       getActiveSegment: function () {
-        return ctx.nr.contextManager.getContext()
+        return ctx.nr.contextManager.getSegment()
       }
     }
     ctx.nr.agent = agent
@@ -377,7 +377,7 @@ test('Shim', async function (t) {
         }
       }
 
-      ctx.nr.startingSegment = ctx.nr.contextManager.getContext()
+      ctx.nr.startingSegment = ctx.nr.contextManager.getSegment()
     })
 
     t.afterEach(afterEach)
@@ -433,9 +433,9 @@ test('Shim', async function (t) {
       assert.notEqual(startingSegment, segment, 'test should start in clean condition')
 
       shim.bindSegment(wrappable, 'getActiveSegment', segment)
-      assert.equal(contextManager.getContext(), startingSegment)
+      assert.deepEqual(contextManager.getSegment(), startingSegment)
       assert.equal(wrappable.getActiveSegment(), segment)
-      assert.equal(contextManager.getContext(), startingSegment)
+      assert.deepEqual(contextManager.getSegment(), startingSegment)
     })
 
     await t.test('should not require any arguments except a function', function (t) {
@@ -446,12 +446,12 @@ test('Shim', async function (t) {
       // no segment is passed in.  To get around this we set the
       // active segment to an object known not to be null then do the
       // wrapping.
-      contextManager.setContext(segment)
+      contextManager.setContext({ segment })
       const wrapped = shim.bindSegment(wrappable.getActiveSegment)
-      contextManager.setContext(startingSegment)
+      contextManager.setContext({ segment: startingSegment })
 
       assert.equal(wrapped(), segment)
-      assert.equal(contextManager.getContext(), startingSegment)
+      assert.deepEqual(contextManager.getSegment(), startingSegment)
     })
 
     await t.test('should default `full` to false', function (t) {
@@ -474,7 +474,7 @@ test('Shim', async function (t) {
 
     await t.test('should default to the current segment', function (t) {
       const { contextManager, segment, shim, wrappable } = t.nr
-      contextManager.setContext(segment)
+      contextManager.setContext({ segment })
       shim.bindSegment(wrappable, 'getActiveSegment')
       const activeSegment = wrappable.getActiveSegment()
       assert.equal(activeSegment, segment)
@@ -887,14 +887,14 @@ test('Shim', async function (t) {
       })
 
       helper.runInTransaction(agent, function (tx) {
-        const startingSegment = contextManager.getContext()
+        const startingSegment = contextManager.getSegment()
         startingSegment.internal = true
         startingSegment.shim = shim
         const segment = wrappable.getActiveSegment()
         assert.equal(segment, startingSegment)
         assert.equal(segment.transaction, tx)
         assert.equal(segment.name, 'ROOT')
-        assert.equal(contextManager.getContext(), startingSegment)
+        assert.deepEqual(contextManager.getSegment(), startingSegment)
         end()
       })
     })
@@ -912,7 +912,7 @@ test('Shim', async function (t) {
       )
 
       helper.runInTransaction(agent, function () {
-        const startingSegment = contextManager.getContext()
+        const startingSegment = contextManager.getSegment()
         startingSegment.internal = true
         startingSegment.shim = shim
         wrapped(function () {})
@@ -1013,7 +1013,7 @@ test('Shim', async function (t) {
       beforeEach(ctx)
       const stream = new EventEmitter()
       ctx.nr.toWrap = function () {
-        stream.segment = ctx.nr.contextManager.getContext()
+        stream.segment = ctx.nr.contextManager.getSegment()
         return stream
       }
       ctx.nr.stream = stream
@@ -1173,7 +1173,7 @@ test('Shim', async function (t) {
       beforeEach(ctx)
       const { promise, resolve, reject } = promiseResolvers()
       const toWrap = function () {
-        promise.segment = ctx.nr.contextManager.getContext()
+        promise.segment = ctx.nr.contextManager.getSegment()
         return promise
       }
       ctx.nr.promise = promise
@@ -1462,12 +1462,12 @@ test('Shim', async function (t) {
       })
 
       helper.runInTransaction(agent, function (tx) {
-        const startingSegment = contextManager.getContext()
+        const startingSegment = contextManager.getSegment()
         const segment = wrappable.getActiveSegment()
         assert.notEqual(segment, startingSegment)
         assert.equal(segment.transaction, tx)
         assert.equal(segment.name, 'test segment')
-        assert.equal(contextManager.getContext(), startingSegment)
+        assert.deepEqual(contextManager.getSegment(), startingSegment)
         end()
       })
     })
@@ -1622,7 +1622,7 @@ test('Shim', async function (t) {
       })
 
       helper.runInTransaction(agent, function (tx) {
-        const startingSegment = contextManager.getContext()
+        const startingSegment = contextManager.getSegment()
         tx.end()
         const segment = wrappable.getActiveSegment()
         assert.equal(segment, startingSegment)
@@ -1912,7 +1912,7 @@ test('Shim', async function (t) {
 
     await t.test('should return the current segment if the function is not bound', function (t) {
       const { contextManager, segment, shim } = t.nr
-      contextManager.setContext(segment)
+      contextManager.setContext({ segment })
       assert.equal(
         shim.getSegment(function () {}),
         segment
@@ -1921,7 +1921,7 @@ test('Shim', async function (t) {
 
     await t.test('should return the current segment if no object is provided', function (t) {
       const { contextManager, segment, shim } = t.nr
-      contextManager.setContext(segment)
+      contextManager.setContext({ segment })
       assert.equal(shim.getSegment(), segment)
     })
   })
@@ -1954,7 +1954,7 @@ test('Shim', async function (t) {
       'should return the current segment if the function is not bound when transaction is active',
       function (t) {
         const { contextManager, segment, shim } = t.nr
-        contextManager.setContext(segment)
+        contextManager.setContext({ segment })
         assert.equal(
           shim.getActiveSegment(function () {}),
           segment
@@ -1966,7 +1966,7 @@ test('Shim', async function (t) {
       'should return the current segment if no object is provided when transaction is active',
       function (t) {
         const { contextManager, segment, shim } = t.nr
-        contextManager.setContext(segment)
+        contextManager.setContext({ segment })
         assert.equal(shim.getActiveSegment(), segment)
       }
     )
@@ -1986,7 +1986,7 @@ test('Shim', async function (t) {
       function (t) {
         const { contextManager, segment, shim } = t.nr
         segment.transaction.active = false
-        contextManager.setContext(segment)
+        contextManager.setContext({ segment })
         assert.equal(
           shim.getActiveSegment(function () {}),
           null
@@ -1999,7 +1999,7 @@ test('Shim', async function (t) {
       function (t) {
         const { contextManager, segment, shim } = t.nr
         segment.transaction.active = false
-        contextManager.setContext(segment)
+        contextManager.setContext({ segment })
         assert.equal(shim.getActiveSegment(), null)
       }
     )
@@ -2019,7 +2019,7 @@ test('Shim', async function (t) {
     await t.test('should default to the current segment', function (t) {
       const { contextManager, shim, wrappable } = t.nr
       const segment = { probe: function () {} }
-      contextManager.setContext(segment)
+      contextManager.setContext({ segment })
       shim.storeSegment(wrappable)
       assert.equal(shim.getSegment(wrappable), segment)
     })
@@ -2228,7 +2228,7 @@ test('Shim', async function (t) {
           [],
           function checkSegment(activeSegment) {
             assert.equal(activeSegment, segment)
-            assert.equal(contextManager.getContext(), segment)
+            assert.deepEqual(contextManager.getSegment(), segment)
             end()
           }
         )
@@ -2238,10 +2238,10 @@ test('Shim', async function (t) {
     await t.test('should make the segment active for the duration of execution', function (t) {
       const { contextManager, segment, shim, wrappable } = t.nr
       const prevSegment = { name: 'prevSegment', probe: function () {} }
-      contextManager.setContext(prevSegment)
+      contextManager.setContext({ segment: prevSegment })
 
       const activeSegment = shim.applySegment(wrappable.getActiveSegment, segment)
-      assert.equal(contextManager.getContext(), prevSegment)
+      assert.deepEqual(contextManager.getSegment(), prevSegment)
       assert.equal(activeSegment, segment)
       assert.equal(segment.touched, false)
       assert.equal(segment.started, false)
@@ -2256,12 +2256,12 @@ test('Shim', async function (t) {
 
     await t.test('should not change the active segment if `segment` is `null`', function (t) {
       const { contextManager, segment, shim, wrappable } = t.nr
-      contextManager.setContext(segment)
+      contextManager.setContext({ segment })
       let activeSegment = null
       assert.doesNotThrow(function () {
         activeSegment = shim.applySegment(wrappable.getActiveSegment, null)
       })
-      assert.equal(contextManager.getContext(), segment)
+      assert.deepEqual(contextManager.getSegment(), segment)
       assert.equal(activeSegment, segment)
     })
 
@@ -2300,13 +2300,13 @@ test('Shim', async function (t) {
           throw new Error('test error')
         }
         const prevSegment = { name: 'prevSegment', probe: function () {} }
-        contextManager.setContext(prevSegment)
+        contextManager.setContext({ segment: prevSegment })
 
         assert.throws(function () {
           shim.applySegment(func, segment)
         }, 'Error: test error')
 
-        assert.equal(contextManager.getContext(), prevSegment)
+        assert.deepEqual(contextManager.getSegment(), prevSegment)
       }
     )
     await t.test(

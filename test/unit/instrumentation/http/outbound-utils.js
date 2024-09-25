@@ -109,7 +109,7 @@ function testResult({ res, headers, swapHost, end, host, port, path, contextMana
     str = 'Hello from Google'
   }
 
-  const segment = contextManager.getContext()
+  const segment = contextManager.getSegment()
 
   assert.equal(segment.name, external)
   assert.equal(res.statusCode, 200)

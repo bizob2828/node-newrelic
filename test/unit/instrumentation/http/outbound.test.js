@@ -448,7 +448,7 @@ test('when working with http.request', async (t) => {
 
     helper.runInTransaction(agent, function (transaction) {
       http.get('http://www.google.com/index.html', function (res) {
-        const segment = contextManager.getContext()
+        const segment = contextManager.getSegment()
 
         assert.equal(segment.name, 'External/www.google.com/index.html')
         res.resume()
@@ -488,7 +488,7 @@ test('when working with http.request', async (t) => {
 
     helper.runInTransaction(agent, function (transaction) {
       http.get('http://www.google.com/index.html', function (res) {
-        const segment = contextManager.getContext()
+        const segment = contextManager.getSegment()
 
         assert.ok(segment.timer.hrstart instanceof Array)
         assert.equal(segment.timer.hrDuration, null)
@@ -516,10 +516,10 @@ test('when working with http.request', async (t) => {
       const parentSegment = agent.tracer.createSegment('ParentSegment')
       parentSegment.opaque = true
 
-      contextManager.setContext(parentSegment) // make the current active segment
+      contextManager.setContext({ segment: parentSegment }) // make the current active segment
 
       http.get(`${host}${path}`, (res) => {
-        const segment = contextManager.getContext()
+        const segment = contextManager.getSegment()
 
         assert.equal(segment, parentSegment)
         assert.equal(segment.name, 'ParentSegment')

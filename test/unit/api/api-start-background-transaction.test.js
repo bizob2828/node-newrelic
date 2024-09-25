@@ -50,7 +50,7 @@ test('Agent API - startBackgroundTransaction', async (t) => {
       assert.equal(transaction.getFullName(), 'OtherTransaction/Nodejs/test')
       assert.ok(transaction.isActive())
 
-      const currentSegment = contextManager.getContext()
+      const currentSegment = contextManager.getSegment()
       const nestedSegment = currentSegment.children[0]
       assert.equal(nestedSegment.name, 'Nodejs/nested')
     })
@@ -220,7 +220,7 @@ test('Agent API - startBackgroundTransaction', async (t) => {
           agent.config.code_level_metrics.enabled = enabled
           api.startBackgroundTransaction('nested-clm-test', function () {
             nested({ api })
-            const currentSegment = contextManager.getContext()
+            const currentSegment = contextManager.getSegment()
             const nestedSegment = currentSegment.children[0]
             assertCLMAttrs({
               segments: [

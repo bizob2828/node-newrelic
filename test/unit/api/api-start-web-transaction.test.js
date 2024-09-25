@@ -48,7 +48,7 @@ test('Agent API - startWebTransaction', async (t) => {
       assert.equal(transaction.getFullName(), 'WebTransaction/Custom//test')
       assert.ok(transaction.isActive())
 
-      const currentSegment = contextManager.getContext()
+      const currentSegment = contextManager.getSegment()
       const nestedSegment = currentSegment.children[0]
       assert.equal(nestedSegment.name, 'nested')
     })
@@ -175,7 +175,7 @@ test('Agent API - startWebTransaction', async (t) => {
           agent.config.code_level_metrics.enabled = enabled
           api.startWebTransaction('clm-nested-test', function () {
             nested({ api })
-            const currentSegment = contextManager.getContext()
+            const currentSegment = contextManager.getSegment()
             const nestedSegment = currentSegment.children[0]
             assertCLMAttrs({
               segments: [

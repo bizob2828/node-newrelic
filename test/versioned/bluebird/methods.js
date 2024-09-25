@@ -99,18 +99,18 @@ module.exports = function (t, library, loadLibrary) {
     t.test('usage', function (t) {
       testPromiseClassMethod(t, 3, function resolveTest(Promise, name) {
         const contextManager = helper.getContextManager()
-        const inTx = !!contextManager.getContext()
+        const inTx = !!contextManager.getSegment()
 
         return new Promise(function (resolve) {
           addTask(function () {
-            t.notOk(contextManager.getContext(), name + 'should lose tx')
+            t.notOk(contextManager.getSegment(), name + 'should lose tx')
             resolve('foobar ' + name)
           })
         }).then(function (res) {
           if (inTx) {
-            t.ok(contextManager.getContext(), name + 'should return tx')
+            t.ok(contextManager.getSegment(), name + 'should return tx')
           } else {
-            t.notOk(contextManager.getContext(), name + 'should not create tx')
+            t.notOk(contextManager.getSegment(), name + 'should not create tx')
           }
           t.equal(res, 'foobar ' + name, name + 'should resolve with correct value')
         })
