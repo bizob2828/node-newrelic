@@ -937,7 +937,7 @@ test('Shim', async function (t) {
       'should call after hook on record when function is done executing',
       function (t, end) {
         const { agent, shim } = t.nr
-        helper.runInTransaction(agent, function () {
+        helper.runInTransaction(agent, function (tx) {
           function testAfter() {
             return 'result'
           }
@@ -946,13 +946,14 @@ test('Shim', async function (t) {
               name: 'test segment',
               callback: shim.LAST,
               after(args) {
-                assert.equal(Object.keys(args).length, 6, 'should have 6 args to after hook')
-                const { fn, name, error, result, segment } = args
+                assert.equal(Object.keys(args).length, 7, 'should have 6 args to after hook')
+                const { fn, name, error, result, segment, transaction } = args
                 assert.equal(segment.name, 'test segment')
                 assert.equal(error, undefined)
                 assert.deepEqual(fn, testAfter)
                 assert.equal(name, testAfter.name)
                 assert.equal(result, 'result')
+                assert.equal(tx.id, transaction.id)
               }
             })
           })
@@ -969,7 +970,7 @@ test('Shim', async function (t) {
       function (t, end) {
         const { agent, shim } = t.nr
         const err = new Error('test err')
-        helper.runInTransaction(agent, function () {
+        helper.runInTransaction(agent, function (tx) {
           function testAfter() {
             throw err
           }
@@ -978,13 +979,14 @@ test('Shim', async function (t) {
               name: 'test segment',
               callback: shim.LAST,
               after(args) {
-                assert.equal(Object.keys(args).length, 6, 'should have 6 args to after hook')
-                const { fn, name, error, result, segment } = args
+                assert.equal(Object.keys(args).length, 7, 'should have 7 args to after hook')
+                const { fn, name, error, result, segment, transaction } = args
                 assert.equal(segment.name, 'test segment')
                 assert.deepEqual(error, err)
                 assert.equal(result, undefined)
                 assert.deepEqual(fn, testAfter)
                 assert.equal(name, testAfter.name)
+                assert.equal(tx.id, transaction.id)
               }
             })
           })
@@ -1322,7 +1324,7 @@ test('Shim', async function (t) {
           name: segmentName,
           promise: true,
           after(args) {
-            plan.equal(Object.keys(args).length, 6, 'should have 6 args to after hook')
+            plan.equal(Object.keys(args).length, 7, 'should have 6 args to after hook')
             const { fn, name, error, result, segment } = args
             plan.deepEqual(fn, toWrap)
             plan.equal(name, toWrap.name)
@@ -1355,7 +1357,7 @@ test('Shim', async function (t) {
           name: segmentName,
           promise: true,
           after(args) {
-            plan.equal(Object.keys(args).length, 5, 'should have 6 args to after hook')
+            plan.equal(Object.keys(args).length, 6, 'should have 6 args to after hook')
             const { fn, name, error, segment } = args
             plan.deepEqual(fn, toWrap)
             plan.equal(name, toWrap.name)

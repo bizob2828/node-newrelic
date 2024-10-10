@@ -83,9 +83,8 @@ test('Query Sample', async (t) => {
       }
     }
     const fakeSample = {
-      segment: {
-        transaction: {}
-      }
+      transaction: {},
+      segment: {}
     }
     let codecCalled = false
 
@@ -118,13 +117,12 @@ test('Query Sample', async (t) => {
     let getFullNameCalled = false
 
     const fakeSample = {
-      segment: {
-        transaction: {
-          getFullName: () => {
-            getFullNameCalled = true
-          }
+      transaction: {
+        getFullName: () => {
+          getFullNameCalled = true
         }
-      }
+      },
+      segment: {}
     }
 
     const clock = sinon.useFakeTimers({
@@ -162,11 +160,11 @@ test('Query Sample', async (t) => {
     const fakeGetAttributes = () => expectedParams
     const fakeSample = {
       trace: {},
+      transaction: {
+        addDistributedTraceIntrinsics: () => {}
+      },
       segment: {
         getAttributes: fakeGetAttributes,
-        transaction: {
-          addDistributedTraceIntrinsics: () => {}
-        }
       }
     }
 
@@ -190,13 +188,13 @@ test('Query Sample', async (t) => {
     }
     const fakeSample = {
       trace: {},
+      transaction: {
+        addDistributedTraceIntrinsics: () => {
+          addDtIntrinsicsCalled = true
+        }
+      },
       segment: {
         getAttributes: () => ({}),
-        transaction: {
-          addDistributedTraceIntrinsics: () => {
-            addDtIntrinsicsCalled = true
-          }
-        }
       }
     }
 
@@ -218,13 +216,13 @@ test('Query Sample', async (t) => {
     }
     const fakeSample = {
       trace: {},
+      transaction: {
+        addDistributedTraceIntrinsics: () => {
+          addDtIntrinsicsCalled = true
+        }
+      },
       segment: {
         getAttributes: () => ({}),
-        transaction: {
-          addDistributedTraceIntrinsics: () => {
-            addDtIntrinsicsCalled = true
-          }
-        }
       }
     }
 
