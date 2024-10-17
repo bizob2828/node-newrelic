@@ -57,10 +57,12 @@ test('Redis instrumentation', { timeout: 20000 }, function (t) {
   t.test('should find Redis calls in the transaction trace', function (t) {
     t.plan(17)
     helper.runInTransaction(agent, function transactionInScope() {
+      debugger
       const transaction = agent.getTransaction()
       t.ok(transaction, 'transaction should be visible')
 
       client.set('testkey', 'arglbargle', function (error, ok) {
+        debugger
         if (error) {
           return t.fail(error)
         }

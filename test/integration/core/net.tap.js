@@ -21,7 +21,8 @@ test('createServer', function createServerTest(t) {
 
     server.listen(4123, function listening() {
       // leave transaction
-      tracer.setSegment({ segment: null, transaction: null })
+      debugger
+      tracer.setSegment({ _segments: [], _transaction: null }) 
       const socket = net.connect({ port: 4123 })
       socket.write('test123')
       socket.end()

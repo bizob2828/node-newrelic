@@ -396,6 +396,7 @@ test('Express transaction names are unaffected by errorware', async function (t)
 })
 
 test('when next is called after transaction state loss', async function (t) {
+  debugger
   // Uninstrumented work queue. This must be set up before the agent is loaded
   // so that no transaction state is maintained.
   const tasks = []
@@ -418,6 +419,7 @@ test('when next is called after transaction state loss', async function (t) {
     'WebTransaction/Expressjs/GET//foo'
   ]
   agent.on('transactionFinished', function (tx) {
+    debugger
     plan.equal(
       tx.name,
       transactionNames[transactionsFinished++],

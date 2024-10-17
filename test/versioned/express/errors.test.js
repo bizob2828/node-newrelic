@@ -186,6 +186,7 @@ test('Error handling tests', async (t) => {
   })
 
   await t.test('does not error when request is aborted', async function (t) {
+    debugger
     const plan = tsplan(t, { plan: 4 })
     const { app, agent, port } = t.nr
     let request = null
@@ -194,6 +195,7 @@ test('Error handling tests', async (t) => {
       plan.ok(agent.getTransaction(), 'transaction exists')
 
       // generate error after client has aborted
+      debugger
       request.abort()
       setTimeout(function () {
         plan.equal(agent.getTransaction(), null, 'transaction has already ended')

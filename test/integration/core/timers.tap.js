@@ -99,6 +99,7 @@ tap.test('setImmediate', function testSetImmediate(t) {
     helper.runInTransaction(agent, (transaction) => {
       transaction.end()
 
+      debugger
       helper.runInSegment(agent, 'test-segment', () => {
         const segment = agent.tracer.getSegment()
         t.not(segment.name, 'test-segment')
