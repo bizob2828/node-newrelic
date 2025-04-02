@@ -4,7 +4,8 @@
  */
 
 'use strict'
-const testCases = require('../../lib/otel-bridge-cross-agent-tests/TestCaseDefinitions.json')
+//const testCases = require('../../lib/otel-bridge-cross-agent-tests/TestCaseDefinitions.json')
+const testCases = require('../../lib/otel-bridge-cross-agent-tests/test.json')
 const cmds = require('#testlib/otel-bridge-cross-agent-tests/commands.js')
 const testAssertions = require('#testlib/otel-bridge-cross-agent-tests/assertions.js')
 const test = require('node:test')
@@ -23,43 +24,72 @@ test.afterEach((ctx) => {
   helper.unloadAgent(ctx.nr.agent)
 })
 
-async function parseOperation({ agent, api, tracer, operation }) {
-  const cmd = camelCase(operation.command)
-  console.log('running cmd', cmd)
-  if (operation.childOperations) {
-    await cmds[cmd]({ agent, api, tracer, ...operation.parameters }, async (data) => {
-      for (const childOp of operation.childOperations) {
-        await parseOperation({ agent, api, tracer, operation: childOp })
-        data?.end()
-        console.log('ENDING CHILD OP', data?.name)
-      }
-    })
-  } else {
-    await new Promise((resolve) => {
-      cmds[cmd]({ agent, api, tracer, ...operation.parameters }, async (data) => {
-        if (operation.assertions) {
-          operation.assertions.forEach((assertion) => {
-            const method = camelCase(assertion.rule.operator)
-            testAssertions[method](agent, assertion.rule.parameters, assertion.description)
-          })
-        }
 
-        data?.end()
-        console.log('ENDING ROOT CALL', data?.name)
-        resolve()
-      })
-    })
+
+const tests = []
+function parseOperation(operation) {
+  for (const childOp of operation.childOperations || []) {
+    if (childOp.assertions) {
+      tests.push({ command: childOp.command, parameters: childOp.parameters, assertions: childOp.assertions })
+    } else {
+      tests.push({ command: childOp.command, parameters: childOp.parameters, assertions: [] })
+    }
+    parseOperation(childOp)
   }
 }
 
+let root = {}
+const actions = []
+
 testCases.forEach((testCase) => {
   test(testCase.testDescription, async (t) => {
-    console.log('running test case', testCase.testDescription)
     const { agent, api, tracer } = t.nr
+    console.log('-----------------------')
+    console.log('RUNNING TEST', testCase.testDescription)
     for (const operation of testCase.operations) {
-      await parseOperation({ agent, api, tracer, operation })
+      root.command = operation.command
+      root.parameters = operation.parameters
+      root.assertions = operation.assertions ?? []
+      parseOperation(operation)
     }
 
-    testAssertions.agentOutput(agent, testCase.agentOutput)
+    runOperation({ agent, api, tracer, operation: root }, async (data) => {
+      actions.push(data)
+      for (const operation of tests) {
+        const result = await new Promise((resolve) => {
+          runOperation({ agent, api, tracer, operation, data: actions[actions.length - 1]}, resolve) 
+        })
+
+        if (result) {
+          actions.push(result)
+        }
+      }
+      
+
+      actions.forEach((result) => {
+        result.end()
+      })
+
+      console.log('RUNNING AGENT OUTPUT')
+      testAssertions.agentOutput(agent, testCase.agentOutput)
+    })
   })
 })
+
+async function runOperation({ agent, api, tracer, operation, data }, cb) {
+  if (operation.command) {
+    const { command, parameters } = operation
+    const cmd = camelCase(command)
+    console.log('RUNNING COMMAND', cmd)
+    cmds[cmd]({ agent, api, tracer, data, ...parameters }, (data) => {
+      operation.assertions.forEach((assertion) => {
+        const method = camelCase(assertion.rule.operator)
+        console.log('RUNNING ASSERTION', method, assertion.description)
+        debugger
+        testAssertions[method](agent, assertion.rule.parameters, assertion.description)
+      })
+
+      cb(data)
+    })
+  }
+}

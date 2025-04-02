@@ -29,6 +29,7 @@ function matches(agent, param, description) {
 
 function agentOutput(agent, output) {
   const txData = agent.transactionEventAggregator.getEvents()
+  debugger
   if (output.transactions.length === 0) {
     assert.deepEqual(txData, output.transactions)
   } else {

@@ -22,13 +22,29 @@ function currentTransaction(agent) {
 
 function currentSegment(agent) {
   const segment = agent.tracer.getSegment()
+  const transaction = agent.tracer.getTransaction()
+  debugger
   return {
-    spanId: segment?.id
+    spanId: segment?.id,
+    traceId: transaction.traceId,
+    sampled: transaction.sampled
+  }
+}
+
+function injected(agent) {
+  const { headers } = agent 
+  const { traceparent } = headers
+  const fields = traceparent.split('-')
+  return {
+    traceId: fields[1],
+    spanId: fields[2],
+    sampled: fields[3] === '01'
   }
 }
 
 module.exports = {
   currentOTelSpan,
   currentSegment,
-  currentTransaction
+  currentTransaction,
+  injected
 }

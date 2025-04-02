@@ -9,12 +9,11 @@ const { SpanKind, context, propagation, trace, ROOT_CONTEXT } = require('@opente
 function doWorkInSpan({ tracer, spanName, spanKind }, cb) {
   const kind = SpanKind[spanKind.toUpperCase()]
   if (kind === SpanKind.CLIENT) {
+    debugger
     const ctx = context.active()
     const span = tracer.startSpan(spanName, { kind }, ctx)
     cb(span)
-    return
   }
-
   tracer.startActiveSpan(spanName, { kind }, cb)
 }
 
@@ -31,13 +30,13 @@ function doWorkInSegment({ agent, api, segmentName }, cb) {
   api.startSegment(segmentName, true, () => {
     const segment = agent.tracer.getSegment()
     cb(segment)
- })
+  })
 }
 
 function addOTelAttribute({ agent, name, value }, cb) {
   const segment = agent.tracer.getSegment()
   segment.addAttribute(name, value)
-  cb()
+  cb(segment)
 }
 
 function recordExceptionOnSpan({ errorMessage }, cb) {
@@ -50,7 +49,7 @@ function recordExceptionOnSpan({ errorMessage }, cb) {
   }
   active.status.code = 2
   active.addEvent('exception', errorEvent.attributes)
-  cb()
+  cb(active)
 }
 
 function doWorkInSpanWithInboundContext({ tracer, spanKind, traceIdInHeader, spanIdInHeader, sampledFlagInHeader, spanName }, cb) {
@@ -62,7 +61,7 @@ function doWorkInSpanWithInboundContext({ tracer, spanKind, traceIdInHeader, spa
   tracer.startActiveSpan(spanName, { kind }, ctx, cb)
 }
 
-function simulateExternalCall({ agent, url, data }, cb) {
+function simulateExternalCall({ url, data }, cb) {
   if (data?.constructor?.name === 'Span') {
     const span = data
     const parentContext = context.active()
@@ -72,29 +71,19 @@ function simulateExternalCall({ agent, url, data }, cb) {
     const requestContext = trace.setSpan(parentContext, span)
     cb(requestContext)
   } else {
-    debugger
-    data.addAttribute('url', url)
-    agent.tracer.setSegment({ segment: data })
-    const active = context.active()
-    cb(active)
   }
 }
 
-function oTelInjectHeaders({ agent, data }, cb) {
-  debugger
+function oTelInjectHeaders({ data }, cb) {
   const headers = {}
-  // TODO: the doWorkInSegment path is not returning proper propagator
   propagation.inject(data, headers)
   agent.headers = headers
 
-  return context.with(data, cb)
-}
-
-function nRInjectHeaders({ agent }, cb) {
-  const ctx = agent.tracer.getTransaction()
-  const headers = {}
-  ctx.transaction.insertDistributedTraceHeaders(headers)
-  agent.headers = headers
+  debugger
+  return context.with(data, () => {
+    debugger
+    cb()
+  })
 }
 
 module.exports = {
@@ -103,7 +92,6 @@ module.exports = {
   doWorkInSpan,
   doWorkInSpanWithInboundContext,
   doWorkInTransaction,
-  nRInjectHeaders,
   recordExceptionOnSpan,
   simulateExternalCall,
   oTelInjectHeaders
