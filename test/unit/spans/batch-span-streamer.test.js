@@ -65,25 +65,63 @@ test('BatchSpanStreamer', async (t) => {
 
     assert.equal(spanStreamer.spans.length, 1, 'one span queued')
   })
+  
+  await t.test('Should drop spans on queue when backpressure and send queued spans when writable', (t) => {
+    const { spanStreamer } = t.nr
+    const metrics = spanStreamer._metrics
+    spanStreamer._writable = false
+    assert.equal(spanStreamer.spans.length, 0, 'no spans queued')
+    const fakeSpan = new SpanStreamerEvent('sandwich', {}, {})
+    spanStreamer.write(fakeSpan)
+    spanStreamer.write(fakeSpan)
+    spanStreamer.write(fakeSpan)
+    spanStreamer.write(fakeSpan)
+    spanStreamer.write(fakeSpan)
+    spanStreamer.write(fakeSpan)
+
+    assert.equal(spanStreamer.spans.length, 2, 'two span queued')
+    assert.equal(
+      metrics.getOrCreateMetric(METRIC_NAMES.INFINITE_TRACING.SENT).callCount,
+      0,
+      'SENT metric incremented'
+    )
+
+    assert.equal(
+      metrics.getOrCreateMetric(METRIC_NAMES.INFINITE_TRACING.SEEN).callCount,
+      6,
+      'SEEN metric incremented'
+    )
+    
+    assert.equal(
+      metrics.getOrCreateMetric(METRIC_NAMES.INFINITE_TRACING.DROPPED).callCount,
+      4,
+      'DROPPED metric not incremented'
+    )
+    spanStreamer._writable = true
+    spanStreamer.stream.write = () => true 
+    spanStreamer.write(fakeSpan)
+    assert.equal(
+      metrics.getOrCreateMetric(METRIC_NAMES.INFINITE_TRACING.SENT).callCount,
+      3,
+      'SENT metric incremented'
+    )
+    assert.equal(spanStreamer.spans.length, 0, 'two span queued')
+  })
 
   await t.test('Should drain span queue on stream drain event', (t) => {
     const { fakeConnection, spanStreamer } = t.nr
-    /* simulate backpressure */
     fakeConnection.stream.write = () => false
     spanStreamer.queue_size = 1
     const metrics = spanStreamer._metrics
 
     assert.equal(spanStreamer.spans.length, 0, 'no spans queued')
-    const fakeSpan = {
-      toStreamingFormat: () => {}
-    }
+    const fakeSpan = new SpanStreamerEvent('sandwich', {}, {}, {})
 
     spanStreamer.write(fakeSpan)
     spanStreamer.write(fakeSpan)
 
     assert.equal(spanStreamer.spans.length, 1, 'one span queued')
 
-    /* emit drain event and allow writes */
     fakeConnection.stream.write = () => true
     spanStreamer.stream.emit('drain', fakeConnection.stream.write)
 
@@ -99,11 +137,22 @@ test('BatchSpanStreamer', async (t) => {
       2,
       'SENT metric incremented'
     )
+
+    assert.equal(
+      metrics.getOrCreateMetric(METRIC_NAMES.INFINITE_TRACING.SEEN).callCount,
+      2,
+      'SEEN metric incremented'
+    )
+    
+    assert.equal(
+      metrics.getOrCreateMetric(METRIC_NAMES.INFINITE_TRACING.DROPPED).callCount,
+      0,
+      'DROPPED metric not incremented'
+    )
   })
 
   await t.test('Should properly format spans sent from the queue', (t) => {
     const { fakeConnection, spanStreamer } = t.nr
-    /* simulate backpressure */
     fakeConnection.stream.write = () => false
     spanStreamer.queue_size = 1
     const metrics = spanStreamer._metrics

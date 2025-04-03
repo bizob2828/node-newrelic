@@ -212,7 +212,7 @@ test('grpc stream event handling', async (t) => {
     assert.ok(disconnectCalled)
   })
 
-  await t.test('should delay reconnect when status not UNPLIMENTED or OK', (t, end) => {
+  await t.test('should delay reconnect when status not UNIMPLEMENTED or OK', (t, end) => {
     const metrics = createMetricAggregatorForTests()
     const fakeStream = new FakeStreamer()
 
@@ -238,7 +238,7 @@ test('grpc stream event handling', async (t) => {
   })
 
   await t.test(
-    'should default delay 15 second reconnect when status not UNPLIMENTED or OK',
+    'should default delay 15 second reconnect when status not UNIMPLEMENTED or OK',
     (t, end) => {
       const metrics = createMetricAggregatorForTests()
       const fakeStream = new FakeStreamer()
@@ -318,7 +318,7 @@ test('grpc stream event handling', async (t) => {
   })
 
   await t.test(
-    'should increment SPAN_RESPONSE_GRPC_STATUS metric when status not UNPLIMENTED or OK',
+    'should increment SPAN_RESPONSE_GRPC_STATUS metric when status not UNIMPLEMENTED or OK',
     () => {
       const metrics = createMetricAggregatorForTests()
       const fakeStream = new FakeStreamer()
