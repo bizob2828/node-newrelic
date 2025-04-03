@@ -63,13 +63,14 @@ function doWorkInSpanWithInboundContext({ tracer, spanKind, traceIdInHeader, spa
 }
 
 function simulateExternalCall({ agent, url, data }, cb) {
-  if (data?.constructor?.name === 'Span') {
+  if (data?.constructor?.name === 'SpanImpl') {
     const span = data
     const parentContext = context.active()
     span.setAttribute('http.request.method', 'GET')
     span.setAttribute('server.adresss', 'newrelic.com')
     span.setAttribute('url.full', `https://newrelic.com/${url}`)
     const requestContext = trace.setSpan(parentContext, span)
+    debugger
     cb(requestContext)
   } else {
     debugger

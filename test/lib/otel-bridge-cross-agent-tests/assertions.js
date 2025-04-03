@@ -14,6 +14,7 @@ function notValid(agent, param, description) {
 }
 
 function equals(agent, param, description) {
+  debugger
   const [leftFn, leftProp] = param.left.split('.')
   const [rightFn, rightProp] = param.right.split('.')
   const left = parameters[leftFn](agent)
@@ -22,6 +23,7 @@ function equals(agent, param, description) {
 }
 
 function matches(agent, param, description) {
+  debugger
   const [fn, prop] = param.object.split('.')
   const data = parameters[fn](agent)
   assert.equal(data[prop], param.value, description)

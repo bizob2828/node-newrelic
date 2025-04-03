@@ -1,5 +1,5 @@
-[
-  {
+[ 
+{
     "testDescription": "OpenTelemetry API and New Relic API can inject outbound trace context",
 
     "operations": [
@@ -217,32 +217,6 @@
           }
         ]
       }
-    ],
-
-    "agentOutput": {
-      "transactions": [
-        {
-          "name": "Foo"
-        }
-      ],
-      "spans": [
-        {
-          "name": "OTelSpan1",
-          "parentName": "Foo"
-        },
-        {
-          "name": "segment1",
-          "parentName": "Foo"
-        },
-        {
-          "name": "OTelSpan2",
-          "parentName": "Foo"
-        },
-        {
-          "name": "segment2",
-          "parentName": "Foo"
-        }
-      ]
-    }
-  }
-]
+    ]
+}
+    ]

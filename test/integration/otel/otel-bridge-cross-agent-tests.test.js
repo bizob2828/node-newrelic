@@ -26,47 +26,51 @@ test.afterEach((ctx) => {
 
 
 
-const tests = []
-function parseOperation(operation) {
-  for (const childOp of operation.childOperations || []) {
-    if (childOp.assertions) {
-      tests.push({ command: childOp.command, parameters: childOp.parameters, assertions: childOp.assertions })
-    } else {
-      tests.push({ command: childOp.command, parameters: childOp.parameters, assertions: [] })
+function parseOperation(operation, tests, node, parent = 0, nest) {
+  debugger
+
+  const childOps = operation.childOperations ?? []
+  childOps.forEach((childOp, index) => {
+    if (!nest) {
+      parent = index
+    } 
+
+    if (!tests.operations[node].nodes[parent]) {
+      tests.operations[node].nodes[parent] = []
     }
-    parseOperation(childOp)
-  }
+      
+    tests.operations[node].nodes[parent].push({ command: childOp.command, parameters: childOp.parameters, assertions: childOp?.assertions ?? [] })
+    
+    parseOperation(childOp, tests, node, parent, true)
+  })
+    
 }
 
-let root = {}
-const actions = []
 
 testCases.forEach((testCase) => {
   test(testCase.testDescription, async (t) => {
+    let root = {}
+    const actions = []
+    const tests = { operations: []}
     const { agent, api, tracer } = t.nr
     console.log('-----------------------')
     console.log('RUNNING TEST', testCase.testDescription)
-    for (const operation of testCase.operations) {
-      root.command = operation.command
-      root.parameters = operation.parameters
-      root.assertions = operation.assertions ?? []
-      parseOperation(operation)
-    }
+    testCase.operations.forEach((operation, index) => {
 
+      tests.operations.push({ root: { command: operation.command, parameters: operation.parameters, assertions: operation.assertions ?? [] }, nodes: [] })
+      parseOperation(operation, tests, index)
+    })
+
+    debugger
     runOperation({ agent, api, tracer, operation: root }, async (data) => {
       actions.push(data)
       for (const operation of tests) {
-        const result = await new Promise((resolve) => {
-          runOperation({ agent, api, tracer, operation, data: actions[actions.length - 1]}, resolve) 
-        })
-
-        if (result) {
-          actions.push(result)
-        }
+        runOperation({ agent, api, tracer, operation, data: actions[actions.length - 1]}, resolve) 
       }
       
 
       actions.forEach((result) => {
+        debugger
         result.end()
       })
 
@@ -76,12 +80,18 @@ testCases.forEach((testCase) => {
   })
 })
 
+/*
 async function runOperation({ agent, api, tracer, operation, data }, cb) {
   if (operation.command) {
     const { command, parameters } = operation
     const cmd = camelCase(command)
     console.log('RUNNING COMMAND', cmd)
+    const ctx = agent.getTracer.getContext()
+    console.log('before run', ctx?.segment?.name)
     cmds[cmd]({ agent, api, tracer, data, ...parameters }, (data) => {
+      const ctx = agent.tracer.getContext()
+      conosle.log('during run', ctx?.segment?.name)
+      debugger
       operation.assertions.forEach((assertion) => {
         const method = camelCase(assertion.rule.operator)
         console.log('RUNNING ASSERTION', method, assertion.description)
@@ -89,7 +99,9 @@ async function runOperation({ agent, api, tracer, operation, data }, cb) {
         testAssertions[method](agent, assertion.rule.parameters, assertion.description)
       })
 
+      actions.unshift(data)
       cb(data)
     })
   }
 }
+*/
