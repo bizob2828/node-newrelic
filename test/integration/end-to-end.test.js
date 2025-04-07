@@ -5,7 +5,6 @@
 
 'use strict'
 const test = require('node:test')
-const assert = require('node:assert')
 const nock = require('nock')
 const { nockRequest } = require('./response-handling-utils')
 const path = require('path')
@@ -15,6 +14,7 @@ const { INFINITE_TRACING } = require('#agentlib/metrics/names.js')
 
 const fakeCert = require('../lib/fake-cert')
 const helper = require('../lib/agent_helper')
+const { tspl } = require('@matteo.collina/tspl')
 
 // We generate the certificate once for the whole suite because it is a CPU
 // intensive operation and would slow down tests if each test created its
@@ -38,20 +38,20 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true
 })
 
-function assertBatch({ spans, names }) {
-  assert.ok(spans.length === names.length, `should have ${names.length}`)
+function assertBatch({ spans, names, plan }) {
+  plan.ok(spans.length === names.length, `should have ${names.length}`)
 
   spans.forEach((span, i) => {
     const { name } = span.intrinsics
-    assert.equal(name.string_value, names[i])
+    plan.equal(name.string_value, names[i])
   })
 }
 
-function assertSpan({ span, i, names }) {
-  assert.ok(span)
+function assertSpan({ span, i, names, plan }) {
+  plan.ok(span)
 
   const { name } = span.intrinsics
-  assert.equal(name.string_value, names[i]) 
+  plan.equal(name.string_value, names[i]) 
 }
 
 const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com.newrelic.trace.v1
@@ -96,91 +96,143 @@ const infiniteTracingService = grpc.loadPackageDefinition(packageDefinition).com
     })
 
     /*
-    await t.test('should successfully send span after startup', (t, end) => {
+    await t.test('should successfully send span after startup', async (t) => {
+      const plan = tspl(t, { plan: 12 })
       const { agent, startingEndpoints } = t.nr
       const expectedRunId = INITIAL_RUN_ID
       const expectedSessionId = INITIAL_SESSION_ID
+      const names = [EXPECTED_SEGMENT_NAME, EXPECTED_SEGMENT_NAME_2]
       t.nr.spanReceivedListener = defaultSpanListener({
-        names: [EXPECTED_SEGMENT_NAME, EXPECTED_SEGMENT_NAME_2],
+        names,
         agent,
         config,
         expectedRunId,
         expectedSessionId,
-        end,
+        plan,
         dropped: 0,
         sent: 2,
         seen: 2
       })
 
       agent.start((error) => {
-        verifyAgentStart(error, startingEndpoints)
+        verifyAgentStart({ error, endpoints: startingEndpoints, plan })
 
-        createTestData(agent, EXPECTED_SEGMENT_NAME)
-        createTestData(agent, EXPECTED_SEGMENT_NAME_2)
+        createTestData({ agent, names })
       })
-    })
-    */
 
-    await t.test('should handle server errors', (t, end) => {
+      await plan.completed
+    })
+
+    await t.test('should handle server errors', async (t) => {
+      const plan = tspl(t, { plan: 14 })
       const { agent, startingEndpoints } = t.nr
       const expectedRunId = INITIAL_RUN_ID
       const expectedSessionId = INITIAL_SESSION_ID
+      const names = [EXPECTED_SEGMENT_NAME, EXPECTED_SEGMENT_NAME_2, 'testSegment']
+      const batch2 = ['testSegment2']
       t.nr.spanReceivedListener = defaultSpanListener({
-        names: [EXPECTED_SEGMENT_NAME, EXPECTED_SEGMENT_NAME_2, 'badSegment', 'testSegment'],
+        names: [...names, ...batch2],
         agent,
         config,
         expectedRunId,
         expectedSessionId,
-        end,
+        plan,
         dropped: 0,
         sent: 4,
         seen: 4 
       })
 
       agent.start((error) => {
-        verifyAgentStart(error, startingEndpoints)
+        verifyAgentStart({ error, endpoints: startingEndpoints, plan })
 
-        createTestData(agent, EXPECTED_SEGMENT_NAME)
-        createTestData(agent, EXPECTED_SEGMENT_NAME_2)
-        createTestData(agent, 'badSegment') 
+        createTestData({ agent, names }) 
+        // delay sending more spans until the connection re-establishes
         setTimeout(() => {
-          debugger
-          createTestData(agent, 'testSegment') 
-        }, 10000)
+          createTestData({ agent, names: batch2 }) 
+        }, 7000)
       })
+
+      await plan.completed
+    })
+    */
+    
+    await t.test('should only send queue size of spans on first attempt', async (t) => {
+      const plan = tspl(t, { plan: 28 })
+      const { agent, startingEndpoints } = t.nr
+      agent.infinite_tracing
+      const expectedRunId = INITIAL_RUN_ID
+      const expectedSessionId = INITIAL_SESSION_ID
+      const names = [EXPECTED_SEGMENT_NAME, EXPECTED_SEGMENT_NAME_2, 'testSegment', 'testSegment2', 'testSegment3', 'testSegment4', 'testSegment5', 'testSegment6', 'testSegment7', 'testSegment8']
+      const batch2 = ['testSegment9']
+      t.nr.spanReceivedListener = defaultSpanListener({
+        calls: [
+          { 
+            sent: 10,
+            seen: 12,
+            dropped: 0,
+            names
+          },
+          {
+            sent: 11,
+            seen: 11,
+            dropped: 0,
+            names: batch2
+          }
+        ],
+        agent,
+        config,
+        expectedRunId,
+        expectedSessionId,
+        plan,
+      })
+
+      agent.start((error) => {
+        verifyAgentStart({ error, endpoints: startingEndpoints, plan })
+
+        createTestData({ agent, names: [...names, ...batch2] })
+        setTimeout(() => {
+          createTestData({ agent, names: ['bobTest']})
+        }, 7000)
+      })
+
+      await plan.completed
     })
   })
   
 })
 
-function defaultSpanListener({ agent, config, names, expectedRunId, expectedSessionId, end, dropped, seen, sent }) {
+function defaultSpanListener({ agent, config, expectedRunId, expectedSessionId, plan, calls }) {
   let i = 0
 
   return function onSpans(data, metadata) {
+    console.log('spans received', data.length)
+    const call = calls[i]
+    const { names, seen, sent, dropped } = call
+    console.log(names, seen, sent, dropped)
+    i++
     if (config.batching) {
-      assertBatch({ spans: data, names })
+      assertBatch({ spans: data, names, plan })
     } else {
-      assertSpan({ span, i, names })
-      i++
+      assertSpan({ span, i, names: call.names, plan })
     }
 
     const [licenseKey] = metadata.get('license_key')
-    assert.equal(licenseKey, EXPECTED_LICENSE_KEY, 'expected license key')
+    plan.equal(licenseKey, EXPECTED_LICENSE_KEY, 'expected license key')
 
     const [runId] = metadata.get('agent_run_token')
-    assert.equal(runId, expectedRunId, 'agent_run_token matches')
+    plan.equal(runId, expectedRunId, 'agent_run_token matches')
 
     const [sessionId] = metadata.get('session_id')
-    assert.equal(sessionId, expectedSessionId, 'should persist new request_headers_map on metadata')
+    plan.equal(sessionId, expectedSessionId, 'should persist new request_headers_map on metadata')
 
     if (config.batching || i === names.length) { 
       const actualSeen = agent.metrics.getOrCreateMetric(INFINITE_TRACING.SEEN).callCount
       const actualSent = agent.metrics.getOrCreateMetric(INFINITE_TRACING.SENT).callCount
       const actualDropped = agent.metrics.getOrCreateMetric(INFINITE_TRACING.DROPPED).callCount
-      assert.equal(actualSeen, seen, 'should have seen 2 spans')
-      assert.equal(actualSent, sent, 'should have sent 2 spans')
-      assert.equal(actualDropped, dropped, 'should have dropped 0 spans')
-      end()
+      console.log(actualSeen, actualSent, actualDropped)
+      plan.equal(actualSeen, seen, `should have seen ${seen} spans`)
+      plan.equal(actualSent, data, `should have sent ${sent} spans`)
+      plan.equal(actualDropped, dropped, `should have dropped ${dropped} spans`)
     }
   }
 }
@@ -202,20 +254,24 @@ function recordSpan(ctx, stream) {
 function recordSpanBatch(ctx, stream) {
   const { spanReceivedListener } = ctx.nr
   stream.on('data', function ({ spans }) {
-    debugger
+    console.log('got spans', spans.length)
     if (spans.length === 3) {
       stream.emit('error', { code: 13, message: 'bob test' })
       return
     }
 
     if (spanReceivedListener) {
+      console.log('called span recieved listener')
       spanReceivedListener(spans, stream.metadata)
     }
   })
 
+  stream.on('error', (err) => {
+    console.log('error', err)
+  })
   // this is necessary to properly end calls and cleanup
   stream.on('end', () => {
-    debugger
+    console.log('stream is ended')
     stream.end()
   })
 }
@@ -273,10 +329,12 @@ async function testSetup(ctx, config) {
   ctx.nr.server = server
 }
 
-function createTestData(agent, segmentName) {
+function createTestData({ agent, names }) {
   helper.runInTransaction(agent, (transaction) => {
-    const segment = transaction.trace.add(segmentName)
-    segment.overwriteDurationInMillis(1)
+    names.forEach((name) => {
+      const segment = transaction.trace.add(name)
+      segment.overwriteDurationInMillis(1)
+    })
 
     transaction.finalizeNameFromUri('/some/test/url', 200)
     transaction.end()
@@ -298,14 +356,15 @@ function setupConnectionEndpoints(runId, sessionId) {
   }
 }
 
-function verifyAgentStart(error, endpoints) {
+function verifyAgentStart({ error, endpoints, plan }) {
+  debugger
   if (error) {
     throw error
   }
 
-  assert.ok(endpoints.preconnect.isDone(), 'requested preconnect')
-  assert.ok(endpoints.connect.isDone(), 'requested connect')
-  assert.ok(endpoints.settings.isDone(), 'requested settings')
+  plan.ok(endpoints.preconnect.isDone(), 'requested preconnect')
+  plan.ok(endpoints.connect.isDone(), 'requested connect')
+  plan.ok(endpoints.settings.isDone(), 'requested settings')
 }
 
 /**
