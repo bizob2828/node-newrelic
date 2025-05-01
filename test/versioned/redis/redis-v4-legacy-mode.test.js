@@ -12,6 +12,36 @@ const { removeMatchedModules } = require('../../lib/cache-buster')
 const params = require('../../lib/params')
 const urltils = require('../../../lib/util/urltils')
 const { checkMetrics } = require('./utils')
+const semver = require('semver')
+const { promisify } = require('node:util')
+
+function isRedis5Plus(version) {
+  return semver.satisfies(version, '>=5.0.0')
+}
+
+/**
+ * Redis v5 legacy changed.  Not only do you have to run the function in promisify
+ * but some commands do not exist on the legacy client.
+ *
+ * @param {object} params to function
+ * @param params.isV5
+ * @param {boolean} isV5 is package v5+
+ * @param {object} params.client redis client
+ * @param {object} params.legacyClient legacy client
+ * @param {string} params.cmd command to execute
+ * @param {array} params.args args passed to command
+ * @returns {Promise} promise to await result
+ *
+ */
+function legacyCall({ isV5, client, legacyClient, cmd, args = [] }) {
+  if (isV5 && client) {
+    return client[cmd](...args)
+  } else if (isV5) {
+    return promisify(legacyClient[cmd]).call(legacyClient, ...args)
+  } else {
+    return legacyClient[cmd](...args)
+  }
+}
 
 // Indicates unique database in Redis. 0-15 supported.
 const DB_INDEX = 2
@@ -20,16 +50,24 @@ test('Redis instrumentation', async function (t) {
   t.beforeEach(async function (ctx) {
     const agent = helper.instrumentMockedAgent()
     const redis = require('redis')
-    const client = redis.createClient({
-      legacyMode: true,
+    const { version } = require('redis/package.json')
+    const isV5 = isRedis5Plus(version)
+    const args = {
       port: params.redis_port,
       host: params.redis_host
-    })
+    }
+
+    if (!isV5) {
+      args.legacyMode = true
+    }
+
+    const client = redis.createClient(args)
+
+    const legacyClient = isV5 ? client.legacy() : client.v4
 
     await client.connect()
-    await client.v4.flushAll()
-
-    await client.v4.select(DB_INDEX)
+    await legacyCall({ isV5, legacyClient, cmd: 'flushAll' })
+    await legacyCall({ isV5, client, legacyClient, cmd: 'select', args: [DB_INDEX] })
 
     const METRIC_HOST_NAME = urltils.isLocalhost(params.redis_host)
       ? agent.config.getHostnameSafe()
@@ -41,33 +79,35 @@ test('Redis instrumentation', async function (t) {
     ctx.nr = {
       agent,
       client,
+      legacyClient,
+      isV5,
       HOST_ID,
       METRIC_HOST_NAME
     }
   })
 
   t.afterEach(async function (ctx) {
-    const { agent, client } = ctx.nr
+    const { agent, client, legacyClient, isV5 } = ctx.nr
     helper.unloadAgent(agent)
-    await client.v4.flushAll()
-    await client.v4.quit()
+    await legacyCall({ isV5, legacyClient, cmd: 'flushAll' })
+    await legacyCall({ isV5, client, legacyClient, cmd: 'quit' })
     // must purge require cache of redis related instrumentation
     // otherwise it will not re-register on subsequent test runs
     removeMatchedModules(/redis/)
   })
 
   await t.test('should find Redis calls in the transaction trace', function (t, end) {
-    const { agent, client } = t.nr
+    const { agent, isV5, legacyClient } = t.nr
     assert.ok(!agent.getTransaction(), 'no transaction should be in play')
     helper.runInTransaction(agent, async function transactionInScope() {
       const transaction = agent.getTransaction()
       assert.ok(transaction, 'transaction should be visible')
 
-      const ok = await client.v4.set('testkey', 'arglbargle')
+      const ok = await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['testkey', 'arglbargle'] })
       assert.ok(agent.getTransaction(), 'transaction should still be visible')
       assert.ok(ok, 'everything should be peachy after setting')
 
-      const value = await client.v4.get('testkey')
+      const value = await legacyCall({ isV5, legacyClient, cmd: 'get', args: ['testkey'] })
       assert.ok(agent.getTransaction(), 'transaction should still still be visible')
       assert.equal(value, 'arglbargle', 'redis client should still work')
 
@@ -98,12 +138,12 @@ test('Redis instrumentation', async function (t) {
   })
 
   await t.test('should create correct metrics', function (t, end) {
-    const { agent, client } = t.nr
+    const { agent, isV5, legacyClient } = t.nr
     assert.ok(!agent.getTransaction(), 'no transaction should be in play')
     helper.runInTransaction(agent, async function transactionInScope() {
       const transaction = agent.getTransaction()
-      await client.v4.set('testkey', 'arglbargle')
-      await client.v4.get('testkey')
+      await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['testkey', 'arglbargle'] })
+      await legacyCall({ isV5, legacyClient, cmd: 'get', args: ['testkey'] })
       transaction.end()
       const metrics = transaction.metrics.unscoped
       const expected = {
@@ -120,12 +160,12 @@ test('Redis instrumentation', async function (t) {
   })
 
   await t.test('should add `key` attribute to trace segment', function (t, end) {
-    const { agent, client } = t.nr
+    const { agent, isV5, legacyClient } = t.nr
     assert.ok(!agent.getTransaction(), 'no transaction should be in play')
     agent.config.attributes.enabled = true
 
     helper.runInTransaction(agent, async function (tx) {
-      await client.v4.set('saveme', 'foobar')
+      await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['saveme', 'foobar'] })
 
       const [segment] = tx.trace.getChildren(agent.tracer.getSegment().id)
       assert.equal(segment.getAttributes().key, '"saveme"', 'should have `key` attribute')
@@ -134,12 +174,12 @@ test('Redis instrumentation', async function (t) {
   })
 
   await t.test('should not add `key` attribute to trace segment', function (t, end) {
-    const { agent, client } = t.nr
+    const { agent, isV5, legacyClient } = t.nr
     assert.ok(!agent.getTransaction(), 'no transaction should be in play')
     agent.config.attributes.enabled = false
 
     helper.runInTransaction(agent, async function (tx) {
-      await client.v4.set('saveme', 'foobar')
+      await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['saveme', 'foobar'] })
 
       const [segment] = tx.trace.getChildren(agent.tracer.getSegment().id)
       assert.ok(!segment.getAttributes().key, 'should not have `key` attribute')
@@ -148,7 +188,7 @@ test('Redis instrumentation', async function (t) {
   })
 
   await t.test('should add datastore instance attributes to trace segments', function (t, end) {
-    const { agent, client, METRIC_HOST_NAME } = t.nr
+    const { agent, isV5, legacyClient, METRIC_HOST_NAME } = t.nr
     assert.ok(!agent.getTransaction(), 'no transaction should be in play')
     // Enable.
     agent.config.datastore_tracer.instance_reporting.enabled = true
@@ -156,7 +196,7 @@ test('Redis instrumentation', async function (t) {
 
     helper.runInTransaction(agent, async function transactionInScope() {
       const transaction = agent.getTransaction()
-      await client.v4.set('testkey', 'arglbargle')
+      await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['testkey', 'arglbargle'] })
 
       const trace = transaction.trace
       const [setSegment] = trace.getChildren(trace.root.id)
@@ -178,7 +218,7 @@ test('Redis instrumentation', async function (t) {
   })
 
   await t.test('should not add instance attributes/metrics when disabled', function (t, end) {
-    const { agent, client, HOST_ID } = t.nr
+    const { agent, isV5, legacyClient, HOST_ID } = t.nr
     assert.ok(!agent.getTransaction(), 'no transaction should be in play')
     // disable
     agent.config.datastore_tracer.instance_reporting.enabled = false
@@ -186,7 +226,7 @@ test('Redis instrumentation', async function (t) {
 
     helper.runInTransaction(agent, async function transactionInScope() {
       const transaction = agent.getTransaction()
-      await client.v4.set('testkey', 'arglbargle')
+      await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['testkey', 'arglbargle'] })
 
       const [setSegment] = transaction.trace.getChildren(transaction.trace.root.id)
       const attributes = setSegment.getAttributes()
@@ -206,19 +246,19 @@ test('Redis instrumentation', async function (t) {
   })
 
   await t.test('should follow selected database', function (t, end) {
-    const { agent, client } = t.nr
+    const { agent, isV5, client, legacyClient } = t.nr
     assert.ok(!agent.getTransaction(), 'no transaction should be in play')
     let transaction = null
     const SELECTED_DB = 3
     helper.runInTransaction(agent, async function (tx) {
       transaction = tx
-      await client.v4.set('select:test:key', 'foo')
+      await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['select:test:key', 'foo'] })
       assert.ok(agent.getTransaction(), 'should not lose transaction state')
 
-      await client.v4.select(SELECTED_DB)
+      await client.select(SELECTED_DB)
       assert.ok(agent.getTransaction(), 'should not lose transaction state')
 
-      await client.v4.set('select:test:key:2', 'bar')
+      await legacyCall({ isV5, legacyClient, cmd: 'set', args: ['select:test:key:2', 'bar'] })
       assert.ok(agent.getTransaction(), 'should not lose transaction state')
       transaction.end()
       verify()
