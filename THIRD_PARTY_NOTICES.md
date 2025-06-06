@@ -30,6 +30,7 @@ code, the source code can be found at [https://github.com/newrelic/node-newrelic
 * [json-bigint](#json-bigint)
 * [json-stringify-safe](#json-stringify-safe)
 * [module-details-from-path](#module-details-from-path)
+* [object-sizeof](#object-sizeof)
 * [readable-stream](#readable-stream)
 * [require-in-the-middle](#require-in-the-middle)
 * [semver](#semver)
@@ -2186,6 +2187,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+```
+
+### object-sizeof
+
+This product includes source derived from [object-sizeof](https://github.com/miktam/sizeof) ([v2.6.5](https://github.com/miktam/sizeof/tree/v2.6.5)), distributed under the [MIT License](https://github.com/miktam/sizeof/blob/v2.6.5/LICENSE.md):
+
+```
+The MIT License (MIT)
+
+Copyright © 2014, Andrei Karpushonak aka @miktam
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ```
 
