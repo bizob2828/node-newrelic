@@ -30,6 +30,7 @@ code, the source code can be found at [https://github.com/newrelic/node-newrelic
 * [json-bigint](#json-bigint)
 * [json-stringify-safe](#json-stringify-safe)
 * [module-details-from-path](#module-details-from-path)
+* [object-sizeof](#object-sizeof)
 * [readable-stream](#readable-stream)
 * [require-in-the-middle](#require-in-the-middle)
 * [semver](#semver)
@@ -94,7 +95,7 @@ code, the source code can be found at [https://github.com/newrelic/node-newrelic
 
 ### @grpc/grpc-js
 
-This product includes source derived from [@grpc/grpc-js](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js) ([v1.13.3](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js/tree/v1.13.3)), distributed under the [Apache-2.0 License](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js/blob/v1.13.3/LICENSE):
+This product includes source derived from [@grpc/grpc-js](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js) ([v1.13.4](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js/tree/v1.13.4)), distributed under the [Apache-2.0 License](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js/blob/v1.13.4/LICENSE):
 
 ```
                                  Apache License
@@ -1901,7 +1902,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### import-in-the-middle
 
-This product includes source derived from [import-in-the-middle](https://github.com/nodejs/import-in-the-middle) ([v1.13.2](https://github.com/nodejs/import-in-the-middle/tree/v1.13.2)), distributed under the [Apache-2.0 License](https://github.com/nodejs/import-in-the-middle/blob/v1.13.2/LICENSE):
+This product includes source derived from [import-in-the-middle](https://github.com/nodejs/import-in-the-middle) ([v1.14.0](https://github.com/nodejs/import-in-the-middle/tree/v1.14.0)), distributed under the [Apache-2.0 License](https://github.com/nodejs/import-in-the-middle/blob/v1.14.0/LICENSE):
 
 ```
                                  Apache License
@@ -2188,6 +2189,23 @@ SOFTWARE.
 
 ```
 
+### object-sizeof
+
+This product includes source derived from [object-sizeof](https://github.com/miktam/sizeof) ([v2.6.5](https://github.com/miktam/sizeof/tree/v2.6.5)), distributed under the [MIT License](https://github.com/miktam/sizeof/blob/v2.6.5/LICENSE.md):
+
+```
+The MIT License (MIT)
+
+Copyright © 2014, Andrei Karpushonak aka @miktam
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+```
+
 ### readable-stream
 
 This product includes source derived from [readable-stream](https://github.com/nodejs/readable-stream) ([v3.6.2](https://github.com/nodejs/readable-stream/tree/v3.6.2)), distributed under the [MIT License](https://github.com/nodejs/readable-stream/blob/v3.6.2/LICENSE):
@@ -2332,7 +2350,7 @@ SOFTWARE.
 
 ### @aws-sdk/client-s3
 
-This product includes source derived from [@aws-sdk/client-s3](https://github.com/aws/aws-sdk-js-v3) ([v3.810.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.810.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.810.0/LICENSE):
+This product includes source derived from [@aws-sdk/client-s3](https://github.com/aws/aws-sdk-js-v3) ([v3.817.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.817.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.817.0/LICENSE):
 
 ```
                                 Apache License
@@ -2541,7 +2559,7 @@ This product includes source derived from [@aws-sdk/client-s3](https://github.co
 
 ### @aws-sdk/s3-request-presigner
 
-This product includes source derived from [@aws-sdk/s3-request-presigner](https://github.com/aws/aws-sdk-js-v3) ([v3.810.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.810.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.810.0/LICENSE):
+This product includes source derived from [@aws-sdk/s3-request-presigner](https://github.com/aws/aws-sdk-js-v3) ([v3.817.0](https://github.com/aws/aws-sdk-js-v3/tree/v3.817.0)), distributed under the [Apache-2.0 License](https://github.com/aws/aws-sdk-js-v3/blob/v3.817.0/LICENSE):
 
 ```
                                 Apache License
@@ -4401,7 +4419,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ### eslint
 
-This product includes source derived from [eslint](https://github.com/eslint/eslint) ([v9.26.0](https://github.com/eslint/eslint/tree/v9.26.0)), distributed under the [MIT License](https://github.com/eslint/eslint/blob/v9.26.0/LICENSE):
+This product includes source derived from [eslint](https://github.com/eslint/eslint) ([v9.27.0](https://github.com/eslint/eslint/tree/v9.27.0)), distributed under the [MIT License](https://github.com/eslint/eslint/blob/v9.27.0/LICENSE):
 
 ```
 Copyright OpenJS Foundation and other contributors, <www.openjsf.org>
