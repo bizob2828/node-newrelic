@@ -10,13 +10,13 @@ const helper = require('../../lib/agent_helper')
 const Traceparent = require('#agentlib/w3c/traceparent.js')
 const Tracestate = require('#agentlib/w3c/tracestate.js')
 const Transaction = require('../../../lib/transaction')
-const TraceContext = require('../../../lib/transaction/tracecontext').TraceContext
 const sinon = require('sinon')
+const proxyquire = require('proxyquire').noCallThru()
 
 test('TraceContext', async function (t) {
-  const supportabilitySpy = sinon.spy()
-
   function beforeEach(ctx) {
+    const sandbox = sinon.createSandbox()
+    const supportabilitySpy = sandbox.spy()
     const agent = helper.loadMockedAgent({
       attributes: { enabled: true }
     })
@@ -27,17 +27,26 @@ test('TraceContext', async function (t) {
     agent.config.distributed_tracing.enabled = true
 
     agent.recordSupportability = supportabilitySpy
+    const loggerMock = require('../mocks/logger')(sandbox)
+    const tracecontext = proxyquire('../../../lib/transaction/tracecontext', {
+      '../logger': {
+        child: sandbox.stub().callsFake(() => loggerMock)
+      }
+    })
 
     const transaction = new Transaction(agent)
     ctx.nr = {}
-    ctx.nr.traceContext = new TraceContext(transaction)
+    ctx.nr.traceContext = new tracecontext.TraceContext(transaction)
     ctx.nr.transaction = transaction
+    ctx.nr.sandbox = sandbox
     ctx.nr.agent = agent
+    ctx.nr.loggerMock = loggerMock
+    ctx.nr.supportabilitySpy = supportabilitySpy
   }
 
   function afterEach(ctx) {
-    supportabilitySpy.resetHistory()
     helper.unloadAgent(ctx.nr.agent)
+    ctx.nr.sandbox.resetHistory()
   }
 
   await t.test('acceptTraceContextPayload', async (t) => {
@@ -66,25 +75,50 @@ test('TraceContext', async function (t) {
     })
 
     await t.test('should not accept an empty traceparent header', (ctx) => {
-      const { traceContext } = ctx.nr
+      const { loggerMock, traceContext } = ctx.nr
       const tcd = traceContext.acceptTraceContextPayload(null, '')
       assert.equal(tcd.traceparent, undefined)
+      assert.equal(loggerMock.trace.callCount, 0)
+      assert.equal(loggerMock.error.callCount, 0)
     })
 
     await t.test('should not accept an invalid traceparent header', (ctx) => {
-      const { traceContext } = ctx.nr
+      const { loggerMock, supportabilitySpy, traceContext } = ctx.nr
       const tcd = traceContext.acceptTraceContextPayload('invalid', '')
       assert.equal(tcd.traceparent, undefined)
+      assert.equal(loggerMock.trace.callCount, 1)
+      assert.equal(loggerMock.error.callCount, 1)
+      assert.equal(loggerMock.trace.firstCall.args[0], 'Invalid traceparent for transaction %s: %s')
+      assert.equal(loggerMock.error.firstCall.args[0], 'Traceparent parse error: %s')
+      assert.equal(supportabilitySpy.callCount, 1)
+      assert.equal(supportabilitySpy.firstCall.args[0], 'TraceContext/TraceParent/Parse/Exception')
     })
 
     await t.test('should not accept an invalid tracestate header', (ctx) => {
-      const { traceContext } = ctx.nr
+      const { loggerMock, supportabilitySpy, traceContext } = ctx.nr
       const traceparent = '00-00015f9f95352ad550284c27c5d3084c-00f067aa0ba902b7-00'
       const tracestate = 'asdf,===asdf,,'
       const tcd = traceContext.acceptTraceContextPayload(traceparent, tracestate)
 
       assert.equal(supportabilitySpy.callCount, 2)
       assert.equal(supportabilitySpy.secondCall.args[0], 'TraceContext/TraceState/Parse/Exception')
+      assert.equal(loggerMock.trace.callCount, 2)
+      assert.equal(loggerMock.error.callCount, 1)
+      assert.equal(loggerMock.trace.secondCall.args[0], 'Invalid tracestate for transaction %s: %s')
+      assert.equal(loggerMock.error.firstCall.args[0], 'Tracestate parse error: %s')
+
+      assert.ok(tcd.traceparent)
+      assert.equal(tcd.tracestate, undefined)
+    })
+
+    await t.test('should return early if tracestate is missing', (ctx) => {
+      const { loggerMock, traceContext } = ctx.nr
+      const traceparent = '00-00015f9f95352ad550284c27c5d3084c-00f067aa0ba902b7-00'
+      const tcd = traceContext.acceptTraceContextPayload(traceparent)
+
+      assert.equal(loggerMock.trace.callCount, 2)
+      assert.equal(loggerMock.error.callCount, 0)
+      assert.equal(loggerMock.trace.secondCall.args[0], 'No tracestate header for transaction %s')
 
       assert.ok(tcd.traceparent)
       assert.equal(tcd.tracestate, undefined)
@@ -432,7 +466,7 @@ test('TraceContext', async function (t) {
     await t.test(
       'should propagate existing list members when cannot accept newrelic list members',
       (ctx, end) => {
-        const { agent } = ctx.nr
+        const { agent, supportabilitySpy } = ctx.nr
         // missing trust key means can't accept/match newrelic header
         agent.config.trusted_account_key = null
         agent.config.distributed_tracing.enabled = true
@@ -697,7 +731,7 @@ test('TraceContext', async function (t) {
     // required fields from server.
 
     await t.test('should not create tracestate when accountId is missing', (ctx, end) => {
-      const { agent } = ctx.nr
+      const { agent, supportabilitySpy } = ctx.nr
       agent.config.account_id = null
       agent.config.distributed_tracing.enabled = true
       agent.config.span_events.enabled = true
@@ -722,7 +756,7 @@ test('TraceContext', async function (t) {
     })
 
     await t.test('should not create tracestate when primary_application_id missing', (ctx, end) => {
-      const { agent } = ctx.nr
+      const { agent, supportabilitySpy } = ctx.nr
       agent.config.account_id = '12345'
       agent.config.primary_application_id = null
       agent.config.distributed_tracing.enabled = true
@@ -748,7 +782,7 @@ test('TraceContext', async function (t) {
     })
 
     await t.test('should not create tracestate when trusted_account_key missing', (ctx, end) => {
-      const { agent } = ctx.nr
+      const { agent, supportabilitySpy } = ctx.nr
       agent.config.account_id = '12345'
       agent.config.primary_application_id = 'appId'
       agent.config.trusted_account_key = null
