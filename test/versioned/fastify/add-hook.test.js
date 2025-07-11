@@ -79,8 +79,8 @@ test('non-error hooks', async (t) => {
   let txPassed = false
   agent.on('transactionFinished', (transaction) => {
     assert.equal(
-      'WebFrameworkUri/Fastify/GET//add-hook',
       transaction.getName(),
+      'WebFrameworkUri/Fastify/GET//add-hook',
       'transaction name matched'
     )
     // all the hooks are siblings of the route handler
@@ -141,8 +141,8 @@ test('error hook', async function errorHookTest(t) {
   let txPassed = false
   agent.on('transactionFinished', (transaction) => {
     assert.equal(
-      'WebFrameworkUri/Fastify/GET//error',
       transaction.getName(),
+      'WebFrameworkUri/Fastify/GET//error',
       'transaction name matched'
     )
     // all the hooks are siblings of the route handler
