@@ -280,7 +280,7 @@ test('produces transaction trace with multiple middleware', async (t) => {
 })
 
 test('correctly records actions interspersed among middleware', async (t) => {
-  const plan = tspl(t, { plan: 17 })
+  const plan = tspl(t, { plan: 13 })
   const { agent, app, testShim } = t.nr
 
   app.use(function one(ctx, next) {
@@ -309,8 +309,8 @@ test('correctly records actions interspersed among middleware', async (t) => {
           'Nodejs/Middleware/Koa/one',
           [
             'Truncated/testSegment',
-            'Nodejs/Middleware/Koa/two',
-            ['timers.setTimeout', ['Callback: <anonymous>'], 'Nodejs/Middleware/Koa/three'],
+            'Nodejs/Middleware/Koa/two', 
+            ['Nodejs/Middleware/Koa/three'],
             'Truncated/nestedSegment'
           ]
         ]

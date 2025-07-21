@@ -12,6 +12,11 @@ const helper = require('../../lib/agent_helper')
 
 test('should apply transaction name as active span intrinsic on transaction end', (t, end) => {
   const agent = helper.instrumentMockedAgent({
+    instrumentation: {
+      timers: {
+        enabled: true
+      }
+    },
     distributed_tracing: {
       enabled: true
     }

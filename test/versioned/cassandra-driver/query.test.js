@@ -251,7 +251,7 @@ function verifyTrace(agent, trace, table) {
     if (getSegment) {
       const getChildren = trace.getChildren(getSegment.id)
       verifyTraceSegment(agent, getSegment, 'select')
-      assert.ok(getChildren.length >= 1, 'get should have a callback/promise segment')
+      assert.equal(getChildren.length, 0)
       assert.ok(getSegment.timer.hrDuration, 'trace segment should have ended')
     }
   }
