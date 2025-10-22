@@ -141,6 +141,10 @@ function initialize() {
     if (agent.config.security.agent.enabled) {
       require('@newrelic/security-agent').start(api)
     }
+
+    if (agent.config.profiling.enabled) {
+      require('./lib/profiler').initialize(api)
+    }
   }
 }
 
