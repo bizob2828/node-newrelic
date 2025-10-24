@@ -55,6 +55,18 @@
       "licenseUrl": "https://github.com/apm-js-collab/tracing-hooks/blob/v0.3.1/LICENSE",
       "licenseTextSource": "file"
     },
+    "@datadog/pprof@5.11.1": {
+      "name": "@datadog/pprof",
+      "version": "5.11.1",
+      "range": "^5.11.1",
+      "licenses": "Apache-2.0",
+      "repoUrl": "https://github.com/datadog/pprof-nodejs",
+      "versionedRepoUrl": "https://github.com/datadog/pprof-nodejs/tree/v5.11.1",
+      "licenseFile": "node_modules/@datadog/pprof/LICENSE",
+      "licenseUrl": "https://github.com/datadog/pprof-nodejs/blob/v5.11.1/LICENSE",
+      "licenseTextSource": "file",
+      "publisher": "Google Inc."
+    },
     "@grpc/grpc-js@1.14.3": {
       "name": "@grpc/grpc-js",
       "version": "1.14.3",
