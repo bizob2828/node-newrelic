@@ -24,7 +24,7 @@ async function initPrismaApp() {
   // install CLI globally with proper version so the client package can be generated and setup accordingly
   // If this was locally installed, it would get stomped on.
   await exec(`npm install -g prisma@${version}`)
-  await exec('prisma generate')
+  await exec('prisma generate --schema ./prisma/schema.prisma')
   await exec('prisma migrate reset --force')
   delete process.env.DATABASE_URL
 }
