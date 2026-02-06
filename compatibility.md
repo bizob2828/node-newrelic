@@ -13,14 +13,14 @@ supported by the agent.
 | --- | --- | --- | --- |
 | `@apollo/gateway` | 2.3.0 | 2.13.0 | `@newrelic/apollo-server-plugin@1.0.0` |
 | `@apollo/server` | 4.0.0 | 5.4.0 | `@newrelic/apollo-server-plugin@2.1.0` |
-| `@aws-sdk/client-bedrock-runtime` | 3.474.0 | 3.983.0 | 11.13.0 |
-| `@aws-sdk/client-dynamodb` | 3.0.0 | 3.983.0 | 8.7.1 |
-| `@aws-sdk/client-sns` | 3.0.0 | 3.983.0 | 8.7.1 |
-| `@aws-sdk/client-sqs` | 3.0.0 | 3.983.0 | 8.7.1 |
-| `@aws-sdk/lib-dynamodb` | 3.377.0 | 3.983.0 | 8.7.1 |
+| `@aws-sdk/client-bedrock-runtime` | 3.474.0 | 3.984.0 | 11.13.0 |
+| `@aws-sdk/client-dynamodb` | 3.0.0 | 3.984.0 | 8.7.1 |
+| `@aws-sdk/client-sns` | 3.0.0 | 3.984.0 | 8.7.1 |
+| `@aws-sdk/client-sqs` | 3.0.0 | 3.984.0 | 8.7.1 |
+| `@aws-sdk/lib-dynamodb` | 3.377.0 | 3.984.0 | 8.7.1 |
 | `@aws-sdk/smithy-client` | 3.47.0 | 3.374.0 | 8.7.1 |
 | `@azure/functions` | 4.7.0 | 4.11.1 | 12.18.0 |
-| `@elastic/elasticsearch` | 7.16.0 | 9.2.1 | 11.9.0 |
+| `@elastic/elasticsearch` | 7.16.0 | 9.3.0 | 11.9.0 |
 | `@google/genai` | 1.1.0 | 1.40.0 | 12.21.0 |
 | `@grpc/grpc-js` | 1.4.0 | 1.14.3 | 8.17.0 |
 | `@hapi/hapi` | 20.1.2 | 21.4.4 | 9.0.0 |
@@ -28,7 +28,7 @@ supported by the agent.
 | `@langchain/aws` | 1.0.0 | 1.2.2 | 13.8.0 |
 | `@langchain/core` | 0.2.0 | 1.1.19 | 11.13.0 |
 | `@langchain/langgraph` | 1.0.0 | 1.1.3 | 13.12.0 |
-| `@langchain/openai` | 1.0.0 | 1.2.4 | 11.13.0 |
+| `@langchain/openai` | 1.0.0 | 1.2.5 | 11.13.0 |
 | `@modelcontextprotocol/sdk` | 1.13.0 | 1.26.0 | 13.2.0 |
 | `@nestjs/cli` | 9.0.0 | 11.0.16 | 10.1.0 |
 | `@opensearch-project/opensearch` | 2.1.0 | 3.5.1 | 12.10.0 |
@@ -62,7 +62,7 @@ supported by the agent.
 | `redis` | 3.1.0 | 5.10.0 | 1.31.0 |
 | `restify` | 11.0.0 | 11.1.0 | 2.6.0 |
 | `superagent` | 3.0.0 | 10.3.0 | 4.9.0 |
-| `undici` | 5.0.0 | 7.20.0 | 11.1.0 |
+| `undici` | 5.0.0 | 7.21.0 | 11.1.0 |
 | `when` | 3.7.0 | 3.7.8 | 1.26.2 |
 | `winston` | 3.0.0 | 3.19.0 | 8.11.0 |
 
