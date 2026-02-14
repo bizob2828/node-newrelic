@@ -18,6 +18,8 @@ class FakeAggregator extends EventEmitter {
     super()
     this.enabled = opts.enabled
     this.method = opts.method
+    this.delay = opts.delay ?? 0
+    this.duration = opts.duration ?? 0
   }
 
   start() {}
