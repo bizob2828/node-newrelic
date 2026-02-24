@@ -29,7 +29,7 @@ supported by the agent.
 | `@langchain/core` | 0.2.0 | 1.1.27 | 11.13.0 |
 | `@langchain/langgraph` | 1.0.0 | 1.1.5 | 13.12.0 |
 | `@langchain/openai` | 1.0.0 | 1.2.9 | 11.13.0 |
-| `@modelcontextprotocol/sdk` | 1.13.0 | 1.26.0 | 13.2.0 |
+| `@modelcontextprotocol/sdk` | 1.13.0 | 1.27.0 | 13.2.0 |
 | `@nestjs/cli` | 9.0.0 | 11.0.16 | 10.1.0 |
 | `@opensearch-project/opensearch` | 2.1.0 | 3.5.1 | 12.10.0 |
 | `@prisma/client` | 5.0.0 | 7.4.1 | 11.0.0 |
@@ -54,7 +54,7 @@ supported by the agent.
 | `mysql` | 2.16.0 | 2.18.1 | 1.32.0 |
 | `mysql2` | 2.0.0 | 3.18.0 | 1.32.0 |
 | `next` | 13.4.19 | 16.1.6 | 12.0.0 |
-| `openai` | 4.0.0 | 6.23.0 | 11.13.0 |
+| `openai` | 4.0.0 | 6.24.0 | 11.13.0 |
 | `pg` | 8.2.0 | 8.18.0 | 9.0.0 |
 | `pg-native` | 3.0.0 | 3.5.2 | 9.0.0 |
 | `pino` | 8.0.0 | 10.3.1 | 8.11.0 |
