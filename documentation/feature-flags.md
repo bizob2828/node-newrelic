@@ -8,12 +8,6 @@ Any prerelease flags can be enabled or disabled in your agent config by adding a
 
 ## Current prerelease feature flags
 
-#### promise_segments
-* Enabled by default: `false`  
-* Configuration: `{ feature_flag: { promise_segments: true|false }}`
-* Environment Variable: `NEW_RELIC_FEATURE_FLAG_PROMISE_SEGMENTS`
-* Description: Creates a segment for every handler in a Promise chain. This is used only by `when.js`. 
-
 #### reverse_naming_rules
 * Enabled by default: `false`
 * Configuration: `{ feature_flag: { reverse_naming_rules: true|false }}`

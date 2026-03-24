@@ -54,59 +54,66 @@ test('no transaction', (t, end) => {
 
   const { agent } = t.nr
   const { version } = require('when/package.json')
-  assertPackageMetrics({ agent, pkg: 'when', version })
+  assertPackageMetrics({ agent, pkg: 'when', version, subscriberType: true })
 })
 
 test('new Promise() throw', async (t) => {
-  const plan = tspl(t, { plan: 2 })
-  const { when } = setupTest(t)
+  const plan = tspl(t, { plan: 3 })
+  const { when, agent } = setupTest(t)
   const { Promise } = when
 
-  try {
-    new Promise(function () {
-      throw new Error('test error')
-    }).then(
-      function resolved() {
-        plan.fail('Error should have been caught.')
-      },
-      function rejected(err) {
-        plan.ok(err, 'Error should go to the reject handler')
-        plan.equal(err.message, 'test error', 'Error should be as expected')
-      }
-    )
-  } catch {
-    plan.fail('Error should have passed to `reject`.')
-  }
+  helper.runInTransaction(agent, (tx) => {
+    try {
+      new Promise(function () {
+        throw new Error('test error')
+      }).then(
+        function resolved() {
+          plan.fail('Error should have been caught.')
+        },
+        function rejected(err) {
+          plan.equal(agent.getTransaction()?.id, tx.id)
+          plan.ok(err, 'Error should go to the reject handler')
+          plan.equal(err.message, 'test error', 'Error should be as expected')
+        }
+      )
+    } catch {
+      plan.fail('Error should have passed to `reject`.')
+    }
+  })
 
   await plan.completed
 })
 
 test('new Promise() resolve then throw', async (t) => {
-  const plan = tspl(t, { plan: 1 })
-  const { when } = setupTest(t)
+  const plan = tspl(t, { plan: 3 })
+  const { when, agent } = setupTest(t)
   const { Promise } = when
 
-  try {
-    new Promise(function (resolve) {
-      resolve('foo')
-      throw new Error('test error')
-    }).then(
-      function resolved(res) {
-        plan.equal(res, 'foo', 'promise should be resolved.')
-      },
-      function rejected() {
-        plan.fail('Error should have been swallowed by promise.')
-      }
-    )
-  } catch {
-    plan.fail('Error should have passed to `reject`.')
-  }
+  helper.runInTransaction(agent, (tx) => {
+    try {
+      new Promise(function (resolve) {
+        resolve('foo')
+        plan.equal(agent.getTransaction()?.id, tx.id)
+        throw new Error('test error')
+      }).then(
+        function resolved(res) {
+          plan.ok(agent.getTransaction())
+          plan.equal(res, 'foo', 'promise should be resolved.')
+        },
+        function rejected() {
+          plan.fail('Error should have been swallowed by promise.')
+        }
+      )
+    } catch {
+      plan.fail('Error should have passed to `reject`.')
+    }
+  })
 
   await plan.completed
 })
 
 test('when()', async (t) => {
-  const plan = tspl(t, { plan: 10 })
+  const plan = tspl(t, { plan: 12 })
   const { agent, when } = setupTest(t)
   const testFunc = (name) => when(name).then(function resolved(value) {
     plan.equal(value, name, `${name} should pass the value`)
@@ -122,7 +129,7 @@ test('when()', async (t) => {
 })
 
 test('when.defer', async (t) => {
-  const plan = tspl(t, { plan: 10 })
+  const plan = tspl(t, { plan: 12 })
   const { agent, when } = setupTest(t)
   const testFunc = (name) => {
     const defer = when.defer()
@@ -183,10 +190,11 @@ test('when debug API', async (t) => {
 })
 
 test('when.iterate', async (t) => {
-  const plan = tspl(t, { plan: 130 })
+  const plan = tspl(t, { plan: 132 })
   const { agent, when } = setupTest(t)
   const COUNT = 10
   const testFunc = (name) => {
+    // tx will be null in the `testThrowOutsideTransaction`
     const tx = agent.getTransaction()
     let incrementorCount = 0
     let predicateCount = 0
@@ -195,19 +203,19 @@ test('when.iterate', async (t) => {
     return when.iterate(iterator, predicate, handler, 0)
 
     function iterator(seed) {
-      plan.equal(agent.getTransaction(), tx, `${name} iterator has correct transaction state`)
+      plan.equal(agent.getTransaction()?.id, tx?.id, `${name} iterator has correct transaction state`)
       plan.equal(incrementorCount++, seed++, `${name} should iterate as expected`)
       return seed
     }
 
     function predicate(iteration) {
-      plan.equal(agent.getTransaction(), tx, `${name} predicate has correct transaction state`)
+      plan.equal(agent.getTransaction()?.id, tx?.id, `${name} predicate has correct transaction state`)
       plan.equal(predicateCount++, iteration, `${name} should execute predicate each time`)
       return iteration >= COUNT
     }
 
     function handler(value) {
-      plan.equal(agent.getTransaction(), tx, `${name} body has correct transaction state`)
+      plan.equal(agent.getTransaction()?.id, tx?.id, `${name} body has correct transaction state`)
       plan.equal(bodyCount++, value, `${name} should execute each time`)
     }
   }
@@ -218,7 +226,7 @@ test('when.iterate', async (t) => {
 })
 
 test('when.join', async (t) => {
-  const plan = tspl(t, { plan: 10 })
+  const plan = tspl(t, { plan: 12 })
   const { agent, when } = setupTest(t)
   const testFunc = (name) => when.join(2, when.resolve(name)).then((value) => {
     plan.deepStrictEqual(value, [2, name], `${name} should resolve with correct value`)
@@ -234,7 +242,7 @@ test('when.join', async (t) => {
 })
 
 test('when.lift', async (t) => {
-  const plan = tspl(t, { plan: 10 })
+  const plan = tspl(t, { plan: 12 })
   const { agent, when } = setupTest(t)
   const testFunc = (name) => {
     const func = when.lift((value) => {
@@ -258,7 +266,7 @@ test('when.lift', async (t) => {
 })
 
 test('when.promise', async (t) => {
-  const plan = tspl(t, { plan: 10 })
+  const plan = tspl(t, { plan: 12 })
   const { agent, when } = setupTest(t)
   const testFunc = (name) => when
     .promise((resolve) => resolve(`${name} resolve value`))
@@ -430,7 +438,7 @@ test('Promise#otherwise', async (t) => {
 })
 
 test('Promise#finally', async (t) => {
-  const plan = tspl(t, { plan: 18 })
+  const plan = tspl(t, { plan: 20 })
   const { agent, when } = setupTest(t)
   const { Promise } = when
   const testFunc = (name) => Promise.resolve([1, 2, 3, name])
@@ -460,7 +468,7 @@ test('Promise#finally', async (t) => {
 })
 
 test('Promise#ensure', async (t) => {
-  const plan = tspl(t, { plan: 18 })
+  const plan = tspl(t, { plan: 20 })
   const { agent, when } = setupTest(t)
   const { Promise } = when
   const testFunc = (name) => Promise.resolve([1, 2, 3, name])
@@ -490,7 +498,7 @@ test('Promise#ensure', async (t) => {
 })
 
 test('Promise#tap', async (t) => {
-  const plan = tspl(t, { plan: 14 })
+  const plan = tspl(t, { plan: 16 })
   const { agent, when } = setupTest(t)
   const { Promise } = when
   const testFunc = (name) => Promise.resolve([1, 2, 3, name])
@@ -528,7 +536,7 @@ test('Promise#spread', async (t) => {
 })
 
 test('Promise#fold', async (t) => {
-  const plan = tspl(t, { plan: 12 })
+  const plan = tspl(t, { plan: 14 })
   const { agent, when } = setupTest(t)
   const { Promise } = when
   const testFunc = (name) => {
@@ -573,7 +581,7 @@ test('Promise#yield', async (t) => {
 
 for (const method of ['else', 'orElse']) {
   test(`Promise#${method}`, async (t) => {
-    const plan = tspl(t, { plan: 10 })
+    const plan = tspl(t, { plan: 12 })
     const { agent, when } = setupTest(t)
     const { Promise } = when
     const testFunc = (name) => {
@@ -621,7 +629,7 @@ test('Promise#delay', async (t) => {
 })
 
 test('Promise#timeout', async (t) => {
-  const plan = tspl(t, { plan: 10 })
+  const plan = tspl(t, { plan: 12 })
   const { agent, when } = setupTest(t)
   const { Promise } = when
   const testFunc = (name) => {
@@ -644,7 +652,7 @@ test('Promise#timeout', async (t) => {
 })
 
 test('Promise#with', async (t) => {
-  const plan = tspl(t, { plan: 10 })
+  const plan = tspl(t, { plan: 12 })
   const { agent, when } = setupTest(t)
   const { Promise } = when
   const testFunc = (name) => {
@@ -671,7 +679,7 @@ test('all', async (t) => {
 
     helper.runInTransaction(agent, (tx) => {
       when.all([p1, p2]).then(() => {
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -685,7 +693,7 @@ test('all', async (t) => {
 
     helper.runInTransaction(agent, (tx) => {
       Promise.all([p1, p2]).then(() => {
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -699,7 +707,7 @@ test('any', async (t) => {
     helper.runInTransaction(agent, (tx) => {
       when.any([when.resolve(1), when.resolve(2)]).then((value) => {
         assert.equal(value, 1)
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -712,7 +720,7 @@ test('any', async (t) => {
     helper.runInTransaction(agent, (tx) => {
       Promise.any([when.resolve(1), when.resolve(2)]).then((value) => {
         assert.equal(value, 1)
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -728,7 +736,7 @@ test('some', async (t) => {
         assert.equal(value.length, 2)
         assert.equal(value[0], 1)
         assert.equal(value[1], 2)
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -743,7 +751,7 @@ test('some', async (t) => {
         assert.equal(value.length, 2)
         assert.equal(value[0], 1)
         assert.equal(value[1], 2)
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -761,7 +769,7 @@ test('map', async (t) => {
           assert.equal(value.length, 2)
           assert.equal(value[0], 1)
           assert.equal(value[1], 2)
-          assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+          assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
           end()
         })
     })
@@ -776,7 +784,7 @@ test('map', async (t) => {
         assert.equal(value.length, 2)
         assert.equal(value[0], 1)
         assert.equal(value[1], 2)
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -796,7 +804,7 @@ test('reduce', async (t) => {
         )
         .then((total) => {
           assert.equal(total, 3)
-          assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+          assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
           end()
         })
     })
@@ -813,7 +821,7 @@ test('reduce', async (t) => {
         0
       ).then((total) => {
         assert.equal(total, 3)
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -829,7 +837,7 @@ test('filter', async (t) => {
         .filter([1, 2, 3, 4], (v) => v % 2)
         .then((value) => {
           assert.equal(value.length, 2)
-          assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+          assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
           end()
         })
     })
@@ -842,7 +850,7 @@ test('filter', async (t) => {
     helper.runInTransaction(agent, (tx) => {
       Promise.filter([1, 2, 3, 4], (v) => v % 2).then((value) => {
         assert.equal(value.length, 2)
-        assert.equal(agent.getTransaction(), tx, 'has the right transaction')
+        assert.equal(agent.getTransaction()?.id, tx.id, 'has the right transaction')
         end()
       })
     })
@@ -890,6 +898,7 @@ async function testThrowOutsideTransaction({ plan, agent, testFunc }) {
     testFunc(name)
       .finally(() => {
         plan.ok(isAsync, `${name} should have executed asynchronously`)
+        plan.equal(agent.getTransaction(), undefined)
       })
       .then(
         function resolved() {
@@ -921,10 +930,13 @@ async function testInsideTransaction({ plan, agent, testFunc }) {
     plan.doesNotThrow(() => {
       let isAsync = false
       testFunc(name)
-        .finally(() => plan.ok(isAsync, `${name} should have executed asynchronously`))
+        .finally(() => {
+          plan.ok(isAsync, `${name} should have executed asynchronously`)
+          plan.equal(agent.getTransaction()?.id, tx.id)
+        })
         .then(
           function resolved() {
-            plan.equal(agent.getTransaction(), tx, `${name} has the right transaction`)
+            plan.equal(agent.getTransaction()?.id, tx.id, `${name} has the right transaction`)
           },
           function rejected(error) {
             plan.ok(!error, `${name} should not result in error`)

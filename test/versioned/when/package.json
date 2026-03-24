@@ -12,7 +12,6 @@
         "when": ">=3.7.0"
       },
       "files": [
-        "segments.test.js",
         "when.test.js",
         "when2.test.js"
       ]
