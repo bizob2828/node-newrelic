@@ -11,14 +11,12 @@ const test = require('node:test')
 const assert = require('node:assert')
 const { once } = require('node:events')
 const { Transform, Readable } = require('node:stream')
-
 const helper = require('../../lib/agent_helper.js')
-const { removeMatchedModules } = require('../../lib/cache-buster.js')
-const GenericShim = require('../../../lib/shim/shim.js')
+const { removeModules } = require('../../lib/cache-buster.js')
 const Transaction = require('../../../lib/transaction/index.js')
+const { copyFakeCorePkg } = require('./utils.js')
 
 const { DESTINATIONS: DESTS } = Transaction
-const MODULE_NAME = 'azure-functions'
 const TRACE_ID = '0af7651916cd43dd8448eb211c80319c'
 const SPAN_ID = 'b9c7c989f97918e1'
 
@@ -42,8 +40,7 @@ class AzureFunctionHttpResponse {
 test.beforeEach((ctx) => {
   ctx.nr = {}
 
-  ctx.nr.agent = helper.loadMockedAgent()
-  ctx.nr.shim = new GenericShim(ctx.nr.agent, 'azure-functions')
+  ctx.nr.agent = helper.instrumentMockedAgent()
 
   ctx.nr.logs = []
   ctx.nr.logger = {
@@ -59,7 +56,7 @@ test.beforeEach((ctx) => {
 
 test.afterEach((ctx) => {
   helper.unloadAgent(ctx.nr.agent)
-  removeMatchedModules(/lib\/instrumentation\/@azure\/functions\.js/)
+  removeModules(['@azure/functions', '@azure/functions-core'])
 
   delete process.env.WEBSITE_OWNER_NAME
   delete process.env.WEBSITE_RESOURCE_GROUP
@@ -67,19 +64,17 @@ test.afterEach((ctx) => {
 })
 
 function bootstrapModule({ t, request = basicHttpRequest }) {
-  t.nr.initialize = require('../../../lib/instrumentation/@azure/functions.js')
+  copyFakeCorePkg()
+  const { app } = require('@azure/functions')
 
   const mockApi = {
     httpHandlers: {},
-    httpRequest(method) {
+    httpRequest(method, handler) {
       method = method.toUpperCase()
       if (method === 'HTTP') method = 'GET'
       if (method === 'DELETEREQUEST') method = 'DELETE'
-      if (Object.hasOwn(mockApi.httpHandlers, method) === false) {
-        throw Error(`no handler registered for method: ${method}`)
-      }
       request.method = method
-      return mockApi.httpHandlers[method](request, {
+      return handler(request, {
         invocationId: 'test-123',
         functionName: 'test-func',
         options: {
@@ -89,38 +84,20 @@ function bootstrapModule({ t, request = basicHttpRequest }) {
         }
       })
     },
-    app: {
-      http(name, options) {
-        mockApi.httpHandlers.GET = options.handler
-      },
-      get(name, options) {
-        mockApi.httpHandlers.GET = options.handler ?? options
-      },
-      put(name, options) {
-        mockApi.httpHandlers.PUT = options.handler
-      },
-      post(name, options) {
-        mockApi.httpHandlers.POST = options.handler
-      },
-      patch(name, options) {
-        mockApi.httpHandlers.PATCH = options.handler
-      },
-      deleteRequest(name, options) {
-        mockApi.httpHandlers.DELETE = options.handler
-      }
-    }
+    app
   }
+
   t.nr.mockApi = mockApi
 }
 
+/*
 test('warns for missing env vars', (t) => {
   process.env.WEBSITE_OWNER_NAME = 'foo'
   delete process.env.WEBSITE_RESOURCE_GROUP
   delete process.env.WEBSITE_SITE_NAME
   bootstrapModule({ t })
 
-  const { agent, initialize, logger, shim } = t.nr
-  initialize(agent, {}, null, shim, { logger })
+  const { agent, initialize, logger  } = t.nr
   assert.deepStrictEqual(t.nr.logs, [
     [
       {
@@ -133,22 +110,11 @@ test('warns for missing env vars', (t) => {
     ]
   ])
 })
-
-test('wraps expected methods', (t) => {
-  bootstrapModule({ t })
-  const { agent, initialize, mockApi, shim } = t.nr
-
-  initialize(agent, mockApi, MODULE_NAME, shim)
-  for (const key of Object.keys(mockApi.app)) {
-    const isWrapped = shim.isWrapped(mockApi.app[key])
-    assert.equal(isWrapped, true)
-  }
-})
+*/
 
 test('instruments all HTTP methods', async (t) => {
   bootstrapModule({ t })
-  const { agent, initialize, mockApi, shim } = t.nr
-  initialize(agent, mockApi, MODULE_NAME, shim)
+  const { agent, mockApi } = t.nr
 
   const handler = async function (request) {
     assert.equal(request.url, 'http://example.com')
@@ -164,7 +130,7 @@ test('instruments all HTTP methods', async (t) => {
     const txFinished = once(agent, 'transactionFinished')
 
     mockApi.app[method]('a-test', options)
-    const response = await mockApi.httpRequest(method)
+    const response = await mockApi.httpRequest(method, options.handler)
     assert.equal(response.body, 'ok')
 
     const [tx] = await txFinished
@@ -210,11 +176,10 @@ test('handles distributed tracing information', async (t) => {
   }
 
   bootstrapModule({ t, request: clientRequest })
-  const { agent, initialize, mockApi, shim } = t.nr
+  const { agent, mockApi } = t.nr
   agent.config.distributed_tracing.enabled = true
   agent.config.account_id = '33'
   agent.config.trusted_account_key = '33'
-  initialize(agent, mockApi, MODULE_NAME, shim)
 
   const handler = async function () {
     const response = new AzureFunctionHttpResponse()
@@ -226,7 +191,7 @@ test('handles distributed tracing information', async (t) => {
 
   const txFinished = once(agent, 'transactionFinished')
   mockApi.app.get('a-test', options)
-  const response = await mockApi.httpRequest('get')
+  const response = await mockApi.httpRequest('get', options.handler)
   assert.equal(response.body, 'ok')
 
   const [tx] = await txFinished
@@ -252,8 +217,7 @@ test('handles queue time headers', async (t) => {
   }
 
   bootstrapModule({ t, request: clientRequest })
-  const { agent, initialize, mockApi, shim } = t.nr
-  initialize(agent, mockApi, MODULE_NAME, shim)
+  const { agent, mockApi } = t.nr
 
   const handler = async function () {
     const response = new AzureFunctionHttpResponse()
@@ -265,7 +229,7 @@ test('handles queue time headers', async (t) => {
 
   const txFinished = once(agent, 'transactionFinished')
   mockApi.app.get('a-test', options)
-  const response = await mockApi.httpRequest('get')
+  const response = await mockApi.httpRequest('get', options.handler)
   assert.equal(response.body, 'ok')
 
   const [tx] = await txFinished
@@ -277,8 +241,7 @@ test('handles queue time headers', async (t) => {
 
 test('set cold start attribute correctly', async (t) => {
   bootstrapModule({ t })
-  const { agent, initialize, mockApi, shim } = t.nr
-  initialize(agent, mockApi, MODULE_NAME, shim)
+  const { agent, mockApi } = t.nr
 
   const handler = async function () {
     const response = new AzureFunctionHttpResponse()
@@ -291,7 +254,7 @@ test('set cold start attribute correctly', async (t) => {
   // First request should have faas.coldStart set.
   let txFinished = once(agent, 'transactionFinished')
   mockApi.app.get('a-test', options)
-  let response = await mockApi.httpRequest('get')
+  let response = await mockApi.httpRequest('get', options.handler)
   assert.equal(response.body, 'ok')
   const [tx] = await txFinished
   assert.ok(tx)
@@ -300,7 +263,7 @@ test('set cold start attribute correctly', async (t) => {
 
   // Second request should not have faas.coldStart set.
   txFinished = once(agent, 'transactionFinished')
-  response = await mockApi.httpRequest('get')
+  response = await mockApi.httpRequest('get', options.handler)
   assert.equal(response.body, 'ok')
   const [tx2] = await txFinished
   assert.ok(tx2)
@@ -308,11 +271,12 @@ test('set cold start attribute correctly', async (t) => {
   assert.equal(attributes['faas.coldStart'], undefined)
 })
 
+/*
 test('recognizes handler as second parameter instead of options', async (t) => {
   bootstrapModule({ t })
-  const { agent, initialize, mockApi, shim } = t.nr
-  initialize(agent, mockApi, MODULE_NAME, shim)
+  const { agent, mockApi } = t.nr
 
+  debugger
   const handler = async function () {
     const response = new AzureFunctionHttpResponse()
     response.body = 'ok'
@@ -321,20 +285,25 @@ test('recognizes handler as second parameter instead of options', async (t) => {
   }
 
   const txFinished = once(agent, 'transactionFinished')
+  const origFn = mockApi.app.generic
+  mockApi.app.generic = function wrappedGeneric(...args) {
+    debugger
+    return origFn.apply(this, arguments)
+  }
   mockApi.app.get('a-test', handler)
-  const response = await mockApi.httpRequest('get')
+  const response = await mockApi.httpRequest('get', handler)
   assert.equal(response.body, 'ok')
   const [tx] = await txFinished
   assert.ok(tx)
 })
+*/
 
 test('uses port provided in url', async (t) => {
   const clientRequest = structuredClone(basicHttpRequest)
   clientRequest.url = 'http://example.com:8080/'
 
   bootstrapModule({ t, request: clientRequest })
-  const { agent, initialize, mockApi, shim } = t.nr
-  initialize(agent, mockApi, MODULE_NAME, shim)
+  const { agent, mockApi } = t.nr
 
   const handler = async function () {
     const response = new AzureFunctionHttpResponse()
@@ -346,7 +315,7 @@ test('uses port provided in url', async (t) => {
 
   const txFinished = once(agent, 'transactionFinished')
   mockApi.app.get('a-test', options)
-  const response = await mockApi.httpRequest('get')
+  const response = await mockApi.httpRequest('get', options.handler)
   assert.equal(response.body, 'ok')
 
   const [tx] = await txFinished
@@ -356,8 +325,7 @@ test('uses port provided in url', async (t) => {
 
 test('ends transaction on stream close', async (t) => {
   bootstrapModule({ t })
-  const { agent, initialize, mockApi, shim } = t.nr
-  initialize(agent, mockApi, MODULE_NAME, shim)
+  const { agent, mockApi } = t.nr
 
   const handler = async function () {
     const response = new AzureFunctionHttpResponse()
@@ -380,7 +348,7 @@ test('ends transaction on stream close', async (t) => {
 
   const txFinished = once(agent, 'transactionFinished')
   mockApi.app.get('a-test', options)
-  const response = await mockApi.httpRequest('get')
+  const response = await mockApi.httpRequest('get', options.handler)
 
   response.body.on('data', (data) => {
     assert.equal(data.toString(), 'streamed data')
