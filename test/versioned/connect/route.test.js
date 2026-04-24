@@ -7,9 +7,12 @@
 
 const test = require('node:test')
 const http = require('node:http')
-const semver = require('semver')
 const tspl = require('@matteo.collina/tspl')
-const { assertPackageMetrics } = require('../../lib/custom-assertions')
+const {
+  assertMetrics,
+  assertPackageMetrics,
+  assertSegments
+} = require('../../lib/custom-assertions')
 const { removeModules } = require('../../lib/cache-buster')
 const helper = require('../../lib/agent_helper')
 
@@ -29,14 +32,20 @@ test.afterEach((ctx) => {
   removeModules(['connect'])
 })
 
-test('should log tracking metrics', function(t) {
-  const { agent, pkgVersion } = t.nr
-  assertPackageMetrics({ agent, pkg: 'connect', version: pkgVersion })
+test('should log tracking metrics', (t) => {
+  const { agent, app, pkgVersion } = t.nr
+  app.use('/foo', () => {})
+  assertPackageMetrics({
+    agent,
+    pkg: 'connect',
+    version: pkgVersion,
+    subscriberType: true
+  })
 })
 
 test('should properly name transaction from route name', async (t) => {
-  const plan = tspl(t, { plan: 10 })
-  const { agent, app, pkgVersion } = t.nr
+  const plan = tspl(t, { plan: 27 })
+  const { agent, app } = t.nr
 
   agent.once('transactionFinished', (tx) => {
     plan.equal(tx.name, 'WebTransaction/Connect/GET//foo')
@@ -48,6 +57,22 @@ test('should properly name transaction from route name', async (t) => {
     plan.ok(web, 'trace has web segment')
     plan.equal(web.name, tx.name, 'segment name and transaction name match')
     plan.equal(web.partialName, 'Connect/GET//foo', 'should have partial name for apdex')
+
+    assertSegments(tx.trace, web, ['Nodejs/Middleware/Connect/middleware//foo'], { exact: true }, { assert: plan })
+    const expectedMetrics = [
+      [{ name: 'WebTransaction' }],
+      [{ name: 'WebTransactionTotalTime' }],
+      [{ name: 'HttpDispatcher' }],
+      [{ name: 'WebTransaction/Connect/GET//foo' }],
+      [{ name: 'WebTransactionTotalTime/Connect/GET//foo' }],
+      [{ name: 'DurationByCaller/Unknown/Unknown/Unknown/Unknown/all' }],
+      [{ name: 'DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb' }],
+      [{ name: 'Apdex/Connect/GET//foo' }],
+      [{ name: 'Apdex' }],
+      [{ name: 'Nodejs/Middleware/Connect/middleware//foo' }],
+      [{ name: 'Nodejs/Middleware/Connect/middleware//foo', scope: 'WebTransaction/Connect/GET//foo' }],
+    ]
+    assertMetrics(tx.metrics, expectedMetrics, false, false, { assert: plan })
   })
 
   function middleware(req, res) {
@@ -60,8 +85,7 @@ test('should properly name transaction from route name', async (t) => {
     url: '/foo',
     expectedData: 'foo',
     plan,
-    app,
-    pkgVersion
+    app
   })
   t.after(() => server.close())
 
@@ -70,7 +94,7 @@ test('should properly name transaction from route name', async (t) => {
 
 test('should default to `/` when no route is specified', async (t) => {
   const plan = tspl(t, { plan: 10 })
-  const { agent, app, pkgVersion } = t.nr
+  const { agent, app } = t.nr
 
   agent.once('transactionFinished', (tx) => {
     plan.equal(tx.name, 'WebTransaction/Connect/GET//')
@@ -94,8 +118,7 @@ test('should default to `/` when no route is specified', async (t) => {
     url: '/foo',
     expectedData: 'root',
     plan,
-    app,
-    pkgVersion
+    app
   })
   t.after(() => server.close())
 
@@ -112,21 +135,10 @@ test('should default to `/` when no route is specified', async (t) => {
  * @param {string} params.expectedData expected response data
  * @param {object} params.plan plan object
  * @param {object} params.app connect app
- * @param {string} params.pkgVersion connect package version
  * @returns {http.Server}
  */
-function createServerAndMakeRequest({ url, expectedData, plan, app, pkgVersion }) {
-  let requestListener = app
-
-  // connect < v2 was a different module
-  // you had to manually call app.handle
-  if (semver.satisfies(pkgVersion, '<2')) {
-    requestListener = function (req, res) {
-      app.handle(req, res)
-    }
-  }
-
-  const server = http.createServer(requestListener).listen(0, function () {
+function createServerAndMakeRequest({ url, expectedData, plan, app }) {
+  const server = http.createServer(app).listen(0, function () {
     const req = http.request(
       {
         port: server.address().port,

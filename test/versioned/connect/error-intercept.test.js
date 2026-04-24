@@ -11,7 +11,6 @@ const http = require('node:http')
 
 const { removeModules } = require('../../lib/cache-buster')
 const helper = require('../../lib/agent_helper')
-const symbols = require('../../../lib/symbols')
 
 // Connect logs stack traces if NODE_ENV is not set to "test"
 process.env.NODE_ENV = 'test'
@@ -41,7 +40,7 @@ test('should wrap handlers with proxies', (t) => {
   assert.equal(wrapNop.route, '', 'nop handler defaults to all routes')
   assert.ok(wrapNop.handle, 'have nop handle passed above')
   assert.equal(wrapNop.handle.name, 'nop', 'nop name is unchanged')
-  assert.equal(wrapNop.handle[symbols.original], nop, 'nop is wrapped')
+  assert.equal(wrapNop.handle === nop, false, 'nop is wrapped')
 })
 
 test('should have only one error interceptor in the middleware stack', (t) => {
@@ -77,13 +76,6 @@ test('should trace errors that occur while executing middleware', (t, end) => {
   })
 
   helper.runInTransaction(agent, () => {
-    function wiggleware(req, res, next) {
-      const harbl = null
-      harbl.bargl() // Induce error.
-
-      return next() // Will never get here.
-    }
-
     app.use(wiggleware)
 
     server = http
@@ -106,3 +98,94 @@ test('should trace errors that occur while executing middleware', (t, end) => {
       })
   })
 })
+
+test(
+  'should trace errors that occur while executing middleware when error middleware passes error along',
+  (t, end) => {
+    const { agent, app } = t.nr
+    let server
+
+    agent.once('transactionFinished', () => {
+      const errors = agent.errors.traceAggregator.errors
+      assert.equal(errors.length, 1, 'the error got traced')
+      server.close()
+      end()
+    })
+
+    helper.runInTransaction(agent, () => {
+      function errorMiddleware(err, req, res, next) {
+        assert.ok(err)
+        next(err)
+      }
+
+      app.use(wiggleware)
+      app.use(errorMiddleware)
+
+      server = http
+        .createServer(function (req, res) {
+          app.handle(req, res)
+        })
+        .listen(0, function () {
+          const req = http.request(
+            {
+              port: server.address().port,
+              host: 'localhost',
+              path: '/asdf',
+              method: 'GET'
+            },
+            (res) => {
+              res.on('data', () => {})
+            }
+          )
+          req.end()
+        })
+    })
+  }
+)
+
+test('should not trace errors that occur while executing middleware', (t, end) => {
+  const { agent, app } = t.nr
+  let server
+
+  agent.once('transactionFinished', () => {
+    const errors = agent.errors.traceAggregator.errors
+    assert.equal(errors.length, 0, 'the error got swallowed')
+    server.close()
+    end()
+  })
+
+  helper.runInTransaction(agent, () => {
+    function errorMiddleware(_, req, res, next) {
+      next()
+    }
+
+    app.use(wiggleware)
+    app.use(errorMiddleware)
+
+    server = http
+      .createServer(function (req, res) {
+        app.handle(req, res)
+      })
+      .listen(0, function () {
+        const req = http.request(
+          {
+            port: server.address().port,
+            host: 'localhost',
+            path: '/asdf',
+            method: 'GET'
+          },
+          (res) => {
+            res.on('data', () => {})
+          }
+        )
+        req.end()
+      })
+  })
+})
+
+function wiggleware(req, res, next) {
+  const harbl = null
+  harbl.bargl() // Induce error.
+
+  return next() // Will never get here.
+}
