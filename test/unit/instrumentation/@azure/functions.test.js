@@ -10,7 +10,6 @@ const assert = require('node:assert')
 
 const helper = require('#testlib/agent_helper.js')
 const { removeMatchedModules } = require('#testlib/cache-buster.js')
-const GenericShim = require('#agentlib/shim/shim.js')
 const Transaction = require('#agentlib/transaction/index.js')
 
 const { DESTINATIONS: DESTS } = require('#agentlib/transaction/index.js')
@@ -19,7 +18,15 @@ test.beforeEach((ctx) => {
   ctx.nr = {}
 
   ctx.nr.agent = helper.loadMockedAgent()
-  ctx.nr.shim = new GenericShim(ctx.nr.agent, 'azure-functions')
+
+  ctx.nr.logger = {
+    warn() {},
+    debug() {},
+    trace() {},
+    child() {
+      return ctx.nr.logger
+    }
+  }
 
   process.env.WEBSITE_OWNER_NAME = 'b999997b-cb91-49e0-b922-c9188372bdba+testing-rg-EastUS2webspace-Linux'
   process.env.WEBSITE_RESOURCE_GROUP = 'test-group'
@@ -28,21 +35,28 @@ test.beforeEach((ctx) => {
 
 test.afterEach((ctx) => {
   helper.unloadAgent(ctx.nr.agent)
-  removeMatchedModules(/lib\/instrumentation\/@azure\/functions\.js/)
+  removeMatchedModules(/lib\/subscribers\/azure-functions\//)
 
   delete process.env.WEBSITE_OWNER_NAME
   delete process.env.WEBSITE_RESOURCE_GROUP
   delete process.env.WEBSITE_SITE_NAME
 })
 
-function bootstrapModule({ t }) {
-  t.nr.initialize = require('#agentlib/instrumentation/@azure/functions.js')
+function bootstrapSubscriber({ t }) {
+  removeMatchedModules(/lib\/subscribers\/azure-functions\//)
+  const AzureFunctionsSubscriber =
+    require('#agentlib/subscribers/azure-functions/index.js')
+  t.nr.subscriber = new AzureFunctionsSubscriber({
+    agent: t.nr.agent,
+    logger: t.nr.logger
+  })
 }
 
-test('addAttributes adds expected attributes', (t) => {
-  bootstrapModule({ t })
-  const { agent } = t.nr
-  const { addAttributes } = t.nr.initialize.internals
+test('addFaasAttributes adds expected attributes', (t) => {
+  bootstrapSubscriber({ t })
+  const { agent, subscriber } = t.nr
+  const AzureHandlerBase = require('#agentlib/subscribers/azure-functions/azure-handler-base.js')
+  const handler = new AzureHandlerBase(subscriber)
   const transaction = new Transaction(agent)
   const functionContext = {
     invocationId: 'id-123',
@@ -53,7 +67,7 @@ test('addAttributes adds expected attributes', (t) => {
       }
     }
   }
-  addAttributes({ transaction, functionContext })
+  handler.addFaasAttributes(transaction, functionContext)
 
   const attributes = transaction.trace.attributes.get(DESTS.TRANS_COMMON)
   assert.equal(attributes['faas.invocation_id'], 'id-123')
@@ -66,9 +80,11 @@ test('addAttributes adds expected attributes', (t) => {
 })
 
 test('buildCloudResourceId returns correct string', (t) => {
-  bootstrapModule({ t })
-  const { buildCloudResourceId } = t.nr.initialize.internals
-  const id = buildCloudResourceId({ functionContext: { functionName: 'test-func' } })
+  bootstrapSubscriber({ t })
+  const { subscriber } = t.nr
+  const AzureHandlerBase = require('#agentlib/subscribers/azure-functions/azure-handler-base.js')
+  const handler = new AzureHandlerBase(subscriber)
+  const id = handler.buildCloudResourceId({ functionName: 'test-func' })
   assert.equal(id, [
     '/subscriptions/',
     'b999997b-cb91-49e0-b922-c9188372bdba',
@@ -83,9 +99,11 @@ test('buildCloudResourceId returns correct string', (t) => {
 
 test('buildCloudResourceId returns correct string (missing WEBSITE_RESOURCE_GROUP)', (t) => {
   delete process.env.WEBSITE_RESOURCE_GROUP
-  bootstrapModule({ t })
-  const { buildCloudResourceId } = t.nr.initialize.internals
-  const id = buildCloudResourceId({ functionContext: { functionName: 'test-func' } })
+  bootstrapSubscriber({ t })
+  const { subscriber } = t.nr
+  const AzureHandlerBase = require('#agentlib/subscribers/azure-functions/azure-handler-base.js')
+  const handler = new AzureHandlerBase(subscriber)
+  const id = handler.buildCloudResourceId({ functionName: 'test-func' })
   assert.equal(id, [
     '/subscriptions/',
     'b999997b-cb91-49e0-b922-c9188372bdba',
@@ -99,8 +117,10 @@ test('buildCloudResourceId returns correct string (missing WEBSITE_RESOURCE_GROU
 })
 
 test('mapTriggerType maps recognized keys', (t) => {
-  bootstrapModule({ t })
-  const { mapTriggerType } = t.nr.initialize.internals
+  bootstrapSubscriber({ t })
+  const { subscriber } = t.nr
+  const AzureHandlerBase = require('#agentlib/subscribers/azure-functions/azure-handler-base.js')
+  const handler = new AzureHandlerBase(subscriber)
   const testData = [
     ['blobTrigger', 'datasource'],
     ['cosmosDBTrigger', 'datasource'],
@@ -127,7 +147,7 @@ test('mapTriggerType maps recognized keys', (t) => {
 
   for (const [input, expected] of testData) {
     const ctx = { options: { trigger: { type: input } } }
-    const found = mapTriggerType({ functionContext: ctx })
+    const found = handler.mapTriggerType(ctx)
     assert.equal(found, expected)
   }
 })
