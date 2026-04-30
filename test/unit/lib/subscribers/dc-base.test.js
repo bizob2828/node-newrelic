@@ -35,7 +35,7 @@ test.afterEach((ctx) => {
 })
 
 test('records supportability metric on first usage', (t) => {
-  t.plan(6)
+  t.plan(9)
   const { agent, logger, subscriber, testChannel } = t.nr
 
   let invocations = 0
@@ -45,9 +45,10 @@ test('records supportability metric on first usage', (t) => {
     { channel: testChannel, hook: handler }
   ]
   subscriber.subscribe()
-
+  t.assert.equal(dc.hasSubscribers(testChannel), true)
   chan.publish({ foo: 'foo' })
-  t.assert.equal(logger.warnOnce.callCount, 0)
+  t.assert.equal(logger.warn.callCount, 0)
+  t.assert.equal(dc.hasSubscribers(testChannel), true)
 
   function handler () {
     invocations += 1
@@ -61,6 +62,7 @@ test('records supportability metric on first usage', (t) => {
       chan.publish({ bar: 'bar' })
       const cachedChan = subscriber.channels[0]
       const keys = Object.keys(cachedChan).sort()
+      t.assert.equal(dc.hasSubscribers(testChannel), true)
       t.assert.deepStrictEqual(
         keys,
         ['boundHook', 'channel', 'eventHandler', 'hook'],
@@ -72,7 +74,6 @@ test('records supportability metric on first usage', (t) => {
 
 test('should not call handler if provided versionRange is not satifisfied with actual package version', (t) => {
   const { logger, subscriber, testChannel } = t.nr
-  t.plan(2)
   // since we rely on the agent version, let's just specify an old version that will never be satisfied
   subscriber.versionRange = '<1.0.0'
   const ch = dc.channel(testChannel)
@@ -80,13 +81,15 @@ test('should not call handler if provided versionRange is not satifisfied with a
     { channel: testChannel, hook: handler }
   ]
   subscriber.subscribe()
+  t.assert.equal(dc.hasSubscribers(testChannel), true)
 
   ch.publish({ key: 'value' })
+  t.assert.equal(dc.hasSubscribers(testChannel), false)
 
   function handler() {
     throw new Error('should not call handler')
   }
 
-  t.assert.equal(logger.warnOnce.callCount, 1)
-  t.assert.equal(logger.warnOnce.args[0][0], `Not instrumenting ${testChannel} as it is not within the supported version range ${subscriber.versionRange}, got ${PKG_VERSION}`)
+  t.assert.equal(logger.warn.callCount, 1)
+  t.assert.equal(logger.warn.args[0][0], `Not instrumenting ${testChannel} as it is not within the supported version range ${subscriber.versionRange}, got ${PKG_VERSION}`)
 })
