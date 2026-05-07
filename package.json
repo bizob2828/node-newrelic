@@ -242,7 +242,7 @@
     "async": "^3.2.4",
     "aws-sdk": "^2.1604.0",
     "borp": "^0.19.0",
-    "c8": "^8.0.1",
+    "c8": "^11.0.0",
     "clean-jsdoc-theme": "^4.2.18",
     "commander": "^7.0.0",
     "conventional-changelog-conventionalcommits": "^5.0.0",
