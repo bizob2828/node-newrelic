@@ -8,7 +8,7 @@ const test = require('node:test')
 const assert = require('node:assert')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
-const { getReleaseDate } = require('../prepare-release')
+const { removeModules } = require('../../test/lib/cache-buster')
 
 test('Prepare Release script', async (t) => {
   await t.test('generateConventionalReleaseNotes', async (t) => {
@@ -38,6 +38,10 @@ test('Prepare Release script', async (t) => {
         MockGithubSdk,
         script
       }
+    })
+
+    t.afterEach(() => {
+      removeModules(['commander'])
     })
 
     await t.test('should return the markdown and json generated notes', async (t) => {
@@ -161,6 +165,10 @@ test('Prepare Release script', async (t) => {
       }
     })
 
+    t.afterEach(() => {
+      removeModules(['commander'])
+    })
+
     await t.test('should return true if force mode enabled', async (t) => {
       const { script } = t.nr
       const result = await script.isValid({ force: true })
@@ -198,18 +206,21 @@ test('Prepare Release script', async (t) => {
 
 test('getReleaseDate', async (t) => {
   t.beforeEach(async (ctx) => {
+    const { getReleaseDate } = require('../prepare-release')
     const now = Date.now
     Date.now = function now() {
       return new Date('2023-11-08T22:45:00.000-05:00').getTime()
     }
-    ctx.nr = { now }
+    ctx.nr = { now, getReleaseDate }
   })
 
   t.afterEach(async (ctx) => {
     Date.now = ctx.nr.now
+    removeModules(['commander'])
   })
 
-  await t.test('returns the correct string', async () => {
+  await t.test('returns the correct string', async (t) => {
+    const { getReleaseDate } = t.nr
     const expected = '2023-11-08'
     const found = getReleaseDate()
     assert.equal(found, expected)

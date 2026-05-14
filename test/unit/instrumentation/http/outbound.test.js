@@ -462,7 +462,7 @@ test('when working with http.request', async (t) => {
       .get(path)
       .reply(200, function () {
         const { transaction, segment } = agent.tracer.getContext()
-        assert.equal(segment.name, 'External/www.google.com')
+        assert.equal(segment.name, 'External/www.google.com/index.html')
         headers = this.req.headers
         assert.ok(headers.traceparent, 'traceparent header')
         const [version, traceId, parentSpanId, sampledFlag] = headers.traceparent.split('-')

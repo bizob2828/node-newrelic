@@ -9,6 +9,7 @@ const assert = require('node:assert')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const SCRIPT_PATH = '../create-docs-pr'
+const { removeModules } = require('../../test/lib/cache-buster')
 
 test('Create Docs PR script', async (t) => {
   await t.test('getReleaseNotes', async (t) => {
@@ -23,6 +24,10 @@ test('Create Docs PR script', async (t) => {
         mockFs,
         script
       }
+    })
+
+    t.afterEach(() => {
+      removeModules(['commander'])
     })
 
     await t.test('should return our release notes', async (t) => {
@@ -64,6 +69,10 @@ test('Create Docs PR script', async (t) => {
         mockFs,
         script
       }
+    })
+
+    t.afterEach(() => {
+      removeModules(['commander'])
     })
 
     await t.test('should throw an error if there is no frontmatter', async (t) => {
@@ -129,6 +138,10 @@ test('Create Docs PR script', async (t) => {
     t.beforeEach((ctx) => {
       const script = proxyquire(SCRIPT_PATH, {})
       ctx.nr = { script }
+    })
+
+    t.afterEach(() => {
+      removeModules(['commander'])
     })
 
     await t.test('should generate the release note markdown', (t) => {
