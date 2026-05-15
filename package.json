@@ -216,7 +216,6 @@
     "json-bigint": "^1.0.0",
     "json-stringify-safe": "^5.0.0",
     "module-details-from-path": "^1.0.3",
-    "readable-stream": "^3.6.1",
     "require-in-the-middle": "^7.4.0",
     "semver": "^7.5.2",
     "winston-transport": "^4.5.0"
@@ -235,10 +234,7 @@
     "@newrelic/newrelic-oss-cli": "^0.1.2",
     "@octokit/rest": "^18.0.15",
     "@slack/bolt": "^3.7.0",
-    "@smithy/eventstream-codec": "^2.2.0",
-    "@smithy/util-utf8": "^2.3.0",
     "ajv": "^6.12.6",
-    "aws-sdk": "^2.1604.0",
     "borp": "^0.19.0",
     "c8": "^8.0.1",
     "clean-jsdoc-theme": "^4.2.18",
@@ -264,8 +260,7 @@
     "rimraf": "^2.6.3",
     "self-cert": "^2.0.0",
     "should": "*",
-    "sinon": "^5.1.1",
-    "superagent": "^9.0.1"
+    "sinon": "^5.1.1"
   },
   "repository": {
     "type": "git",

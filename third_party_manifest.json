@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "Thu May 14 2026 10:43:24 GMT-0400 (Eastern Daylight Time)",
+  "lastUpdated": "Thu May 14 2026 21:10:59 GMT-0400 (Eastern Daylight Time)",
   "projectName": "New Relic Node Agent",
   "projectUrl": "https://github.com/newrelic/node-newrelic",
   "includeOptDeps": true,
@@ -293,17 +293,6 @@
       "email": "w@tson.dk",
       "url": "https://wa.tson.dk/"
     },
-    "readable-stream@3.6.2": {
-      "name": "readable-stream",
-      "version": "3.6.2",
-      "range": "^3.6.1",
-      "licenses": "MIT",
-      "repoUrl": "https://github.com/nodejs/readable-stream",
-      "versionedRepoUrl": "https://github.com/nodejs/readable-stream/tree/v3.6.2",
-      "licenseFile": "node_modules/readable-stream/LICENSE",
-      "licenseUrl": "https://github.com/nodejs/readable-stream/blob/v3.6.2/LICENSE",
-      "licenseTextSource": "file"
-    },
     "require-in-the-middle@7.5.2": {
       "name": "require-in-the-middle",
       "version": "7.5.2",
@@ -432,32 +421,6 @@
       "licenseTextSource": "file",
       "publisher": "Slack Technologies, LLC"
     },
-    "@smithy/eventstream-codec@2.2.0": {
-      "name": "@smithy/eventstream-codec",
-      "version": "2.2.0",
-      "range": "^2.2.0",
-      "licenses": "Apache-2.0",
-      "repoUrl": "https://github.com/awslabs/smithy-typescript",
-      "versionedRepoUrl": "https://github.com/awslabs/smithy-typescript/tree/v2.2.0",
-      "licenseFile": "node_modules/@smithy/eventstream-codec/LICENSE",
-      "licenseUrl": "https://github.com/awslabs/smithy-typescript/blob/v2.2.0/LICENSE",
-      "licenseTextSource": "file",
-      "publisher": "AWS SDK for JavaScript Team",
-      "url": "https://aws.amazon.com/javascript/"
-    },
-    "@smithy/util-utf8@2.3.0": {
-      "name": "@smithy/util-utf8",
-      "version": "2.3.0",
-      "range": "^2.3.0",
-      "licenses": "Apache-2.0",
-      "repoUrl": "https://github.com/awslabs/smithy-typescript",
-      "versionedRepoUrl": "https://github.com/awslabs/smithy-typescript/tree/v2.3.0",
-      "licenseFile": "node_modules/@smithy/util-utf8/LICENSE",
-      "licenseUrl": "https://github.com/awslabs/smithy-typescript/blob/v2.3.0/LICENSE",
-      "licenseTextSource": "file",
-      "publisher": "AWS SDK for JavaScript Team",
-      "url": "https://aws.amazon.com/javascript/"
-    },
     "ajv@6.15.0": {
       "name": "ajv",
       "version": "6.15.0",
@@ -469,19 +432,6 @@
       "licenseUrl": "https://github.com/ajv-validator/ajv/blob/v6.15.0/LICENSE",
       "licenseTextSource": "file",
       "publisher": "Evgeny Poberezkin"
-    },
-    "aws-sdk@2.1693.0": {
-      "name": "aws-sdk",
-      "version": "2.1693.0",
-      "range": "^2.1604.0",
-      "licenses": "Apache-2.0",
-      "repoUrl": "https://github.com/aws/aws-sdk-js",
-      "versionedRepoUrl": "https://github.com/aws/aws-sdk-js/tree/v2.1693.0",
-      "licenseFile": "node_modules/aws-sdk/LICENSE.txt",
-      "licenseUrl": "https://github.com/aws/aws-sdk-js/blob/v2.1693.0/LICENSE.txt",
-      "licenseTextSource": "file",
-      "publisher": "Amazon Web Services",
-      "url": "https://aws.amazon.com/"
     },
     "borp@0.19.0": {
       "name": "borp",
@@ -823,19 +773,6 @@
       "licenseUrl": "https://github.com/sinonjs/sinon/blob/v5.1.1/LICENSE",
       "licenseTextSource": "file",
       "publisher": "Christian Johansen"
-    },
-    "superagent@9.0.2": {
-      "name": "superagent",
-      "version": "9.0.2",
-      "range": "^9.0.1",
-      "licenses": "MIT",
-      "repoUrl": "https://github.com/ladjs/superagent",
-      "versionedRepoUrl": "https://github.com/ladjs/superagent/tree/v9.0.2",
-      "licenseFile": "node_modules/superagent/LICENSE",
-      "licenseUrl": "https://github.com/ladjs/superagent/blob/v9.0.2/LICENSE",
-      "licenseTextSource": "file",
-      "publisher": "TJ Holowaychuk",
-      "email": "tj@vision-media.ca"
     }
   }
 }
