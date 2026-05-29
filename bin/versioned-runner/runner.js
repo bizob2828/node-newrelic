@@ -80,7 +80,7 @@ async function runTests() {
       let args = [testFile]
       if (process.env.PKG_TYPE === 'module' && process.env.NR_LOADER) {
         const loaderPath = path.resolve(process.env.NR_LOADER)
-        const loaderArg = '--experimental-loader'
+        const loaderArg = '--import'
         args = [loaderArg, loaderPath, testFile]
       }
 

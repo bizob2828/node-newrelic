@@ -163,7 +163,7 @@
     "docker-env": "./bin/docker-env-vars.sh",
     "docs": "rm -rf ./out && jsdoc -c ./jsdoc-conf.jsonc --private -r .",
     "integration": "npm run sub-install && BORP_CONF_FILE=.borp.int.yaml time c8 -o ./coverage/integration borp --timeout 600000 --reporter ./test/lib/test-reporter.mjs",
-    "integration:esm": "NODE_OPTIONS='--loader=./esm-loader.mjs' BORP_CONF_FILE=.borp.int-esm.yaml time c8 -o ./coverage/integration-esm borp --reporter ./test/lib/test-reporter.mjs",
+    "integration:esm": "NODE_OPTIONS='--import=./esm-loader.mjs' BORP_CONF_FILE=.borp.int-esm.yaml time c8 -o ./coverage/integration-esm borp --reporter ./test/lib/test-reporter.mjs",
     "prepare-test": "npm run docker-env",
     "lint": "eslint --quiet .",
     "lint:verbose": "eslint .",
@@ -197,7 +197,7 @@
     "#test/assert": "./test/lib/custom-assertions/index.js"
   },
   "dependencies": {
-    "@apm-js-collab/tracing-hooks": "^0.7.0",
+    "@apm-js-collab/tracing-hooks": "^0.9.1",
     "@grpc/grpc-js": "^1.13.2",
     "@grpc/proto-loader": "^0.8.1",
     "@newrelic/security-agent": "^3.0.0",

@@ -46,6 +46,10 @@ test.beforeEach(async (ctx) => {
     onRequire: instrumentation
   })
 
+  // Wait for the hook.mjs ESM loader to acknowledge the new package before
+  // importing it, so the loader's includeModules list is up to date.
+  //await shimmer.waitForAllEsmHooksAcknowledged()
+
   const agent = helper.instrumentMockedAgent()
   ctx.nr.agent = agent
 
