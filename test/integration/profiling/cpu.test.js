@@ -177,3 +177,155 @@ test('produces no `span:` labels when no transaction is active', async (t) => {
   const labelled = samples.filter((s) => s.spanLabels.length > 0)
   assert.equal(labelled.length, 0, 'samples outside a transaction should not carry `span:` labels')
 })
+
+test('attributes samples to the correct span id for sibling segments', async (t) => {
+  const { agent, profiler } = t.nr
+
+  profiler.start()
+
+  const name = 'TestTransaction/siblings'
+  let expected
+  await helper.runInTransaction(agent, 'test', async (transaction) => {
+    transaction.name = name
+    const root = agent.tracer.getSegment()
+
+    let first
+    let second
+    // Two segments under the same parent, each burning CPU in its own context.
+    agent.tracer.addSegment('first', null, root, false, (segment) => {
+      first = segment.getSpanId()
+      burnCpu(400)
+    })
+    agent.tracer.addSegment('second', null, root, false, (segment) => {
+      second = segment.getSpanId()
+      burnCpu(400)
+    })
+
+    expected = {
+      id: transaction.id,
+      traceId: transaction.traceId,
+      created: new Set([root.getSpanId(), first, second]),
+      first,
+      second
+    }
+  })
+
+  const { samples } = decodeSamples(await profiler.collect())
+  const labelled = samples.filter((s) => s.spanLabels.length > 0)
+  assert.ok(labelled.length > 0, 'at least some samples should carry a span: label')
+
+  const expectedKey = `span:${expected.id}:${name}`
+  const seen = new Set()
+  for (const sample of labelled) {
+    const [{ key, extracted }] = sample.spanLabels
+    assert.equal(key, expectedKey, 'label key should be span:<transaction.id>:<name>')
+    assert.equal(extracted.trace_id, expected.traceId, 'all samples share the transaction trace_id')
+    assert.ok(
+      expected.created.has(extracted.span_id),
+      `span_id ${extracted.span_id} should belong to a segment created in this transaction`
+    )
+    seen.add(extracted.span_id)
+  }
+
+  assert.ok(seen.has(expected.first), 'first sibling segment should own some samples')
+  assert.ok(seen.has(expected.second), 'second sibling segment should own some samples')
+})
+
+test('attributes samples to a child segment and restores the parent after it completes', async (t) => {
+  const { agent, profiler } = t.nr
+
+  profiler.start()
+
+  const name = 'TestTransaction/nested'
+  let expected
+  await helper.runInTransaction(agent, 'test', async (transaction) => {
+    transaction.name = name
+    const root = agent.tracer.getSegment()
+
+    let parentId
+    let childId
+    agent.tracer.addSegment('parent', null, root, false, (parentSegment) => {
+      parentId = parentSegment.getSpanId()
+
+      // Nest a child segment and do all of its CPU work inside it.
+      agent.tracer.addSegment('child', null, parentSegment, false, (childSegment) => {
+        childId = childSegment.getSpanId()
+        burnCpu(400)
+      })
+
+      // The child segment has ended, so the active context is restored to
+      // `parent`. CPU burned here can only be attributed to `parent`; seeing the
+      // parent span id below proves the child's span id did not leak past its
+      // scope.
+      burnCpu(400)
+    })
+
+    expected = {
+      id: transaction.id,
+      traceId: transaction.traceId,
+      created: new Set([root.getSpanId(), parentId, childId]),
+      parent: parentId,
+      child: childId
+    }
+  })
+
+  const { samples } = decodeSamples(await profiler.collect())
+  const labelled = samples.filter((s) => s.spanLabels.length > 0)
+  assert.ok(labelled.length > 0, 'at least some samples should carry a span: label')
+
+  const expectedKey = `span:${expected.id}:${name}`
+  const seen = new Set()
+  for (const sample of labelled) {
+    const [{ key, extracted }] = sample.spanLabels
+    assert.equal(key, expectedKey, 'label key should be span:<transaction.id>:<name>')
+    assert.equal(extracted.trace_id, expected.traceId, 'all samples share the transaction trace_id')
+    assert.ok(
+      expected.created.has(extracted.span_id),
+      `span_id ${extracted.span_id} should belong to a segment created in this transaction`
+    )
+    seen.add(extracted.span_id)
+  }
+
+  assert.ok(seen.has(expected.child), 'child segment should own some samples')
+  assert.ok(
+    seen.has(expected.parent),
+    'parent segment should own samples after the child completes (context restored)'
+  )
+})
+
+test('attributes samples to the correct trace_id across separate transactions', async (t) => {
+  const { agent, profiler } = t.nr
+
+  profiler.start()
+
+  // Map each transaction id to its trace id so we can cross-check the label key
+  // (which encodes the transaction id) against the sampled trace_id.
+  const traceByTxId = new Map()
+
+  for (const suffix of ['one', 'two']) {
+    await helper.runInTransaction(agent, 'test', async (transaction) => {
+      transaction.name = `TestTransaction/${suffix}`
+      traceByTxId.set(transaction.id, transaction.traceId)
+      burnCpu(400)
+    })
+  }
+
+  const { samples } = decodeSamples(await profiler.collect())
+  const labelled = samples.filter((s) => s.spanLabels.length > 0)
+  assert.ok(labelled.length > 0, 'at least some samples should carry a span: label')
+
+  const seenTxIds = new Set()
+  for (const sample of labelled) {
+    const [{ key, extracted }] = sample.spanLabels
+    const txId = key.split(':')[1]
+    assert.ok(traceByTxId.has(txId), `sample key should reference a known transaction id (${txId})`)
+    assert.equal(
+      extracted.trace_id,
+      traceByTxId.get(txId),
+      'trace_id must match the transaction referenced by the label key'
+    )
+    seenTxIds.add(txId)
+  }
+
+  assert.equal(seenTxIds.size, 2, 'samples from both transactions should be present with distinct trace ids')
+})
