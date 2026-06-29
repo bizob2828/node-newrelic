@@ -11,7 +11,7 @@ supported by the agent.
 
 | Package name | Minimum supported version | Latest published version | Introduced in* |
 | --- | --- | --- | --- |
-| `@anthropic-ai/sdk` | 0.33.0 | 0.106.0 | 13.19.0 |
+| `@anthropic-ai/sdk` | 0.33.0 | 0.107.0 | 13.19.0 |
 | `@apollo/gateway` | 2.3.0 | 2.14.2 | 14.0.0 |
 | `@apollo/server` | 4.0.0 | 5.5.1 | 14.0.0 |
 | `@aws-sdk/client-bedrock-runtime` | 3.377.0 | 3.1075.0 | 11.13.0 |
