@@ -319,6 +319,7 @@ test('with default properties', async (t) => {
     assert.deepEqual(configuration.distributed_tracing, {
       enabled: true,
       exclude_newrelic_header: true,
+      send_message_queue_not_sampled_header: false,
       sampler: {
         root: 'adaptive',
         remote_parent_sampled: 'adaptive',

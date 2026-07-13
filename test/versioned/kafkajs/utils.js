@@ -118,3 +118,32 @@ utils.verifyDistributedTrace = ({ plan, consumeTxs, produceTx }) => {
     plan.equal(consumeTx.parentTransportType, 'Kafka', 'should have correct transport type')
   })
 }
+
+/**
+ * Asserts the produce and consume transaction properties when an unsampled
+ * producer propagates the `nrns` (not sampled) header instead of the full
+ * trace context.
+ * @param {object} params function params
+ * @param {object} params.plan assertion library instance with plan support
+ * @param {object} params.consumeTxs consumer transactions
+ * @param {object} params.produceTx produce transaction
+ */
+utils.verifyNrnsDistributedTrace = ({ plan, consumeTxs, produceTx }) => {
+  plan.equal(produceTx.sampled, false, 'producer should not be sampled')
+  plan.ok(produceTx.isDistributedTrace, 'should mark producer as distributed')
+  plan.ok(
+    produceTx.agent.__mocks.supportability.get('TraceContext/Create/NRNS') >= 1,
+    'should record the nrns create supportability metric'
+  )
+  consumeTxs.forEach((consumeTx) => {
+    plan.ok(consumeTx.isDistributedTrace, 'should mark consumer as distributed')
+    plan.equal(consumeTx.parentId, undefined, 'should not set a parent id')
+    plan.equal(consumeTx.parentSpanId, undefined, 'should not set a parent span id')
+    plan.notEqual(consumeTx.traceId, produceTx.traceId, 'should start a new trace id')
+    plan.equal(consumeTx.parentTransportType, 'Kafka', 'should have correct transport type')
+  })
+  plan.ok(
+    produceTx.agent.__mocks.supportability.get('TraceContext/Accept/NRNS') >= 1,
+    'should record the nrns accept supportability metric'
+  )
+}

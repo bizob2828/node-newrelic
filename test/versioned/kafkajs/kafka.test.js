@@ -193,6 +193,79 @@ test('send passes along DT headers', async (t) => {
   await plan.completed
 })
 
+test('send emits nrns header when producer is not sampled', async (t) => {
+  // When `send_message_queue_not_sampled_header` is enabled and the producer
+  // transaction is not sampled, only the empty `nrns` header should be
+  // propagated (no traceparent/tracestate/newrelic), and consumers should
+  // treat it as a not-sampled inbound message transaction.
+  const plan = tspl(t, { plan: 20 })
+  const { agent, consumer, producer, topic } = t.nr
+  const expectedName = 'produce-tx'
+
+  agent.config.account_id = 'account_1'
+  agent.config.primary_application_id = 'app_1'
+  agent.config.trusted_account_key = 42
+  agent.config.distributed_tracing.send_message_queue_not_sampled_header = true
+
+  let produceTx = null
+  const consumeTxs = []
+  let txCount = 0
+
+  agent.on('transactionFinished', (tx) => {
+    txCount++
+
+    if (tx.name === expectedName) {
+      produceTx = tx
+    } else {
+      consumeTxs.push(tx)
+    }
+
+    if (txCount === 3) {
+      utils.verifyNrnsDistributedTrace({ plan, consumeTxs, produceTx })
+    }
+  })
+
+  helper.runInTransaction(agent, async (tx) => {
+    tx.name = expectedName
+    // Force a not-sampled sampling decision on the producer transaction.
+    tx.priority = 0
+    tx.sampled = false
+
+    await consumer.subscribe({ topic, fromBeginning: true })
+
+    const promise = new Promise((resolve) => {
+      let msgCount = 0
+      consumer.run({
+        eachMessage: async ({ message: actualMessage }) => {
+          ++msgCount
+          plan.equal(actualMessage.headers.nrns.toString(), '', 'should propagate empty nrns header')
+          plan.equal(actualMessage.headers.traceparent, undefined, 'should not send traceparent')
+          plan.equal(actualMessage.headers.newrelic, undefined, 'should not send newrelic header')
+          if (msgCount === 2) {
+            resolve()
+          }
+        }
+      })
+    })
+
+    await utils.waitForConsumersToJoinGroup({ consumer })
+    await producer.send({
+      acks: 1,
+      topic,
+      messages: [
+        { key: 'key', value: 'one' },
+        { key: 'key2', value: 'two' }
+      ]
+    })
+
+    await promise
+
+    tx.end()
+  })
+
+  await plan.completed
+})
+
 test('sendBatch records correctly', async (t) => {
   const plan = tspl(t, { plan: 9 })
   const { agent, consumer, producer, topic } = t.nr

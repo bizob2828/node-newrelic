@@ -176,12 +176,14 @@ test('when overriding configuration values via environment variables', async (t)
     const env = {
       NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: 'true',
       NEW_RELIC_DISTRIBUTED_TRACING_EXCLUDE_NEWRELIC_HEADER: 'true',
+      NEW_RELIC_DISTRIBUTED_TRACING_SEND_MESSAGE_QUEUE_NOT_SAMPLED_HEADER: 'true',
       NEW_RELIC_DISTRIBUTED_TRACING_SAMPLER_ADAPTIVE_SAMPLING_TARGET: 20
     }
 
     idempotentEnv(env, (tc) => {
       assert.equal(tc.distributed_tracing.enabled, true)
       assert.equal(tc.distributed_tracing.exclude_newrelic_header, true)
+      assert.equal(tc.distributed_tracing.send_message_queue_not_sampled_header, true)
       assert.equal(tc.distributed_tracing.sampler.adaptive_sampling_target, 20)
       assert.equal(tc.sampling_target, 20)
       end()

@@ -1339,6 +1339,86 @@ test('acceptDistributedTraceHeaders', async (t) => {
       end()
     })
   })
+
+  await t.test('should accept nrns header on a new message transaction', (t) => {
+    const { agent } = t.nr
+    const txn = new Transaction(agent)
+    txn.type = 'message'
+
+    txn.acceptDistributedTraceHeaders('Kafka', { nrns: '' })
+
+    assert.ok(txn.isDistributedTrace)
+    assert.ok(txn.acceptedDistributedTrace)
+    assert.equal(txn.parentTransportType, 'Kafka')
+    // No upstream trace context: parent identifiers are missing and a sampling
+    // decision was applied (via the remote-parent-not-sampled path).
+    assert.equal(txn.parentId, undefined)
+    assert.equal(txn.parentSpanId, undefined)
+    assert.equal(typeof txn.sampled, 'boolean')
+    assert.equal(typeof txn.priority, 'number')
+    // trace id is lazily generated since there is no upstream trace context
+    assert.equal(typeof txn.traceId, 'string')
+    assert.equal(txn.traceId.length, 32)
+    assert.equal(agent.__mocks.supportability.get('TraceContext/Accept/NRNS'), 1)
+  })
+
+  await t.test('should treat nrns as a not-sampled parent', (t) => {
+    // Use an always_off remote-parent-not-sampled sampler so the not-sampled
+    // decision is deterministic. Swap the agent so afterEach unloads this one.
+    helper.unloadAgent(t.nr.agent)
+    t.nr.agent = helper.loadMockedAgent({
+      distributed_tracing: {
+        enabled: true,
+        sampler: { remote_parent_not_sampled: 'always_off' }
+      }
+    })
+    const { agent } = t.nr
+    const txn = new Transaction(agent)
+    txn.type = 'message'
+
+    txn.acceptDistributedTraceHeaders('Kafka', { nrns: '' })
+
+    assert.equal(txn.sampled, false)
+  })
+
+  await t.test('should ignore nrns header when not a message transaction', (t) => {
+    const { agent } = t.nr
+    const txn = new Transaction(agent)
+    txn.type = 'web'
+
+    txn.acceptDistributedTraceHeaders('HTTP', { nrns: '' })
+
+    assert.ok(!txn.isDistributedTrace)
+    assert.ok(!txn.acceptedDistributedTrace)
+    assert.equal(agent.__mocks.supportability.get('TraceContext/Accept/NRNS'), undefined)
+  })
+
+  await t.test('should ignore nrns header when the transaction already has DT', (t) => {
+    const { agent } = t.nr
+    const txn = new Transaction(agent)
+    txn.type = 'message'
+    txn.isDistributedTrace = true
+
+    txn.acceptDistributedTraceHeaders('Kafka', { nrns: '' })
+
+    assert.ok(!txn.acceptedDistributedTrace)
+    assert.equal(agent.__mocks.supportability.get('TraceContext/Accept/NRNS'), undefined)
+  })
+
+  await t.test('should prefer traceparent over nrns when both are present', (t) => {
+    const { agent } = t.nr
+    const txn = new Transaction(agent)
+    txn.type = 'message'
+    const traceId = 'da8bc8cc6d062849b0efcf3c169afb5a'
+
+    txn.acceptDistributedTraceHeaders('Kafka', {
+      traceparent: `00-${traceId}-7d3efb1b173fecfa-01`,
+      nrns: ''
+    })
+
+    assert.equal(txn.traceId, traceId)
+    assert.equal(agent.__mocks.supportability.get('TraceContext/Accept/NRNS'), undefined)
+  })
 })
 
 test('insertDistributedTraceHeaders', async (t) => {
@@ -1543,6 +1623,100 @@ test('insertDistributedTraceHeaders', async (t) => {
     assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'tracestate'))
     assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'newrelic'))
   })
+
+  await t.test(
+    'should emit only the nrns header for a not-sampled message queue produce',
+    (t) => {
+      const { agent, tracer } = t.nr
+      agent.config.distributed_tracing.send_message_queue_not_sampled_header = true
+
+      const txn = new Transaction(agent)
+      tracer.setSegment({ transaction: txn, segment: txn.trace.root })
+      // Force a not-sampled decision before inserting headers.
+      txn.priority = 0
+      txn.sampled = false
+
+      const headers = {}
+      txn.insertDistributedTraceHeaders(headers, null, null, { isMessageQueue: true })
+
+      assert.equal(headers.nrns, '')
+      assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'traceparent'))
+      assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'tracestate'))
+      assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'newrelic'))
+      assert.ok(txn.isDistributedTrace)
+      assert.equal(agent.__mocks.supportability.get('TraceContext/Create/NRNS'), 1)
+      assert.equal(agent.__mocks.supportability.get('TraceContext/Create/Success'), undefined)
+    }
+  )
+
+  await t.test('should not emit nrns header when the transaction is sampled', (t) => {
+    const { agent, tracer } = t.nr
+    agent.config.distributed_tracing.send_message_queue_not_sampled_header = true
+
+    const txn = new Transaction(agent)
+    tracer.setSegment({ transaction: txn, segment: txn.trace.root })
+    txn.priority = 2
+    txn.sampled = true
+
+    const headers = {}
+    txn.insertDistributedTraceHeaders(headers, null, null, { isMessageQueue: true })
+
+    assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'nrns'))
+    assert.ok(headers.traceparent)
+  })
+
+  await t.test('should not emit nrns header when the config is disabled', (t) => {
+    const { agent, tracer } = t.nr
+    // send_message_queue_not_sampled_header defaults to false
+
+    const txn = new Transaction(agent)
+    tracer.setSegment({ transaction: txn, segment: txn.trace.root })
+    txn.priority = 0
+    txn.sampled = false
+
+    const headers = {}
+    txn.insertDistributedTraceHeaders(headers, null, null, { isMessageQueue: true })
+
+    assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'nrns'))
+    assert.ok(headers.traceparent)
+  })
+
+  await t.test('should not emit nrns header for a non-message-queue produce', (t) => {
+    const { agent, tracer } = t.nr
+    agent.config.distributed_tracing.send_message_queue_not_sampled_header = true
+
+    const txn = new Transaction(agent)
+    tracer.setSegment({ transaction: txn, segment: txn.trace.root })
+    txn.priority = 0
+    txn.sampled = false
+
+    const headers = {}
+    // No isMessageQueue flag - normal external/http produce.
+    txn.insertDistributedTraceHeaders(headers)
+
+    assert.ok(!Object.prototype.hasOwnProperty.call(headers, 'nrns'))
+    assert.ok(headers.traceparent)
+  })
+
+  await t.test(
+    'should emit nrns header even when span and transaction events are disabled',
+    (t) => {
+      const { agent, tracer } = t.nr
+      agent.config.distributed_tracing.send_message_queue_not_sampled_header = true
+      agent.config.span_events.enabled = false
+      agent.config.transaction_events.enabled = false
+
+      const txn = new Transaction(agent)
+      tracer.setSegment({ transaction: txn, segment: txn.trace.root })
+      txn.priority = 0
+      txn.sampled = false
+
+      const headers = {}
+      txn.insertDistributedTraceHeaders(headers, null, null, { isMessageQueue: true })
+
+      assert.equal(headers.nrns, '')
+    }
+  )
 })
 
 test('acceptTraceContextPayload', async (t) => {

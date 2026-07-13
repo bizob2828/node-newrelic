@@ -31,6 +31,7 @@ primary_application_id: string (unset by default, only set when using Serverless
 distributed_tracing:
   enabled: boolean (default true)
   exclude_newrelic_header: boolean (default false)
+  send_message_queue_not_sampled_header: boolean (default false, when true an unsampled message queue produce call emits only the empty `nrns` header instead of the full trace context)
   enable_success_metrics (OPTIONAL): boolean (default true, set to false to disable supportability metrics)
   sampler: (section for sampling config options for different scenarios)
     adaptive_sampling_target (see note on Sampling Target above)
