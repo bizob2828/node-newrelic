@@ -29,50 +29,83 @@ const baseAgentConfig = {
   transaction_tracer: {}
 }
 
-test('registers the agent command endpoints', async (t) => {
+test('registers the agent_command_results endpoint', async (t) => {
   await beforeEach(t)
   t.after(() => afterEach(t))
 
   const { collectorApi } = t.nr
-  assert.ok(collectorApi._methods.get_agent_commands)
   assert.ok(collectorApi._methods.agent_command_results)
-  assert.equal(collectorApi._methods.get_agent_commands.name, 'get_agent_commands')
   assert.equal(collectorApi._methods.agent_command_results.name, 'agent_command_results')
+  assert.equal(collectorApi._methods.get_agent_commands, undefined)
 })
 
-test('getAgentCommands returns the command list from the payload', async (t) => {
+test('_handleResponseCode calls processInbandCommands when agent_actions is in the payload', async (t) => {
   await beforeEach(t)
   t.after(() => afterEach(t))
 
   const { agent, collector, collectorApi } = t.nr
   const { promise, resolve } = promiseResolvers()
-  const returnValue = [[841, { name: 'start_profiler', arguments: { profile_id: 1 } }]]
+  const agentActions = [[1, { name: 'start_profiler', arguments: { profile_id: 42 } }]]
 
-  collector.addHandler(helper.generateCollectorPath('get_agent_commands', RUN_ID), (req, res) => {
-    res.json({ payload: { return_value: returnValue } })
-  })
+  // Capture the call to processInbandCommands
+  let capturedCommands = null
+  agent.commandParser = {
+    processInbandCommands(rawCommands) {
+      capturedCommands = rawCommands
+      return Promise.resolve()
+    }
+  }
+
+  collector.addHandler(
+    helper.generateCollectorPath('agent_command_results', RUN_ID),
+    (req, res) => {
+      // agent_actions is a sibling to return_value in the response body, not nested inside it.
+      res.json({ payload: { return_value: null, agent_actions: agentActions } })
+    }
+  )
   agent.config.run_id = RUN_ID
 
-  collectorApi.getAgentCommands((error, response) => {
+  collectorApi.sendCommandResults({ 1: {} }, (error) => {
     assert.equal(error, undefined)
-    assert.deepEqual(response.payload, returnValue)
-    assert.equal(collector.isDone('get_agent_commands'), true)
-    resolve()
+    // Give the fire-and-forget promise a tick to settle
+    setImmediate(() => {
+      assert.deepEqual(capturedCommands, agentActions)
+      resolve()
+    })
   })
 
   await promise
 })
 
-test('getAgentCommands bails out when not connected', async (t) => {
+test('_handleResponseCode does not call processInbandCommands when agent_actions is absent', async (t) => {
   await beforeEach(t)
   t.after(() => afterEach(t))
 
-  const { collectorApi } = t.nr
+  const { agent, collector, collectorApi } = t.nr
   const { promise, resolve } = promiseResolvers()
 
-  collectorApi.getAgentCommands((error) => {
-    assert.equal(error.message, 'Not connected to collector.')
-    resolve()
+  let called = false
+  agent.commandParser = {
+    processInbandCommands() {
+      called = true
+      return Promise.resolve()
+    }
+  }
+
+  collector.addHandler(
+    helper.generateCollectorPath('agent_command_results', RUN_ID),
+    (req, res) => {
+      res.json({ payload: { return_value: null } })
+    }
+  )
+  agent.config.run_id = RUN_ID
+
+  collectorApi.sendCommandResults({ 1: {} }, (error) => {
+    assert.equal(error, undefined)
+    setImmediate(() => {
+      assert.equal(called, false)
+      resolve()
+    })
   })
 
   await promise
