@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "Thu Jul 23 2026 15:55:28 GMT-0400 (Eastern Daylight Time)",
+  "lastUpdated": "Thu Jul 23 2026 16:28:46 GMT-0400 (Eastern Daylight Time)",
   "projectName": "New Relic Node Agent",
   "projectUrl": "https://github.com/newrelic/node-newrelic",
   "includeOptDeps": true,
@@ -56,15 +56,15 @@
   },
   "includeDev": true,
   "dependencies": {
-    "@apm-js-collab/tracing-hooks@0.9.1": {
+    "@apm-js-collab/tracing-hooks@0.13.0": {
       "name": "@apm-js-collab/tracing-hooks",
-      "version": "0.9.1",
+      "version": "0.13.0",
       "range": "^0.13.0",
       "licenses": "Apache-2.0",
       "repoUrl": "https://github.com/apm-js-collab/tracing-hooks",
-      "versionedRepoUrl": "https://github.com/apm-js-collab/tracing-hooks/tree/v0.9.1",
+      "versionedRepoUrl": "https://github.com/apm-js-collab/tracing-hooks/tree/v0.13.0",
       "licenseFile": "node_modules/@apm-js-collab/tracing-hooks/LICENSE",
-      "licenseUrl": "https://github.com/apm-js-collab/tracing-hooks/blob/v0.9.1/LICENSE",
+      "licenseUrl": "https://github.com/apm-js-collab/tracing-hooks/blob/v0.13.0/LICENSE",
       "licenseTextSource": "file"
     },
     "@grpc/grpc-js@1.14.4": {
@@ -422,16 +422,18 @@
       "licenseTextSource": "file",
       "publisher": "New Relic"
     },
-    "@octokit/rest@18.12.0": {
+    "@octokit/rest@22.0.1": {
       "name": "@octokit/rest",
-      "version": "18.12.0",
-      "range": "^18.0.15",
+      "version": "22.0.1",
+      "range": "^22.0.1",
       "licenses": "MIT",
       "repoUrl": "https://github.com/octokit/rest.js",
-      "versionedRepoUrl": "https://github.com/octokit/rest.js/tree/v18.12.0",
+      "versionedRepoUrl": "https://github.com/octokit/rest.js/tree/v22.0.1",
       "licenseFile": "node_modules/@octokit/rest/LICENSE",
-      "licenseUrl": "https://github.com/octokit/rest.js/blob/v18.12.0/LICENSE",
-      "licenseTextSource": "file"
+      "licenseUrl": "https://github.com/octokit/rest.js/blob/v22.0.1/LICENSE",
+      "licenseTextSource": "file",
+      "publisher": "Gregor Martynus",
+      "url": "https://github.com/gr2m"
     },
     "@opentelemetry/exporter-metrics-otlp-proto@0.219.0": {
       "name": "@opentelemetry/exporter-metrics-otlp-proto",
@@ -509,17 +511,18 @@
       "publisher": "Ben Coe",
       "email": "ben@npmjs.com"
     },
-    "clean-jsdoc-theme@4.3.3": {
+    "clean-jsdoc-theme@5.0.8": {
       "name": "clean-jsdoc-theme",
-      "version": "4.3.3",
-      "range": "^4.2.18",
+      "version": "5.0.8",
+      "range": "^5.0.8",
       "licenses": "MIT",
       "repoUrl": "https://github.com/ankitskvmdam/clean-jsdoc-theme",
-      "versionedRepoUrl": "https://github.com/ankitskvmdam/clean-jsdoc-theme/tree/v4.3.3",
+      "versionedRepoUrl": "https://github.com/ankitskvmdam/clean-jsdoc-theme/tree/v5.0.8",
       "licenseFile": "node_modules/clean-jsdoc-theme/LICENSE",
-      "licenseUrl": "https://github.com/ankitskvmdam/clean-jsdoc-theme/blob/v4.3.3/LICENSE",
+      "licenseUrl": "https://github.com/ankitskvmdam/clean-jsdoc-theme/blob/v5.0.8/LICENSE",
       "licenseTextSource": "file",
-      "publisher": "Ank"
+      "publisher": "Ankit Kumar",
+      "url": "hello@ankdev.me"
     },
     "colors@1.4.0": {
       "name": "colors",
@@ -533,15 +536,15 @@
       "licenseTextSource": "file",
       "publisher": "Marak Squires"
     },
-    "commander@14.0.3": {
+    "commander@15.0.0": {
       "name": "commander",
-      "version": "14.0.3",
-      "range": "^14.0.3",
+      "version": "15.0.0",
+      "range": "^15.0.0",
       "licenses": "MIT",
       "repoUrl": "https://github.com/tj/commander.js",
-      "versionedRepoUrl": "https://github.com/tj/commander.js/tree/v14.0.3",
+      "versionedRepoUrl": "https://github.com/tj/commander.js/tree/v15.0.0",
       "licenseFile": "node_modules/commander/LICENSE",
-      "licenseUrl": "https://github.com/tj/commander.js/blob/v14.0.3/LICENSE",
+      "licenseUrl": "https://github.com/tj/commander.js/blob/v15.0.0/LICENSE",
       "licenseTextSource": "file",
       "publisher": "TJ Holowaychuk",
       "email": "tj@vision-media.ca"

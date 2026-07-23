@@ -91,7 +91,7 @@ code, the source code can be found at [https://github.com/newrelic/node-newrelic
 
 ### @apm-js-collab/tracing-hooks
 
-This product includes source derived from [@apm-js-collab/tracing-hooks](https://github.com/apm-js-collab/tracing-hooks) ([v0.9.1](https://github.com/apm-js-collab/tracing-hooks/tree/v0.9.1)), distributed under the [Apache-2.0 License](https://github.com/apm-js-collab/tracing-hooks/blob/v0.9.1/LICENSE):
+This product includes source derived from [@apm-js-collab/tracing-hooks](https://github.com/apm-js-collab/tracing-hooks) ([v0.13.0](https://github.com/apm-js-collab/tracing-hooks/tree/v0.13.0)), distributed under the [Apache-2.0 License](https://github.com/apm-js-collab/tracing-hooks/blob/v0.13.0/LICENSE):
 
 ```
 
@@ -4184,7 +4184,7 @@ This product includes source derived from [@newrelic/newrelic-oss-cli](https://g
 
 ### @octokit/rest
 
-This product includes source derived from [@octokit/rest](https://github.com/octokit/rest.js) ([v18.12.0](https://github.com/octokit/rest.js/tree/v18.12.0)), distributed under the [MIT License](https://github.com/octokit/rest.js/blob/v18.12.0/LICENSE):
+This product includes source derived from [@octokit/rest](https://github.com/octokit/rest.js) ([v22.0.1](https://github.com/octokit/rest.js/tree/v22.0.1)), distributed under the [MIT License](https://github.com/octokit/rest.js/blob/v22.0.1/LICENSE):
 
 ```
 The MIT License
@@ -4921,12 +4921,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ### clean-jsdoc-theme
 
-This product includes source derived from [clean-jsdoc-theme](https://github.com/ankitskvmdam/clean-jsdoc-theme) ([v4.3.3](https://github.com/ankitskvmdam/clean-jsdoc-theme/tree/v4.3.3)), distributed under the [MIT License](https://github.com/ankitskvmdam/clean-jsdoc-theme/blob/v4.3.3/LICENSE):
+This product includes source derived from [clean-jsdoc-theme](https://github.com/ankitskvmdam/clean-jsdoc-theme) ([v5.0.8](https://github.com/ankitskvmdam/clean-jsdoc-theme/tree/v5.0.8)), distributed under the [MIT License](https://github.com/ankitskvmdam/clean-jsdoc-theme/blob/v5.0.8/LICENSE):
 
 ```
 MIT License
 
-Copyright (c) 2019-2022 Ankit Kumar (अंकित कुमार)
+Copyright (c) 2026 Ankit Kumar (अंकित कुमार)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -4983,7 +4983,7 @@ THE SOFTWARE.
 
 ### commander
 
-This product includes source derived from [commander](https://github.com/tj/commander.js) ([v14.0.3](https://github.com/tj/commander.js/tree/v14.0.3)), distributed under the [MIT License](https://github.com/tj/commander.js/blob/v14.0.3/LICENSE):
+This product includes source derived from [commander](https://github.com/tj/commander.js) ([v15.0.0](https://github.com/tj/commander.js/tree/v15.0.0)), distributed under the [MIT License](https://github.com/tj/commander.js/blob/v15.0.0/LICENSE):
 
 ```
 (The MIT License)
