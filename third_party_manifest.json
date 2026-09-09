@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "Wed Sep 09 2026 11:26:00 GMT-0400 (Eastern Daylight Time)",
+  "lastUpdated": "Wed Sep 09 2026 12:07:44 GMT-0400 (Eastern Daylight Time)",
   "projectName": "New Relic Node Agent",
   "projectUrl": "https://github.com/newrelic/node-newrelic",
   "includeOptDeps": true,
@@ -175,18 +175,6 @@
       "licenseTextSource": "file",
       "publisher": "OpenTelemetry Authors"
     },
-    "@opentelemetry/sdk-logs@0.221.0": {
-      "name": "@opentelemetry/sdk-logs",
-      "version": "0.221.0",
-      "range": "^0.221.0",
-      "licenses": "Apache-2.0",
-      "repoUrl": "https://github.com/open-telemetry/opentelemetry-js",
-      "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v0.221.0",
-      "licenseFile": "node_modules/@opentelemetry/sdk-logs/LICENSE",
-      "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v0.221.0/LICENSE",
-      "licenseTextSource": "file",
-      "publisher": "OpenTelemetry Authors"
-    },
     "@opentelemetry/sdk-metrics@2.10.0": {
       "name": "@opentelemetry/sdk-metrics",
       "version": "2.10.0",
@@ -195,18 +183,6 @@
       "repoUrl": "https://github.com/open-telemetry/opentelemetry-js",
       "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v2.10.0",
       "licenseFile": "node_modules/@opentelemetry/sdk-metrics/LICENSE",
-      "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v2.10.0/LICENSE",
-      "licenseTextSource": "file",
-      "publisher": "OpenTelemetry Authors"
-    },
-    "@opentelemetry/sdk-trace-base@2.10.0": {
-      "name": "@opentelemetry/sdk-trace-base",
-      "version": "2.10.0",
-      "range": "^2.0.0",
-      "licenses": "Apache-2.0",
-      "repoUrl": "https://github.com/open-telemetry/opentelemetry-js",
-      "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v2.10.0",
-      "licenseFile": "node_modules/@opentelemetry/sdk-trace-base/LICENSE",
       "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v2.10.0/LICENSE",
       "licenseTextSource": "file",
       "publisher": "OpenTelemetry Authors"
@@ -458,6 +434,30 @@
       "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v0.221.0",
       "licenseFile": "node_modules/@opentelemetry/exporter-metrics-otlp-proto/LICENSE",
       "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v0.221.0/LICENSE",
+      "licenseTextSource": "file",
+      "publisher": "OpenTelemetry Authors"
+    },
+    "@opentelemetry/sdk-logs@0.221.0": {
+      "name": "@opentelemetry/sdk-logs",
+      "version": "0.221.0",
+      "range": "^0.221.0",
+      "licenses": "Apache-2.0",
+      "repoUrl": "https://github.com/open-telemetry/opentelemetry-js",
+      "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v0.221.0",
+      "licenseFile": "node_modules/@opentelemetry/sdk-logs/LICENSE",
+      "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v0.221.0/LICENSE",
+      "licenseTextSource": "file",
+      "publisher": "OpenTelemetry Authors"
+    },
+    "@opentelemetry/sdk-trace-base@2.10.0": {
+      "name": "@opentelemetry/sdk-trace-base",
+      "version": "2.10.0",
+      "range": "^2.0.0",
+      "licenses": "Apache-2.0",
+      "repoUrl": "https://github.com/open-telemetry/opentelemetry-js",
+      "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v2.10.0",
+      "licenseFile": "node_modules/@opentelemetry/sdk-trace-base/LICENSE",
+      "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v2.10.0/LICENSE",
       "licenseTextSource": "file",
       "publisher": "OpenTelemetry Authors"
     },
