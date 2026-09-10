@@ -80,6 +80,7 @@ test('sends metrics through HTTP proxy', { timeout: 5_000 }, async (t) => {
 
   let proxyConnected = false
   proxyServer.on('proxyConnect', (info) => {
+    if (proxyConnected) return
     proxyConnected = true
     t.assert.equal(info.host, agent.config.host)
     t.assert.equal(info.port, agent.config.port)
@@ -97,13 +98,17 @@ test('sends metrics through HTTP proxy', { timeout: 5_000 }, async (t) => {
   const counter = metrics.getMeter('test-meter').createCounter('test-counter')
   counter.add(1, { ready: 'no' })
 
+  // Pre-register the bootstrapped listener before emitting 'started' so the
+  // event isn't missed if postReady resolves in a single microtask tick.
+  const bootstrapped = once(agent, 'otelMetricsBootstrapped')
+
   // Increment metric after the agent is ready:
   process.nextTick(() => agent.emit('started'))
   await once(agent, 'started')
   counter.add(1, { ready: 'yes' })
 
   // Increment metric after otel metrics bootstrapping:
-  await once(agent, 'otelMetricsBootstrapped')
+  await bootstrapped
   counter.add(1, { otel: 'yes' })
 
   await once(otelServer, 'requestComplete')
@@ -158,6 +163,7 @@ test('sends metrics through HTTPS proxy', { timeout: 5_000 }, async (t) => {
 
   let proxyConnected = false
   proxyServer.on('proxyConnect', (info) => {
+    if (proxyConnected) return
     proxyConnected = true
     t.assert.equal(info.host, agent.config.host)
     t.assert.equal(info.port, agent.config.port)
@@ -175,13 +181,17 @@ test('sends metrics through HTTPS proxy', { timeout: 5_000 }, async (t) => {
   const counter = metrics.getMeter('test-meter-https').createCounter('test-counter-https')
   counter.add(1, { ready: 'no' })
 
+  // Pre-register the bootstrapped listener before emitting 'started' so the
+  // event isn't missed if postReady resolves in a single microtask tick.
+  const bootstrapped = once(agent, 'otelMetricsBootstrapped')
+
   // Increment metric after the agent is ready:
   process.nextTick(() => agent.emit('started'))
   await once(agent, 'started')
   counter.add(1, { ready: 'yes' })
 
   // Increment metric after otel metrics bootstrapping:
-  await once(agent, 'otelMetricsBootstrapped')
+  await bootstrapped
   counter.add(1, { otel: 'yes' })
 
   await once(otelServer, 'requestComplete')

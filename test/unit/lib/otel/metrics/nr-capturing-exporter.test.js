@@ -7,55 +7,31 @@
 
 const test = require('node:test')
 const assert = require('node:assert')
-const { ExportResultCode } = require('@opentelemetry/core')
-const {
-  MeterProvider,
-  PeriodicExportingMetricReader
-} = require('@opentelemetry/sdk-metrics')
-const { ProtobufMetricsSerializer } = require('@opentelemetry/otlp-transformer')
 
 const NRCapturingExporter = require('#agentlib/otel/metrics/nr-capturing-exporter.js')
+const NrMeterProvider = require('#agentlib/otel/metrics/nr-meter-provider.js')
+const NrJsonSerializer = new (require('#agentlib/otel/metrics/nr-json-serializer.js'))()
 
 test.beforeEach((ctx) => {
-  ctx.nr = {
-    logs: []
-  }
-
+  ctx.nr = { logs: [] }
   ctx.nr.logger = {
     audit(...args) { ctx.nr.logs.push(args) },
+    auditEnabled() { return true },
     child() { return this }
   }
-
   ctx.nr.exporter = new NRCapturingExporter({ logger: ctx.nr.logger })
-
-  ctx.nr.reader = new PeriodicExportingMetricReader({
-    exporter: {
-      export: () => {},
-      forceFlush: () => Promise.resolve(),
-      shutdown: () => Promise.resolve()
-    },
-    exportIntervalMillis: 100
-  })
-  ctx.nr.meterProvider = new MeterProvider({ readers: [ctx.nr.reader] })
-})
-
-test.afterEach(async (ctx) => {
-  await ctx.nr.meterProvider.shutdown()
+  ctx.nr.provider = new NrMeterProvider()
 })
 
 /**
- * Collects a real `ResourceMetrics` object carrying a single incremented
- * counter so tests can exercise the exporter with genuine data.
+ * Records a counter increment and collects the resulting NrResourceMetrics.
  *
- * @param {object} ctx The test context holding the reader/meter provider.
- * @returns {Promise<object>} The collected `ResourceMetrics`.
+ * @param {object} ctx Test context holding the meter provider.
+ * @returns {Promise<object>} Collected ResourceMetrics.
  */
 async function collect(ctx) {
-  ctx.nr.meterProvider
-    .getMeter('test-meter')
-    .createCounter('test-counter')
-    .add(1, { foo: 'bar' })
-  const { resourceMetrics } = await ctx.nr.reader.collect()
+  ctx.nr.provider.getMeter('test-meter').createCounter('test-counter').add(1, { foo: 'bar' })
+  const { resourceMetrics } = await ctx.nr.provider.collect()
   return resourceMetrics
 }
 
@@ -65,11 +41,9 @@ test('export serializes the metrics and reports success', async (t) => {
 
   let result = null
   exporter.export(metrics, (r) => { result = r })
-  assert.deepEqual(result, { code: ExportResultCode.SUCCESS })
+  assert.deepEqual(result, { code: 0 })
 
-  const expected = Buffer.from(
-    ProtobufMetricsSerializer.serializeRequest(metrics)
-  ).toString('base64')
+  const expected = Buffer.from(NrJsonSerializer.serializeRequest(metrics), 'utf8').toString('base64')
   assert.equal(exporter.lastSerialization, expected)
 })
 
@@ -79,15 +53,15 @@ test('export writes an audit log of the serialized payload', async (t) => {
 
   exporter.export(metrics, () => {})
 
-  const expected = Buffer.from(
-    ProtobufMetricsSerializer.serializeRequest(metrics)
-  ).toString('base64')
+  const serialized = NrJsonSerializer.serializeRequest(metrics)
+  const expected = Buffer.from(serialized, 'utf8').toString('base64')
+
   assert.equal(t.nr.logs.length, 1)
   assert.deepEqual(t.nr.logs[0], [
     {
       destUrl: 'local capture',
       data: expected,
-      bytes: Buffer.from(expected, 'base64').byteLength
+      bytes: Buffer.from(serialized, 'utf8').byteLength
     },
     'Serialized metrics data.'
   ])

@@ -27,6 +27,7 @@ function captureLogger() {
     warnCalls,
     debug: (msg) => debugMessages.push(msg),
     warn: (...args) => warnCalls.push(args),
+    trace() {},
     audit() {},
     auditEnabled() { return false },
     child() { return this }
@@ -109,18 +110,22 @@ test('configures global provider after agent start', async (t) => {
     debugMessages.includes('Waiting for agent connect to finish bootstrapping OTEL metrics.'),
     'should log that bootstrapping is deferred to agent connect'
   )
+  // Register the bootstrapped listener *before* emitting 'started' so the
+  // event isn't missed if postReady resolves in a single microtask tick.
+  const bootstrapped = once(agent, 'otelMetricsBootstrapped')
+
   process.nextTick(() => agent.emit('started'))
 
   await once(agent, 'started')
   t.assert.equal(0, agent.listenerCount('started'))
 
-  await once(agent, 'otelMetricsBootstrapped')
+  await bootstrapped
   t.assert.ok(
-    debugMessages.includes('Agent connect finished. Finishing boostrap of OTEL metrics.'),
+    debugMessages.includes('Agent connect finished. Finishing bootstrap of OTEL metrics.'),
     'should log that bootstrapping resumes once agent connect finishes'
   )
   const provider = require('@opentelemetry/api').metrics.getMeterProvider()
-  t.assert.deepEqual(provider._sharedState.resource.attributes, {
+  t.assert.deepEqual(provider.resource.attributes, {
     'entity.guid': 'guid-123456',
     'tags.accountId': '1',
     'tags.account': 'Test Account',
@@ -226,10 +231,10 @@ test('flushToString collects, exports, and returns the base64 OTLP payload', asy
   t.assert.equal(typeof found, 'string')
   t.assert.ok(found.length > 0, 'should return a non-empty payload')
 
-  // The payload is base64-encoded OTLP protobuf. Protobuf encodes string fields
-  // (metric names, attribute keys) as literal UTF-8, so the recorded counter and
-  // its attribute survive into the decoded bytes -- confirming real metrics were
-  // serialized rather than an empty envelope.
+  // The payload is base64-encoded OTLP JSON. JSON encodes all field names as
+  // plain text, so the recorded counter name and its attribute key survive into
+  // the decoded string -- confirming real metrics were serialized rather than
+  // an empty envelope.
   const decoded = Buffer.from(found, 'base64').toString('utf8')
   t.assert.match(decoded, /test-counter/, 'payload should carry the recorded counter name')
   t.assert.match(decoded, /foo/, 'payload should carry the recorded attribute key')
