@@ -9,23 +9,23 @@ const test = require('node:test')
 const assert = require('node:assert')
 
 const {
-  nowHrTime,
+  hrTime,
   toHrTime,
   hrTimeDiff,
   hrTimeToMilliseconds
-} = require('#agentlib/otel/utils/hr-time.js')
+} = require('#agentlib/otel/utils/time.js')
 
-test('nowHrTime returns a [seconds, nanoseconds] tuple', () => {
-  const found = nowHrTime()
+test('hrTime returns a [seconds, nanoseconds] tuple', () => {
+  const found = hrTime()
   assert.equal(Array.isArray(found), true)
   assert.equal(found.length, 2)
   assert.equal(typeof found[0], 'number')
   assert.equal(typeof found[1], 'number')
 })
 
-test('nowHrTime represents the current time', () => {
+test('hrTime represents the current time', () => {
   const before = Date.now()
-  const [seconds, nanos] = nowHrTime()
+  const [seconds, nanos] = hrTime()
   const after = Date.now()
 
   assert.equal(nanos >= 0 && nanos < 1_000_000_000, true)
@@ -118,8 +118,8 @@ test('hrTimeToMilliseconds does not truncate fractional milliseconds', () => {
   assert.equal(Math.abs(found - 1000.500001) < 1e-9, true)
 })
 
-test('nowHrTime, toHrTime, hrTimeDiff, and hrTimeToMilliseconds compose to round-trip a duration', () => {
-  const start = nowHrTime()
+test('hrTime, toHrTime, hrTimeDiff, and hrTimeToMilliseconds compose to round-trip a duration', () => {
+  const start = hrTime()
   const endMs = start[0] * 1_000 + start[1] / 1e6 + 250
   const end = toHrTime(endMs)
 
