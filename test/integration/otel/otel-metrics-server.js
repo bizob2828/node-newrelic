@@ -6,8 +6,6 @@
 'use strict'
 
 const https = require('node:https')
-const path = require('node:path')
-const protobuf = require('protobufjs')
 const fakeCert = require('#testlib/fake-cert.js')
 
 module.exports = async function createOtelMetricsServer(dataTracker) {
@@ -25,13 +23,6 @@ module.exports = async function createOtelMetricsServer(dataTracker) {
       resolve()
     })
   })
-
-  const otlpSchemas = new protobuf.Root()
-  otlpSchemas.resolvePath = (...args) => path.join(__dirname, 'schemas', args[1])
-  await otlpSchemas.load('opentelemetry/proto/collector/metrics/v1/metrics_service.proto')
-  const requestSchema = otlpSchemas.lookupType(
-    'opentelemetry.proto.collector.metrics.v1.ExportMetricsServiceRequest'
-  )
 
   return {
     server,
@@ -51,9 +42,7 @@ module.exports = async function createOtelMetricsServer(dataTracker) {
       res.writeHead(200, { 'content-type': 'text/plain' })
       res.end('ok')
 
-      dataTracker.payload = requestSchema.decode(
-        new protobuf.BufferReader(payload)
-      )
+      dataTracker.payload = JSON.parse(payload.toString('utf8'))
       server.emit('requestComplete', dataTracker.payload)
     })
   }
