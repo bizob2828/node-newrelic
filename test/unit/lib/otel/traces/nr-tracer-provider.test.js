@@ -9,7 +9,7 @@ const test = require('node:test')
 const assert = require('node:assert')
 const NrTracerProvider = require('#agentlib/otel/traces/nr-tracer-provider.js')
 const NrTracer = require('#agentlib/otel/traces/nr-tracer.js')
-const { SamplingDecision } = require('#agentlib/otel/constants.js')
+const { SamplingDecision } = require('@opentelemetry/api')
 
 function makeSampler(decision = SamplingDecision.RECORD_AND_SAMPLED) {
   return { shouldSample: () => { return { decision } } }

@@ -7,10 +7,9 @@
 
 const test = require('node:test')
 const assert = require('node:assert')
-const { ROOT_CONTEXT, SpanKind, context, trace } = require('@opentelemetry/api')
+const { ROOT_CONTEXT, SpanKind, context, trace, SamplingDecision } = require('@opentelemetry/api')
 const NrTracer = require('#agentlib/otel/traces/nr-tracer.js')
 const NrSpan = require('#agentlib/otel/traces/nr-span.js').NrSpan
-const { SamplingDecision } = require('#agentlib/otel/constants.js')
 
 function makeProcessor() {
   const calls = { onStart: [], onEnd: [] }
