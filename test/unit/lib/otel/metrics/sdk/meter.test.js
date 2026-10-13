@@ -24,6 +24,19 @@ function fakeMeterProvider() {
   }
 }
 
+function fakeAgent() {
+  const recorded = []
+  return {
+    recorded,
+    metrics: {
+      getOrCreateMetric(name) {
+        recorded.push(name)
+        return { incrementCallCount() {} }
+      }
+    }
+  }
+}
+
 test('creates and caches instruments by type and lowercase name', (t) => {
   const meter = new Meter(fakeMeterProvider(), { name: 'scope', version: '', schemaUrl: '' })
 
@@ -66,7 +79,22 @@ test('addBatchObservableCallback/removeBatchObservableCallback delegate to the r
   assert.equal(meterProvider.reader.lastBatchRemove, callback)
 })
 
-test('createCounter does not throw', (t) => {
+test('tracks every create* call as a Supportability metric when an agent is provided', (t) => {
+  const agent = fakeAgent()
+  const meter = new Meter(fakeMeterProvider(), { name: 'scope', version: '', schemaUrl: '' }, agent)
+
+  meter.createCounter('a')
+  meter.createCounter('a') // same instrument, reused -- still tracked on every call
+  meter.createHistogram('b')
+
+  assert.deepEqual(agent.recorded, [
+    'Supportability/Metrics/Nodejs/OpenTelemetryBridge/meter/createCounter',
+    'Supportability/Metrics/Nodejs/OpenTelemetryBridge/meter/createCounter',
+    'Supportability/Metrics/Nodejs/OpenTelemetryBridge/meter/createHistogram'
+  ])
+})
+
+test('does not throw when no agent is provided', (t) => {
   const meter = new Meter(fakeMeterProvider(), { name: 'scope', version: '', schemaUrl: '' })
   assert.doesNotThrow(() => meter.createCounter('a'))
 })
