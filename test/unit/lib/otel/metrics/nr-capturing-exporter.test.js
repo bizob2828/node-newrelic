@@ -8,11 +8,9 @@
 const test = require('node:test')
 const assert = require('node:assert')
 const { ExportResultCode } = require('#agentlib/otel/constants.js')
-const {
-  MeterProvider,
-  PeriodicExportingMetricReader
-} = require('@opentelemetry/sdk-metrics')
-const { ProtobufMetricsSerializer } = require('@opentelemetry/otlp-transformer')
+const PeriodicMetricReader = require('#agentlib/otel/metrics/sdk/periodic-metric-reader.js')
+const MeterProvider = require('#agentlib/otel/metrics/sdk/meter-provider.js')
+const { getMetricsProtobufTypes } = require('#agentlib/otel/metrics/otlp/otlp-proto-loader.js')
 
 const NRCapturingExporter = require('#agentlib/otel/metrics/nr-capturing-exporter.js')
 
@@ -28,15 +26,15 @@ test.beforeEach((ctx) => {
 
   ctx.nr.exporter = new NRCapturingExporter({ logger: ctx.nr.logger })
 
-  ctx.nr.reader = new PeriodicExportingMetricReader({
+  ctx.nr.reader = new PeriodicMetricReader({
     exporter: {
-      export: () => {},
+      export: (_metrics, callback) => callback({ code: ExportResultCode.SUCCESS }),
       forceFlush: () => Promise.resolve(),
       shutdown: () => Promise.resolve()
     },
     exportIntervalMillis: 100
   })
-  ctx.nr.meterProvider = new MeterProvider({ readers: [ctx.nr.reader] })
+  ctx.nr.meterProvider = new MeterProvider({ reader: ctx.nr.reader })
 })
 
 test.afterEach(async (ctx) => {
@@ -67,10 +65,14 @@ test('export serializes the metrics and reports success', async (t) => {
   exporter.export(metrics, (r) => { result = r })
   assert.deepEqual(result, { code: ExportResultCode.SUCCESS })
 
-  const expected = Buffer.from(
-    ProtobufMetricsSerializer.serializeRequest(metrics)
-  ).toString('base64')
-  assert.equal(exporter.lastSerialization, expected)
+  const { ExportMetricsServiceRequest } = getMetricsProtobufTypes()
+  const decoded = ExportMetricsServiceRequest.decode(
+    Buffer.from(exporter.lastSerialization, 'base64')
+  )
+  const metric = decoded.resourceMetrics[0].scopeMetrics[0].metrics[0]
+  assert.equal(metric.name, 'test-counter')
+  assert.equal(metric.sum.dataPoints[0].attributes[0].key, 'foo')
+  assert.deepEqual(metric.sum.dataPoints[0].attributes[0].value, { stringValue: 'bar' })
 })
 
 test('export writes an audit log of the serialized payload', async (t) => {
@@ -79,18 +81,11 @@ test('export writes an audit log of the serialized payload', async (t) => {
 
   exporter.export(metrics, () => {})
 
-  const expected = Buffer.from(
-    ProtobufMetricsSerializer.serializeRequest(metrics)
-  ).toString('base64')
   assert.equal(t.nr.logs.length, 1)
-  assert.deepEqual(t.nr.logs[0], [
-    {
-      destUrl: 'local capture',
-      data: expected,
-      bytes: Buffer.from(expected, 'base64').byteLength
-    },
-    'Serialized metrics data.'
-  ])
+  const [logged] = t.nr.logs
+  assert.deepEqual(logged[1], 'Serialized metrics data.')
+  assert.equal(logged[0].destUrl, 'local capture')
+  assert.equal(logged[0].bytes, Buffer.from(logged[0].data, 'base64').byteLength)
 })
 
 test('lastSerialization purges the cache on read', async (t) => {

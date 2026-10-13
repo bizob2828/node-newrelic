@@ -7,11 +7,11 @@
 
 const test = require('node:test')
 const assert = require('node:assert')
-const {
-  MeterProvider,
-  PeriodicExportingMetricReader
-} = require('@opentelemetry/sdk-metrics')
-const { ProtobufMetricsSerializer } = require('@opentelemetry/otlp-transformer')
+const PeriodicMetricReader = require('#agentlib/otel/metrics/sdk/periodic-metric-reader.js')
+const MeterProvider = require('#agentlib/otel/metrics/sdk/meter-provider.js')
+const { NrMetricsSerializer } = require('#agentlib/otel/metrics/otlp/nr-metrics-serializer.js')
+const { getMetricsProtobufTypes } = require('#agentlib/otel/metrics/otlp/otlp-proto-loader.js')
+const { ExportResultCode } = require('#agentlib/otel/constants.js')
 const NRProxyingSerializer = require('#agentlib/otel/metrics/nr-proxying-serializer.js')
 
 test.beforeEach((ctx) => {
@@ -29,17 +29,15 @@ test.beforeEach((ctx) => {
     destinationUrl: 'http://example.com:1234/v1/metrics',
     logger: ctx.nr.logger
   })
-  ctx.nr.reader = new PeriodicExportingMetricReader({
+  ctx.nr.reader = new PeriodicMetricReader({
     exporter: {
-      export: () => {},
+      export: (_metrics, callback) => callback({ code: ExportResultCode.SUCCESS }),
       forceFlush: () => Promise.resolve(),
       shutdown: () => Promise.resolve()
     },
     exportIntervalMillis: 100
   })
-  ctx.nr.meterProvider = new MeterProvider({
-    readers: [ctx.nr.reader]
-  })
+  ctx.nr.meterProvider = new MeterProvider({ reader: ctx.nr.reader })
 })
 
 test.afterEach(async (ctx) => {
@@ -54,7 +52,7 @@ test('logs when serializing', async (t) => {
 
   const collected = await reader.collect()
   const input = collected.resourceMetrics
-  const expected = ProtobufMetricsSerializer.serializeRequest(input)
+  const expected = NrMetricsSerializer.serializeRequest(input)
   const found = serializer.serializeRequest(input)
 
   assert.equal(Buffer.compare(found, expected), 0)
@@ -73,16 +71,19 @@ test('logs when serializing', async (t) => {
 })
 
 test('logs when deserializing', async (t) => {
-  const { meterProvider, reader, serializer } = t.nr
+  const { serializer } = t.nr
 
-  const meter = meterProvider.getMeter('test-meter')
-  const counter = meter.createCounter('test-counter')
-  counter.add(42, { test: 'deserialize' })
+  // Use a real, correctly-shaped `ExportMetricsServiceResponse` buffer --
+  // not an `ExportMetricsServiceRequest` buffer, which happens to decode
+  // under the response schema in some cases but is not a valid response.
+  const { ExportMetricsServiceResponse } = getMetricsProtobufTypes()
+  const input = ExportMetricsServiceResponse.encode(
+    ExportMetricsServiceResponse.create({
+      partialSuccess: { rejectedDataPoints: 1, errorMessage: 'partial' }
+    })
+  ).finish()
 
-  const collected = await reader.collect()
-  const metricsData = collected.resourceMetrics
-  const input = ProtobufMetricsSerializer.serializeRequest(metricsData)
-  const expected = ProtobufMetricsSerializer.deserializeResponse(input)
+  const expected = NrMetricsSerializer.deserializeResponse(input)
   const found = serializer.deserializeResponse(input)
 
   assert.deepEqual(found, expected)
@@ -108,7 +109,7 @@ test('does not log when audit logging is disabled', async (t) => {
 
   const collected = await reader.collect()
   const input = collected.resourceMetrics
-  const expected = ProtobufMetricsSerializer.serializeRequest(input)
+  const expected = NrMetricsSerializer.serializeRequest(input)
   const found = serializer.serializeRequest(input)
 
   assert.equal(Buffer.compare(found, expected), 0)

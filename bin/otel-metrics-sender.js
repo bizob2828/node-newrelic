@@ -13,27 +13,44 @@ if (NR_KEY === null) {
 
 const HOST = process.env.NEW_RELIC_METRICS_HOST || 'staging-collector.newrelic.com'
 
-const { MeterProvider, PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics')
-const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-proto')
-const { diag, DiagConsoleLogger, DiagLogLevel } = require('@opentelemetry/api')
-const { resourceFromAttributes } = require('@opentelemetry/resources')
+const MeterProvider = require('../lib/otel/metrics/sdk/meter-provider.js')
+const PeriodicMetricReader = require('../lib/otel/metrics/sdk/periodic-metric-reader.js')
+const NROTLPMetricExporter = require('../lib/otel/metrics/nr-exporter.js')
+const { resourceFromAttributes } = require('../lib/otel/metrics/nr-resource.js')
 
-// This will capture internal errors from all OTel components, including the exporter.
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR)
+// This script runs standalone, outside of an agent instance, so the
+// exporter/delegate chain gets minimal stand-ins for the pieces it expects:
+// an agent-shaped object (for Supportability-metric side effects we don't
+// care about here) and a logger (for audit logging we don't need).
+const fakeAgent = {
+  metrics: {
+    getOrCreateMetric() {
+      return { incrementCallCount() {} }
+    }
+  }
+}
+const fakeLogger = {
+  child() { return this },
+  debug() {},
+  warn(...args) { console.warn(...args) },
+  audit() {},
+  auditEnabled() { return false }
+}
 
 const resource = resourceFromAttributes({
   'service.name': 'nodejs-benchmark-runner'
 })
 
-const exporter = new OTLPMetricExporter({
-  url: `https://${HOST}:443/v1/metrics`,
-  headers: { 'api-key': NR_KEY }
-})
+const exporter = new NROTLPMetricExporter(
+  {
+    url: `https://${HOST}:443/v1/metrics`,
+    headers: { 'api-key': NR_KEY }
+  },
+  { agent: fakeAgent, logger: fakeLogger }
+)
 
-const meterProvider = new MeterProvider({
-  resource,
-  readers: [new PeriodicExportingMetricReader({ exporter, exportIntervalMillis: 1000 })]
-})
+const reader = new PeriodicMetricReader({ exporter, exportIntervalMillis: 1000 })
+const meterProvider = new MeterProvider({ reader, resource })
 
 const meter = meterProvider.getMeter('nodejs-agent-benchmarks')
 

@@ -58,13 +58,21 @@ test('sends metrics', { timeout: 5_000 }, async (t) => {
   const counter = metrics.getMeter('test-meter').createCounter('test-counter')
   counter.add(1, { ready: 'no' })
 
+  // Register both listeners BEFORE emitting `started`: bootstrapping's
+  // internal chain can resolve in as little as one microtask hop, so
+  // `otelMetricsBootstrapped` may already have fired by the time a listener
+  // registered only after `await once(agent, 'started')` subscribes --
+  // missing it forever, since events aren't replayed to late listeners.
+  const startedPromise = once(agent, 'started')
+  const bootstrappedPromise = once(agent, 'otelMetricsBootstrapped')
+
   // Increment metric after the agent is ready:
   process.nextTick(() => agent.emit('started'))
-  await once(agent, 'started')
+  await startedPromise
   counter.add(1, { ready: 'yes' })
 
   // Increment metric after otel metrics bootstrapping:
-  await once(agent, 'otelMetricsBootstrapped')
+  await bootstrappedPromise
   counter.add(1, { otel: 'yes' })
 
   await once(server, 'requestComplete')

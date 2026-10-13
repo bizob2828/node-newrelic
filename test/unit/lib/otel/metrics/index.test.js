@@ -122,12 +122,19 @@ test('configures global provider after agent start', async (t) => {
     debugMessages.includes('Waiting for agent connect to finish bootstrapping OTEL metrics.'),
     'should log that bootstrapping is deferred to agent connect'
   )
+  // Register both listeners BEFORE emitting `started`: bootstrapping's
+  // internal chain can resolve in as little as one microtask hop, so
+  // `otelMetricsBootstrapped` may already have fired by the time a listener
+  // registered only after `await once(agent, 'started')` subscribes --
+  // missing it forever, since events aren't replayed to late listeners.
+  const startedPromise = once(agent, 'started')
+  const bootstrappedPromise = once(agent, 'otelMetricsBootstrapped')
   process.nextTick(() => agent.emit('started'))
 
-  await once(agent, 'started')
+  await startedPromise
   t.assert.equal(0, agent.listenerCount('started'))
 
-  await once(agent, 'otelMetricsBootstrapped')
+  await bootstrappedPromise
   t.assert.ok(
     debugMessages.includes('Agent connect finished. Finishing boostrap of OTEL metrics.'),
     'should log that bootstrapping resumes once agent connect finishes'
@@ -136,7 +143,7 @@ test('configures global provider after agent start', async (t) => {
   // background; wait for its outcome so the plan count above is stable.
   await t.nr.exportSettled
   const provider = require('@opentelemetry/api').metrics.getMeterProvider()
-  t.assert.deepEqual(provider._sharedState.resource.attributes, {
+  t.assert.deepEqual(provider.resource.attributes, {
     'entity.guid': 'guid-123456',
     'tags.accountId': '1',
     'tags.account': 'Test Account',
