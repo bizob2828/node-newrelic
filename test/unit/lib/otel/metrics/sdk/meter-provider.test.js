@@ -19,6 +19,19 @@ function fakeReader() {
   }
 }
 
+function fakeAgent() {
+  const recorded = []
+  return {
+    recorded,
+    metrics: {
+      getOrCreateMetric(name) {
+        recorded.push(name)
+        return { incrementCallCount() {} }
+      }
+    }
+  }
+}
+
 test('getMeter caches by name@version@schemaUrl', (t) => {
   const provider = new MeterProvider({ reader: fakeReader() })
 
@@ -57,7 +70,32 @@ test('shutdown delegates to the reader', async (t) => {
   assert.equal(reader.shutdownCalled, true)
 })
 
-test('getMeter does not throw', (t) => {
+test('tracks every getMeter call as a Supportability metric when an agent is provided', (t) => {
+  const agent = fakeAgent()
+  const provider = new MeterProvider({ reader: fakeReader(), agent })
+
+  provider.getMeter('scope-a')
+  provider.getMeter('scope-a') // cache hit -- still tracked on every call
+
+  assert.deepEqual(agent.recorded, [
+    'Supportability/Metrics/Nodejs/OpenTelemetryBridge/getMeter',
+    'Supportability/Metrics/Nodejs/OpenTelemetryBridge/getMeter'
+  ])
+})
+
+test('passes the agent through to meters it creates', (t) => {
+  const agent = fakeAgent()
+  const provider = new MeterProvider({ reader: fakeReader(), agent })
+
+  provider.getMeter('scope-a').createCounter('my-counter')
+
+  assert.deepEqual(agent.recorded, [
+    'Supportability/Metrics/Nodejs/OpenTelemetryBridge/getMeter',
+    'Supportability/Metrics/Nodejs/OpenTelemetryBridge/meter/createCounter'
+  ])
+})
+
+test('does not throw when no agent is provided', (t) => {
   const provider = new MeterProvider({ reader: fakeReader() })
   assert.doesNotThrow(() => provider.getMeter('scope-a'))
 })

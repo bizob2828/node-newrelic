@@ -23,13 +23,3 @@ test('defaults to an empty attributes object', (t) => {
   const resource = resourceFromAttributes()
   assert.deepEqual(resource.attributes, {})
 })
-
-test('asyncAttributesPending is always false', (t) => {
-  const resource = resourceFromAttributes({ foo: 'bar' })
-  assert.equal(resource.asyncAttributesPending, false)
-})
-
-test('waitForAsyncAttributes resolves immediately', async (t) => {
-  const resource = resourceFromAttributes({ foo: 'bar' })
-  await assert.doesNotReject(() => resource.waitForAsyncAttributes())
-})

@@ -113,6 +113,7 @@ test('configures global provider after agent start', async (t) => {
   const { debugMessages } = logger
 
   const signal = new SetupMetrics({ agent, logger })
+  t.after(() => signal.teardown())
   t.assert.ok(signal)
 
   t.assert.equal(1, agent.listenerCount('started'))
@@ -122,11 +123,12 @@ test('configures global provider after agent start', async (t) => {
     debugMessages.includes('Waiting for agent connect to finish bootstrapping OTEL metrics.'),
     'should log that bootstrapping is deferred to agent connect'
   )
-  // Register both listeners BEFORE emitting `started`: bootstrapping's
-  // internal chain can resolve in as little as one microtask hop, so
-  // `otelMetricsBootstrapped` may already have fired by the time a listener
-  // registered only after `await once(agent, 'started')` subscribes --
-  // missing it forever, since events aren't replayed to late listeners.
+  // Register both listeners BEFORE emitting `started`: `postReady`'s
+  // internal chain (reader.collect().then(...)) can resolve in as little
+  // as one microtask hop, so `otelMetricsBootstrapped` may already have
+  // fired by the time a listener registered only after `await
+  // once(agent, 'started')` gets a chance to subscribe -- missing it
+  // forever, since events aren't replayed to late listeners.
   const startedPromise = once(agent, 'started')
   const bootstrappedPromise = once(agent, 'otelMetricsBootstrapped')
   process.nextTick(() => agent.emit('started'))
@@ -173,6 +175,7 @@ test('logs warning and uses defaults when export_interval <= export_timeout', as
   }
 
   const signal = new SetupMetrics({ agent, logger })
+  t.after(() => signal.teardown())
   t.assert.ok(signal)
   t.assert.ok(warnMessage !== null, 'warning should have been logged')
 })
@@ -191,6 +194,7 @@ test('serverless mode does not wait for the started event', (t) => {
   const { debugMessages } = logger
 
   const signal = new SetupMetrics({ agent, logger })
+  t.after(() => signal.teardown())
   t.assert.ok(signal)
 
   t.assert.equal(agent.listenerCount('started'), 0)
@@ -201,7 +205,7 @@ test('serverless mode does not wait for the started event', (t) => {
   t.assert.ok(bootstrapped, 'should emit otelMetricsBootstrapped from the constructor')
 })
 
-test('getMeter called multiple times for the same scope does not re-wrap create* methods', async (t) => {
+test('tracks getMeter and create* calls as Supportability metrics end-to-end', async (t) => {
   const { agent } = t.nr
   const createCounterCounts = {}
   agent.metrics.getOrCreateMetric = function (name) {
@@ -209,8 +213,8 @@ test('getMeter called multiple times for the same scope does not re-wrap create*
     return this
   }
 
-  // eslint-disable-next-line no-new
-  new SetupMetrics({ agent })
+  const signal = new SetupMetrics({ agent })
+  t.after(() => signal.teardown())
   const provider = otelApi.metrics.getMeterProvider()
 
   for (let i = 0; i < 5; i++) {
@@ -242,6 +246,7 @@ test('flushToString collects, exports, and returns the base64 OTLP payload', asy
   agent.serverlessMode = true
 
   const signal = new SetupMetrics({ agent })
+  t.after(() => signal.teardown())
   const provider = otelApi.metrics.getMeterProvider()
   provider.getMeter('test-meter').createCounter('test-counter').add(1, { foo: 'bar' })
 

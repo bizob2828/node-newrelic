@@ -50,7 +50,7 @@ const exporter = new NROTLPMetricExporter(
 )
 
 const reader = new PeriodicMetricReader({ exporter, exportIntervalMillis: 1000 })
-const meterProvider = new MeterProvider({ reader, resource })
+const meterProvider = new MeterProvider({ reader, resource, agent: fakeAgent })
 
 const meter = meterProvider.getMeter('nodejs-agent-benchmarks')
 

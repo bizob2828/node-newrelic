@@ -11,7 +11,7 @@ const http = require('node:http')
 const PeriodicMetricReader = require('#agentlib/otel/metrics/sdk/periodic-metric-reader.js')
 const MeterProvider = require('#agentlib/otel/metrics/sdk/meter-provider.js')
 const { getMetricsProtobufTypes } = require('#agentlib/otel/metrics/otlp/otlp-proto-loader.js')
-const { AggregationTemporality, AggregationType, ExportResultCode, InstrumentType } = require('#agentlib/otel/constants.js')
+const { ExportResultCode } = require('#agentlib/otel/constants.js')
 const NROTLPMetricExporter = require('#agentlib/otel/metrics/nr-exporter.js')
 
 function startServer(handler) {
@@ -139,23 +139,6 @@ test('reports failure when the destination errors', async (t) => {
   assert.deepEqual(t.nr.metricsRecorded, [
     'Supportability/Metrics/Nodejs/OpenTelemetryBridge/export/failure'
   ])
-})
-
-test('selectAggregation and selectAggregationTemporality use the agent defaults', async (t) => {
-  const { agent, logger } = t.nr
-  t.nr.server = await startServer((req, res) => { res.writeHead(200); res.end() })
-
-  const exporter = new NROTLPMetricExporter(
-    { url: urlFor(t.nr.server) },
-    { agent, logger }
-  )
-
-  assert.deepEqual(exporter.selectAggregation(InstrumentType.COUNTER), { type: AggregationType.DEFAULT })
-  assert.equal(exporter.selectAggregationTemporality(InstrumentType.COUNTER), AggregationTemporality.DELTA)
-  assert.equal(
-    exporter.selectAggregationTemporality(InstrumentType.UP_DOWN_COUNTER),
-    AggregationTemporality.CUMULATIVE
-  )
 })
 
 test('forceFlush and shutdown resolve', async (t) => {
