@@ -53,12 +53,17 @@ test.beforeEach((ctx) => {
       },
       entity_guid: guid,
       license_key: licenseKey,
-      host: 'example.com',
-      port: 443,
+      // Deliberately not a real/reachable destination: 127.0.0.1 with
+      // nothing listening fails fast and deterministically (ECONNREFUSED)
+      // without depending on real network access.
+      host: '127.0.0.1',
+      port: 1,
+      proxy: '',
+      proxy_host: '',
       opentelemetry: {
         metrics: {
           enabled: true,
-          export_interval: 1_000,
+          export_interval: 2_000,
           export_timeout: 1_000
         }
       }
@@ -74,6 +79,9 @@ test.beforeEach((ctx) => {
           'Supportability/Metrics/Nodejs/OpenTelemetryBridge/meter/createCounter'
         ]
         ctx.assert.ok(validMetrics.includes(name), `Unexpected metric: ${name}`)
+        if (name.startsWith('Supportability/Metrics/Nodejs/OpenTelemetryBridge/export/')) {
+          ctx.nr.resolveExportSettled()
+        }
         return this
       },
       incrementCallCount() {
@@ -84,6 +92,11 @@ test.beforeEach((ctx) => {
   Object.setPrototypeOf(agent, EventEmitter.prototype)
 
   ctx.nr.agent = agent
+  // The `started` bootstrap opportunistically flushes any metrics recorded
+  // before it fired, in the background. Tests that need to observe its
+  // outcome (success or failure) can await this instead of racing on
+  // microtask ordering against the `otelMetricsBootstrapped` event.
+  ctx.nr.exportSettled = new Promise((resolve) => { ctx.nr.resolveExportSettled = resolve })
 })
 
 test.afterEach(() => {
@@ -119,6 +132,9 @@ test('configures global provider after agent start', async (t) => {
     debugMessages.includes('Agent connect finished. Finishing boostrap of OTEL metrics.'),
     'should log that bootstrapping resumes once agent connect finishes'
   )
+  // The opportunistic flush of pre-`started` metrics happens in the
+  // background; wait for its outcome so the plan count above is stable.
+  await t.nr.exportSettled
   const provider = require('@opentelemetry/api').metrics.getMeterProvider()
   t.assert.deepEqual(provider._sharedState.resource.attributes, {
     'entity.guid': 'guid-123456',

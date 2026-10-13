@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "Tue Oct 13 2026 15:48:07 GMT-0400 (Eastern Daylight Time)",
+  "lastUpdated": "Tue Oct 13 2026 16:49:29 GMT-0400 (Eastern Daylight Time)",
   "projectName": "New Relic Node Agent",
   "projectUrl": "https://github.com/newrelic/node-newrelic",
   "includeOptDeps": true,
@@ -124,30 +124,6 @@
       "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v1.9.1",
       "licenseFile": "node_modules/@opentelemetry/api/LICENSE",
       "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v1.9.1/LICENSE",
-      "licenseTextSource": "file",
-      "publisher": "OpenTelemetry Authors"
-    },
-    "@opentelemetry/exporter-metrics-otlp-http@0.221.0": {
-      "name": "@opentelemetry/exporter-metrics-otlp-http",
-      "version": "0.221.0",
-      "range": "^0.221.0",
-      "licenses": "Apache-2.0",
-      "repoUrl": "https://github.com/open-telemetry/opentelemetry-js",
-      "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v0.221.0",
-      "licenseFile": "node_modules/@opentelemetry/exporter-metrics-otlp-http/LICENSE",
-      "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v0.221.0/LICENSE",
-      "licenseTextSource": "file",
-      "publisher": "OpenTelemetry Authors"
-    },
-    "@opentelemetry/otlp-exporter-base@0.221.0": {
-      "name": "@opentelemetry/otlp-exporter-base",
-      "version": "0.221.0",
-      "range": "^0.221.0",
-      "licenses": "Apache-2.0",
-      "repoUrl": "https://github.com/open-telemetry/opentelemetry-js",
-      "versionedRepoUrl": "https://github.com/open-telemetry/opentelemetry-js/tree/v0.221.0",
-      "licenseFile": "node_modules/@opentelemetry/otlp-exporter-base/LICENSE",
-      "licenseUrl": "https://github.com/open-telemetry/opentelemetry-js/blob/v0.221.0/LICENSE",
       "licenseTextSource": "file",
       "publisher": "OpenTelemetry Authors"
     },
@@ -375,15 +351,15 @@
       "publisher": "Matteo Collina",
       "email": "hello@matteocollina.com"
     },
-    "@newrelic/eslint-config@0.8.0": {
+    "@newrelic/eslint-config@0.9.1": {
       "name": "@newrelic/eslint-config",
-      "version": "0.8.0",
-      "range": "^0.8.0",
+      "version": "0.9.1",
+      "range": "^0.9.1",
       "licenses": "Apache-2.0",
       "repoUrl": "https://github.com/newrelic/eslint-config-newrelic",
-      "versionedRepoUrl": "https://github.com/newrelic/eslint-config-newrelic/tree/v0.8.0",
+      "versionedRepoUrl": "https://github.com/newrelic/eslint-config-newrelic/tree/v0.9.1",
       "licenseFile": "node_modules/@newrelic/eslint-config/LICENSE",
-      "licenseUrl": "https://github.com/newrelic/eslint-config-newrelic/blob/v0.8.0/LICENSE",
+      "licenseUrl": "https://github.com/newrelic/eslint-config-newrelic/blob/v0.9.1/LICENSE",
       "licenseTextSource": "file",
       "publisher": "New Relic Node.js agent team",
       "email": "nodejs@newrelic.com"
@@ -566,29 +542,29 @@
       "email": "maochenyan@gmail.com",
       "url": "https://github.com/stevemao"
     },
-    "eslint-plugin-jsdoc@63.3.3": {
+    "eslint-plugin-jsdoc@65.2.4": {
       "name": "eslint-plugin-jsdoc",
-      "version": "63.3.3",
-      "range": "^63.2.0",
+      "version": "65.2.4",
+      "range": "^65.0.0",
       "licenses": "BSD-3-Clause",
       "repoUrl": "https://github.com/gajus/eslint-plugin-jsdoc",
-      "versionedRepoUrl": "https://github.com/gajus/eslint-plugin-jsdoc/tree/v63.3.3",
+      "versionedRepoUrl": "https://github.com/gajus/eslint-plugin-jsdoc/tree/v65.2.4",
       "licenseFile": "node_modules/eslint-plugin-jsdoc/LICENSE",
-      "licenseUrl": "https://github.com/gajus/eslint-plugin-jsdoc/blob/v63.3.3/LICENSE",
+      "licenseUrl": "https://github.com/gajus/eslint-plugin-jsdoc/blob/v65.2.4/LICENSE",
       "licenseTextSource": "file",
       "publisher": "Gajus Kuizinas",
       "email": "gajus@gajus.com",
       "url": "http://gajus.com"
     },
-    "eslint@9.39.5": {
+    "eslint@10.12.0": {
       "name": "eslint",
-      "version": "9.39.5",
-      "range": "^9.17.0",
+      "version": "10.12.0",
+      "range": "^10.12.0",
       "licenses": "MIT",
       "repoUrl": "https://github.com/eslint/eslint",
-      "versionedRepoUrl": "https://github.com/eslint/eslint/tree/v9.39.5",
+      "versionedRepoUrl": "https://github.com/eslint/eslint/tree/v10.12.0",
       "licenseFile": "node_modules/eslint/LICENSE",
-      "licenseUrl": "https://github.com/eslint/eslint/blob/v9.39.5/LICENSE",
+      "licenseUrl": "https://github.com/eslint/eslint/blob/v10.12.0/LICENSE",
       "licenseTextSource": "file",
       "publisher": "Nicholas C. Zakas",
       "email": "nicholas+npm@nczconsulting.com"
