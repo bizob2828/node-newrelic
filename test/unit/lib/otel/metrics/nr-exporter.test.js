@@ -8,12 +8,10 @@
 const test = require('node:test')
 const assert = require('node:assert')
 const http = require('node:http')
-const {
-  MeterProvider,
-  PeriodicExportingMetricReader
-} = require('@opentelemetry/sdk-metrics')
-const { ProtobufMetricsSerializer } = require('@opentelemetry/otlp-transformer')
-const { ExportResultCode } = require('#agentlib/otel/constants.js')
+const PeriodicMetricReader = require('#agentlib/otel/metrics/sdk/periodic-metric-reader.js')
+const MeterProvider = require('#agentlib/otel/metrics/sdk/meter-provider.js')
+const { getMetricsProtobufTypes } = require('#agentlib/otel/metrics/otlp/otlp-proto-loader.js')
+const { AggregationTemporality, AggregationType, ExportResultCode, InstrumentType } = require('#agentlib/otel/constants.js')
 const NROTLPMetricExporter = require('#agentlib/otel/metrics/nr-exporter.js')
 
 function startServer(handler) {
@@ -29,11 +27,15 @@ function urlFor(server) {
 }
 
 async function collectSampleMetrics() {
-  const reader = new PeriodicExportingMetricReader({
-    exporter: { export() {}, forceFlush: () => Promise.resolve(), shutdown: () => Promise.resolve() },
+  const reader = new PeriodicMetricReader({
+    exporter: {
+      export(_metrics, callback) { callback({ code: ExportResultCode.SUCCESS }) },
+      forceFlush: () => Promise.resolve(),
+      shutdown: () => Promise.resolve()
+    },
     exportIntervalMillis: 100
   })
-  const provider = new MeterProvider({ readers: [reader] })
+  const provider = new MeterProvider({ reader })
   provider.getMeter('test-meter').createCounter('test-counter').add(1, { foo: 'bar' })
   const { resourceMetrics } = await reader.collect()
   await provider.shutdown()
@@ -87,7 +89,6 @@ test('posts serialized metrics and reports success', async (t) => {
   )
 
   const resourceMetrics = await collectSampleMetrics()
-  const expectedBody = ProtobufMetricsSerializer.serializeRequest(resourceMetrics)
 
   await new Promise((resolve) => {
     exporter.export(resourceMetrics, (result) => {
@@ -98,7 +99,14 @@ test('posts serialized metrics and reports success', async (t) => {
 
   assert.equal(receivedHeaders['api-key'], 'test-key')
   assert.equal(receivedHeaders['content-type'], 'application/x-protobuf')
-  assert.equal(Buffer.compare(receivedBody, Buffer.from(expectedBody)), 0)
+
+  const { ExportMetricsServiceRequest } = getMetricsProtobufTypes()
+  const decoded = ExportMetricsServiceRequest.decode(receivedBody)
+  const metric = decoded.resourceMetrics[0].scopeMetrics[0].metrics[0]
+  assert.equal(metric.name, 'test-counter')
+  assert.equal(metric.sum.dataPoints[0].attributes[0].key, 'foo')
+  assert.deepEqual(metric.sum.dataPoints[0].attributes[0].value, { stringValue: 'bar' })
+
   assert.deepEqual(t.nr.metricsRecorded, [
     'Supportability/Metrics/Nodejs/OpenTelemetryBridge/export/success'
   ])
@@ -134,7 +142,6 @@ test('reports failure when the destination errors', async (t) => {
 })
 
 test('selectAggregation and selectAggregationTemporality use the agent defaults', async (t) => {
-  const { AggregationTemporality, AggregationType, InstrumentType } = require('@opentelemetry/sdk-metrics')
   const { agent, logger } = t.nr
   t.nr.server = await startServer((req, res) => { res.writeHead(200); res.end() })
 
