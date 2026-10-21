@@ -127,6 +127,39 @@ test('environmental sampler', async function (t) {
     assert.equal(systemMetricsSampler.state, 'stopped')
   })
 
+  await t.test('should not create duplicate timers when start is called while already running', function (t) {
+    const { agent, sandbox } = t.nr
+    const setIntervalSpy = sandbox.spy(global, 'setInterval')
+
+    systemMetricsSampler.start(agent)
+    const callCountAfterFirstStart = setIntervalSpy.callCount
+
+    // Lambda can reuse one execution environment for overlapping invocations
+    // (e.g. response-streaming); calling start() again must not create duplicates.
+    systemMetricsSampler.start(agent)
+    assert.equal(
+      setIntervalSpy.callCount,
+      callCountAfterFirstStart,
+      'should not create additional timers for the overlapping start'
+    )
+  })
+
+  await t.test('should use a shorter sample interval in serverless mode', function (t) {
+    const { agent, sandbox } = t.nr
+    agent.config.serverless_mode.enabled = true
+    agent.config.plugins.native_metrics.enabled = false
+
+    const setIntervalSpy = sandbox.spy(global, 'setInterval')
+
+    systemMetricsSampler.start(agent)
+
+    // Memory sampling stays at 5s regardless of mode.
+    assert.ok(setIntervalSpy.calledWith(sinon.match.func, 5000))
+    // The 15s-based samplers use the shortened serverless interval instead.
+    assert.ok(setIntervalSpy.calledWith(sinon.match.func, 1000))
+    assert.ok(!setIntervalSpy.calledWith(sinon.match.func, 15000))
+  })
+
   await t.test('should gather CPU user utilization metric', function (t) {
     const { agent } = t.nr
     systemMetricsSampler.sampleCpu(agent)()

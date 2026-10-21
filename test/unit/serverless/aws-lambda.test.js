@@ -16,6 +16,7 @@ const tempRemoveListeners = require('../../lib/temp-remove-listeners')
 const tempOverrideUncaught = require('../../lib/temp-override-uncaught')
 const AwsLambda = require('../../../lib/serverless/aws-lambda')
 const lambdaSampleEvents = require('./lambda-sample-events')
+const systemMetricsSampler = require('../../../lib/system-metrics-sampler')
 
 const { DESTINATIONS: ATTR_DEST } = require('../../../lib/config/attribute-filter')
 const symbols = require('../../../lib/symbols')
@@ -634,6 +635,33 @@ test('AwsLambda.patchLambdaHandler', async (t) => {
 
     wrappedHandler(stubEvent, stubContext, stubCallback)
   })
+
+  await t.test(
+    'should start and stop the system metrics sampler once per invocation, and reset the metrics start time',
+    (t, end) => {
+      const { awsLambda, stubEvent, stubContext, stubCallback } = t.nr
+      const { agent } = t.nr
+      const startSpy = sinon.spy(systemMetricsSampler, 'start')
+      const stopSpy = sinon.spy(systemMetricsSampler, 'stop')
+      const resetStartTimeSpy = sinon.spy(agent.metrics, 'resetStartTime')
+      t.after(() => {
+        startSpy.restore()
+        stopSpy.restore()
+        resetStartTimeSpy.restore()
+      })
+
+      const wrappedHandler = awsLambda.patchLambdaHandler((event, context, callback) => {
+        callback(null, 'worked')
+      })
+
+      wrappedHandler(stubEvent, stubContext, stubCallback)
+
+      assert.equal(startSpy.callCount, 1)
+      assert.equal(resetStartTimeSpy.callCount, 1)
+      assert.equal(stopSpy.callCount, 1)
+      end()
+    }
+  )
 
   await t.test('should capture cold start boolean on first invocation', (t, end) => {
     const { agent, awsLambda, stubEvent, stubContext, stubCallback } = t.nr
