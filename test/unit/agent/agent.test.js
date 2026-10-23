@@ -325,6 +325,27 @@ test('#harvesters.start not should start profiling aggregator when serverless_mo
   assert.equal(agent.profilingData.sendTimer, null)
 })
 
+test('agent.start should not start free-running system metric intervals in serverless_mode', (t, end) => {
+  const agent = helper.loadMockedAgent({
+    serverless_mode: {
+      enabled: true
+    }
+  }, false)
+  t.after(() => {
+    systemMetricsSampler.stop()
+    helper.unloadAgent(agent)
+  })
+
+  const setIntervalSpy = sinon.spy(global, 'setInterval')
+  t.after(() => setIntervalSpy.restore())
+
+  agent.start(() => {
+    assert.equal(systemMetricsSampler.state, 'running')
+    assert.equal(setIntervalSpy.callCount, 0)
+    end()
+  })
+})
+
 test('#onConnect should reconfigure all the aggregators', (t, end) => {
   const EXPECTED_AGG_COUNT = 10
   const agent = helper.loadMockedAgent(null, false)

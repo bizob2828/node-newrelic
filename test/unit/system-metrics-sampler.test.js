@@ -238,6 +238,79 @@ test('environmental sampler', async function (t) {
     assert.equal(stats.callCount, 0)
   })
 
+  await t.test('startServerless should load native metrics without starting interval samplers', function (t) {
+    const { agent, sandbox } = t.nr
+    const setIntervalSpy = sandbox.spy(global, 'setInterval')
+
+    systemMetricsSampler.startServerless(agent)
+
+    assert.equal(systemMetricsSampler.state, 'running')
+    assert.ok(systemMetricsSampler.nativeMetrics)
+    assert.equal(setIntervalSpy.callCount, 0)
+  })
+
+  await t.test('should record CPU and memory metrics scoped to a single invocation', function (t) {
+    const { agent, sandbox } = t.nr
+    let now = 1_000_000
+    sandbox.stub(Date, 'now').callsFake(() => now)
+    process.cpuUsage
+      .onFirstCall().returns({ user: 0, system: 0 })
+      .onSecondCall().returns({ user: 1e6 * numCpus, system: 1e6 * numCpus })
+
+    const snapshot = systemMetricsSampler.startInvocationSample()
+    now += 1000 // pretend the invocation ran for one second
+
+    systemMetricsSampler.endInvocationSample(agent, snapshot)
+
+    const userTime = agent.metrics.getOrCreateMetric(NAMES.CPU.USER_TIME)
+    assert.equal(userTime.callCount, 1)
+    assert.equal(userTime.total, numCpus)
+
+    const userUtil = agent.metrics.getOrCreateMetric(NAMES.CPU.USER_UTILIZATION)
+    assert.equal(userUtil.callCount, 1)
+    assert.equal(userUtil.total, 1)
+
+    const physicalMemory = agent.metrics.getOrCreateMetric(NAMES.MEMORY.PHYSICAL)
+    assert.equal(physicalMemory.callCount, 1)
+  })
+
+  await t.test('endInvocationSample should do nothing when there is no snapshot', function (t) {
+    const { agent } = t.nr
+    assert.doesNotThrow(function () {
+      systemMetricsSampler.endInvocationSample(agent, null)
+    })
+
+    const userTime = agent.metrics.getOrCreateMetric(NAMES.CPU.USER_TIME)
+    assert.equal(userTime.callCount, 0)
+  })
+
+  await t.test('endInvocationSample should also gather GC/loop metrics when native metrics are bound', function (t, end) {
+    const { agent } = t.nr
+    systemMetricsSampler.startServerless(agent)
+
+    // Clear up the current state of the metrics.
+    systemMetricsSampler.nativeMetrics.getGCMetrics()
+    systemMetricsSampler.nativeMetrics.getLoopMetrics()
+
+    spinLoop(function runLoop() {
+      const snapshot = systemMetricsSampler.startInvocationSample()
+      systemMetricsSampler.endInvocationSample(agent, snapshot)
+
+      const loop = agent.metrics.getOrCreateMetric(NAMES.LOOP.USAGE)
+      assert.ok(loop.callCount > 0)
+
+      const type = [
+        'Scavenge',
+        'MarkSweepCompact',
+        'IncrementalMarking',
+        'ProcessWeakCallbacks',
+        'All'
+      ].find((t) => agent.metrics.getOrCreateMetric(NAMES.GC.PREFIX + t).callCount)
+      assert.ok(type)
+      end()
+    })
+  })
+
   await t.test('should have some rough idea of how deep the event queue is', function (t, end) {
     const { agent } = t.nr
     systemMetricsSampler.checkEvents(agent)()

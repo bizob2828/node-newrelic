@@ -19,6 +19,7 @@ const lambdaSampleEvents = require('./lambda-sample-events')
 
 const { DESTINATIONS: ATTR_DEST } = require('../../../lib/config/attribute-filter')
 const symbols = require('../../../lib/symbols')
+const NAMES = require('../../../lib/metrics/names')
 
 // Attribute key names:
 const REQ_ID = 'aws.requestId'
@@ -1587,6 +1588,47 @@ test('AwsLambda.patchLambdaHandler', async (t) => {
 
       end()
     }
+  })
+
+  await t.test('should record system metrics scoped to the invocation', (t, end) => {
+    const { agent, awsLambda, stubEvent, stubContext, stubCallback } = t.nr
+    agent.on('harvestStarted', confirmMetrics)
+
+    const wrappedHandler = awsLambda.patchLambdaHandler((event, context, callback) => {
+      callback(null, 'worked')
+    })
+
+    wrappedHandler(stubEvent, stubContext, stubCallback)
+
+    function confirmMetrics() {
+      const unscopedMetrics = getMetrics(agent).unscoped
+
+      const userTime = unscopedMetrics[NAMES.CPU.USER_TIME]
+      assert.ok(userTime)
+      assert.equal(userTime.callCount, 1)
+
+      const physicalMemory = unscopedMetrics[NAMES.MEMORY.PHYSICAL]
+      assert.ok(physicalMemory)
+      assert.equal(physicalMemory.callCount, 1)
+
+      end()
+    }
+  })
+
+  await t.test('should reset the metrics start time at the beginning of the invocation', (t) => {
+    const { agent, awsLambda, stubEvent, stubContext, stubCallback } = t.nr
+    const resetStartTimeSpy = sinon.spy(agent.metrics, 'resetStartTime')
+    t.after(() => resetStartTimeSpy.restore())
+
+    const wrappedHandler = awsLambda.patchLambdaHandler((event, context, callback) => {
+      // The reset must happen before the handler body runs, not just before harvest.
+      assert.equal(resetStartTimeSpy.callCount, 1)
+      callback(null, 'worked')
+    })
+
+    wrappedHandler(stubEvent, stubContext, stubCallback)
+
+    assert.equal(resetStartTimeSpy.callCount, 1)
   })
 
   await t.test('should handle async handler no callback', async (t) => {
