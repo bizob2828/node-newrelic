@@ -1,0 +1,35 @@
+name: Check AWS Partitions
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    - cron: '17 9 * * 1' # Mondays, ~9am UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Run without pushing a branch or opening a PR
+        type: boolean
+        default: false
+
+jobs:
+  check-partitions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 'lts/*'
+          check-latest: true
+      - name: Install Dependencies
+        run: npm install
+      - run: |
+          git config user.name ${GITHUB_ACTOR}
+          git config user.email gh-actions-${GITHUB_ACTOR}@github.com
+      - name: Check for AWS partition changes
+        run: node ./bin/check-aws-partitions.js ${{ inputs.dry_run && '--dry-run' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.NODE_AGENT_GH_TOKEN }}
+          GITHUB_USER: ${{ vars.NODE_AGENT_CI_USER_NAME }}
+          GITHUB_EMAIL: ${{ vars.NODE_AGENT_CI_USER_EMAIL }}
